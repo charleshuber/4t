@@ -1,0 +1,7 @@
+package fr.metz.surfthevoid.tttt.rest.resources.db.entity;
+
+@Entity
+@Table("USER")
+public class UserDbo extends GenericDbo {
+
+}

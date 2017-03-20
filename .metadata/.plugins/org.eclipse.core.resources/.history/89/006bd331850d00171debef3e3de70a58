@@ -1,0 +1,21 @@
+package fr.metz.surfthevoid.tttt.rest.resources.user;
+
+import javax.ws.rs.core.Response;
+
+import fr.metz.surfthevoid.tttt.rest.resources.IResourceBoundary;
+
+public class ResourceBoundary<R> implements IResourceBoundary<R> {
+
+	@Override
+	public Response create(R resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response update(R resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}

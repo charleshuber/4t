@@ -1,0 +1,8 @@
+package fr.metz.surfthevoid.tttt.rest.resources.user;
+
+import javax.ws.rs.Path;
+
+@Path("/user")
+public interface IUserBoundary {
+	
+}

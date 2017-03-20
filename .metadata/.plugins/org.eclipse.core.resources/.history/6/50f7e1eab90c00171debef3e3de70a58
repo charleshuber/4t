@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<Context reloadable="true" docBase="4TRest.war">
+	
+	<Valve className="org.apache.catalina.valves.AccessLogValve"
+         prefix="4TRest_access_log" suffix=".txt"
+         pattern="common"/>
+         
+   	 <Resource 
+   	 	name="jdbc/surfthevoid" 
+   	 	auth="Container"
+     	type="javax.sql.DataSource"
+     	description="4TRest database"
+     	username="surfthevoid"
+        password="model4stv"/>
+
+</Context>

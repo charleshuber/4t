@@ -1,0 +1,42 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>fr.metz.surfthevoid.4t</groupId>
+		<artifactId>common</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../common</relativePath>
+	</parent>
+	<artifactId>business-rest</artifactId>
+	<version>0.0.2-SNAPSHOT</version>
+	<name>4t-rest</name>
+	<packaging>war</packaging>
+
+	<properties>
+		<tomcat-servlet-api-version>8.5.0</tomcat-servlet-api-version>
+		<local-deployment-directory>/var/lib/docker/volumes/tomcat85webapps/_data</local-deployment-directory>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.apache.tomcat</groupId>
+			<artifactId>tomcat-servlet-api</artifactId>
+			<version>${tomcat-servlet-api-version}</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<version>3.0.0</version>
+				<configuration>
+					<webappDirectory>${local-deployment-directory}</webappDirectory>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

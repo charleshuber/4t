@@ -1,0 +1,8 @@
+package fr.metz.surfthevoid.tttt.rest.resources.user;
+
+import org.springframework.stereotype.Service;
+
+@Service("userBoundary")
+public class UserBoundary {
+
+}

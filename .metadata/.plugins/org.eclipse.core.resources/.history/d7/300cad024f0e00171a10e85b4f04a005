@@ -1,0 +1,22 @@
+package fr.metz.surfthevoid.tttt.rest.db.repo;
+
+import java.lang.reflect.ParameterizedType;
+
+import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
+
+public abstract class GenericDao<T extends GenericDbo> {
+	
+	private static final String UNCHECKED = "unchecked";
+	protected Class<?> type;
+	
+	public GenericDao(){
+		Class<?> implementationClass = this.getClass();
+		@SuppressWarnings(UNCHECKED)
+		ParameterizedType currentAbstractClass = (ParameterizedType) implementationClass.getGenericSuperclass();
+		System.out.println(currentAbstractClass.getActualTypeArguments()[0]);
+	}
+	
+	public static void main(String... args){
+		UserDao dao = new UserDao();
+	}
+}

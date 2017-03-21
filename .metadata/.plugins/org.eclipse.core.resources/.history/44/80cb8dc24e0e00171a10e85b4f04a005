@@ -1,0 +1,20 @@
+package fr.metz.surfthevoid.tttt.rest.db.repo;
+
+import java.lang.reflect.ParameterizedType;
+
+import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
+
+public abstract class GenericDao<T extends GenericDbo> {
+	
+	protected Class<?> type;
+	
+	public GenericDao(){
+		Class<?> implementationClass = this.getClass();
+		@SuppressWarnings("unchecked")
+		ParameterizedType currentAbstractClass = (ParameterizedType) implementationClass.getGenericSuperclass();
+	}
+	
+	public static void main(String... args){
+		UserDao dao = new UserDao();
+	}
+}

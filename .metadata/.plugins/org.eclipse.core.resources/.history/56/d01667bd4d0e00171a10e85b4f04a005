@@ -1,0 +1,5 @@
+package fr.metz.surfthevoid.tttt.rest.db.repo;
+
+public abstract class GenericDao<T> {
+
+}

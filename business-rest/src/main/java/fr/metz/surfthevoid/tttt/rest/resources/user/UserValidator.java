@@ -5,6 +5,8 @@ import javax.inject.Inject;
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
+import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
+import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Errors;
 import fr.metz.surfthevoid.tttt.rest.resources.Validator;
 
 public class UserValidator extends Validator<User, UserDbo>{
@@ -13,7 +15,7 @@ public class UserValidator extends Validator<User, UserDbo>{
 	protected UserDao dao;
 	
 	@Override
-	public void validateInput(User input, Operation op) throws ValidationException {
+	public void validateInput(User input, Operation op, Errors errors) throws ValidationException {
 		// TODO Auto-generated method stub		
 	}
 

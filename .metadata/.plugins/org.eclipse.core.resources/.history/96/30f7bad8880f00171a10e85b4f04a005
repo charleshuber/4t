@@ -1,0 +1,49 @@
+package fr.metz.surfthevoid.tttt.rest.resources;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.Map;
+
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+
+import org.springframework.util.CollectionUtils;
+
+import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
+import fr.metz.surfthevoid.tttt.rest.db.repo.GenericDao;
+import fr.metz.surfthevoid.tttt.rest.resources.Validator.ValidationException.Type;
+
+@Transactional(TxType.REQUIRED)
+public abstract class Validator<R extends Resource, T extends GenericDbo> {
+	
+	public void validate(R input, Operation op) throws ValidationException {
+		if(input == null){
+			throw new ValidationException(Type.INVALID_INPUT);
+		}
+		validateState(input, op);
+		validateInput(input, op);
+	}
+	
+	protected void validateState(R input, Operation op) throws ValidationException {
+		if(op == Operation.CREATE && input.getId() != null){
+			throw new ValidationException(Type.INVALID_STATE);
+		} else if(op == Operation.UDPDATE){ 
+			if(input.getId() == null){
+				throw new ValidationException(Type.INVALID_STATE);
+			} 
+			GenericDbo dbo = getDao().read(input.getId());
+			if(dbo == null){
+				throw new ValidationException(Type.INVALID_STATE);
+			}
+		}
+	}
+	
+	public void validateId(Long id) throws ValidationException {
+		if(id == null || getDao().read(id) == null){
+			throw new ValidationException(Type.NOT_FOUND);
+		}
+	}
+
+	protected abstract void validateInput(R input, Operation op) throws ValidationException;
+	protected abstract GenericDao<T> getDao();
+}

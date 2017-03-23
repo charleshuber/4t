@@ -9,3 +9,7 @@
 1490161697447	Rename local variable 'dbo'
 1490207951952	Rename method 'extract'
 1490208576763	Rename enum constant 'INVALID_OPERATION'
+1490244548168	Rename method 'getResourceStore'
+1490244967735	Rename field 'ressourceValidationMessage'
+1490247451350	Rename method 'isUserRightValid'
+1490247466438	Rename method 'isUserRightValid'

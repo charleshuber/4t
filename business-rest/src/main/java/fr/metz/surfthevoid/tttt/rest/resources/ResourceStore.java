@@ -5,7 +5,6 @@ import javax.transaction.Transactional.TxType;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.GenericDao;
-import fr.metz.surfthevoid.tttt.rest.resources.Validator.ValidationException;
 
 
 @Transactional(TxType.REQUIRES_NEW)
@@ -31,9 +30,12 @@ public abstract class ResourceStore<R extends Resource, T extends GenericDbo> {
 		return extract(mergedDbo);
 	}
 
-	public void delete(Long id) throws ValidationException{
+	public R delete(Long id) throws ValidationException{
 		getValidator().validateId(id);
-		getDao().delete(getDao().read(id));
+		T dboToDelete = getDao().read(id);
+		R deletedResource = extract(dboToDelete);
+		getDao().delete(dboToDelete);
+		return deletedResource;
 	}
 	
 	private T validateAndTransform(R res, Operation op) throws ValidationException{

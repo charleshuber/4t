@@ -13,6 +13,8 @@ import javax.ws.rs.core.Response;
 
 public interface IResourceBoundary <R extends Resource>{
 	
+	public static final String VALIDATION_HEADER = "validation-failed";
+	
 	@POST
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

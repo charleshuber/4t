@@ -14,7 +14,7 @@ public class UserBoundary extends ResourceBoundary<User> implements IUserBoundar
 	protected UserStore userStore;
 
 	@Override
-	protected ResourceStore<User, UserDbo> getResourceStore() {
+	protected ResourceStore<User, UserDbo> getStore() {
 		return userStore;
 	}
 }

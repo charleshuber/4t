@@ -1,0 +1,36 @@
+package fr.metz.surfthevoid.tttt.rest.resources;
+
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+import javax.ws.rs.core.Response;
+
+@Transactional(TxType.NEVER)
+public abstract class ResourceBoundary<R extends Resource> implements IResourceBoundary<T> {
+
+	@Override
+	public Response create(R resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response update(R resource) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	@Override
+	public Response read(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Response delete(Long id) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	ResourceStore<R, T extends GenericDbo>
+
+}

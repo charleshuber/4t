@@ -33,11 +33,19 @@ public abstract class GenericDao<T extends GenericDbo> {
 		em.persist(dbo);
 	}
 	
-	public T read(Integer id){
+	public T update(T dbo){
+		return em.merge(dbo);
+	}
+	
+	public T read(Long id){
 		if(id != null){
 			return em.getReference(type, id);
 		}
 		return null;
+	}
+	
+	public void delete(T dbo){
+		em.remove(dbo);
 	}
 	
 	public Set<T> readAll(){
@@ -48,9 +56,5 @@ public abstract class GenericDao<T extends GenericDbo> {
 		cq.select(table);
 		results.addAll(em.createQuery(cq).getResultList());
 		return results;
-	}
-	
-	public void delete(T dbo){
-		em.remove(dbo);
 	}
 } 

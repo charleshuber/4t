@@ -1,0 +1,39 @@
+package fr.metz.surfthevoid.tttt.rest.resources;
+
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
+
+import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
+import fr.metz.surfthevoid.tttt.rest.db.repo.GenericDao;
+import fr.metz.surfthevoid.tttt.rest.resources.Validator.ValidationException;
+
+
+@Transactional(TxType.REQUIRES_NEW)
+public abstract class ResourceStore<T extends GenericDbo> {
+	
+	protected abstract GenericDao<T> getDao(); 
+	protected abstract Validator<T> getValidator();
+	
+	public T create(T dbo) throws ValidationException{
+		getValidator().validate(dbo, Operation.CREATE);
+		getDao().create(dbo);
+		return dbo;
+	}
+	
+	public T read(Long id){
+		return getDao().read(id);
+	}
+	
+	public T update(T dbo) throws ValidationException{
+		getValidator().validate(dbo, Operation.UDPDATE);
+		getDao().create(dbo);
+		return dbo;
+	}
+
+	public void delete(Long id){
+		T dbo = read(id);
+		if(dbo != null){
+			getDao().delete(dbo);
+		}
+	}
+}

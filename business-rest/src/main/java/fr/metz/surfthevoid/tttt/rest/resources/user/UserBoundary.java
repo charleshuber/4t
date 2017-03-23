@@ -1,24 +1,20 @@
 package fr.metz.surfthevoid.tttt.rest.resources.user;
 
-import javax.ws.rs.core.Response;
+import javax.inject.Inject;
+import javax.inject.Named;
 
-import org.springframework.stereotype.Service;
-
+import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceBoundary;
+import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 
-@Service("userBoundary")
+@Named("userBoundary")
 public class UserBoundary extends ResourceBoundary<User> implements IUserBoundary{
+	
+	@Inject
+	protected UserStore userStore;
 
 	@Override
-	public Response read(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+	protected ResourceStore<User, UserDbo> getResourceStore() {
+		return userStore;
 	}
-
-	@Override
-	public Response delete(Long id) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }

@@ -42,7 +42,7 @@ public class ValidationException extends Exception {
 		protected Errors(){}
 		
 		public Boolean hasErrors(){
-			return !CollectionUtils.sizeIsEmpty(this.fieldsValidationMessages) 
+			return (fieldsValidationMessages != null && fieldsValidationMessages.size() > 0) 
 					|| !CollectionUtils.isEmpty(this.globalValidationMessages);
 		}
 		

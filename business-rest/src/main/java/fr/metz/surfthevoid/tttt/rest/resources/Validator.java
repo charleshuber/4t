@@ -16,7 +16,7 @@ public abstract class Validator<R extends Resource, T extends GenericDbo> {
 		if(input == null){
 			throw new ValidationException(Type.INVALID_INPUT, errors);
 		}
-		if(doUserCanAccessData(input, op, errors)){
+		if(!doUserCanAccessData(input, op, errors)){
 			throw new ValidationException(Type.INVALID_RIGHT, errors);
 		}
 		validateState(input, op, errors);

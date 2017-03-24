@@ -6,6 +6,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.apache.cxf.jaxrs.impl.ResponseBuilderImpl;
 import org.springframework.security.access.AccessDeniedException;
 
@@ -13,27 +15,25 @@ import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
 
 @Transactional(TxType.NEVER)
-public abstract class ResourceBoundary<R extends Resource> implements IResourceBoundary<R> {
+public abstract class ResourceBoundary<R extends Resource>{
+	
+	protected Log log = LogFactory.getLog(getClass());
 
-	@Override
 	public Response create(R resource) {
 		OperationalInterface<R> operation = input -> getStore().create(input);
 		return doOperate(resource, Status.CREATED, operation);
 	}
 
-	@Override
 	public Response read(Long id) {
 		OperationalInterface<Long> operation = input -> getStore().read(id);
 		return doOperate(id, Status.OK, operation);
 	}
 	
-	@Override
 	public Response update(R resource) {
 		OperationalInterface<R> operation = input -> getStore().update(input);
 		return doOperate(resource, Status.OK, operation);
 	}
 	
-	@Override
 	public Response delete(Long id) {
 		OperationalInterface<Long> operation = input -> getStore().delete(id);
 		return doOperate(id, Status.OK, operation);
@@ -57,6 +57,7 @@ public abstract class ResourceBoundary<R extends Resource> implements IResourceB
 		} catch(AccessDeniedException e){
 			rb.status(Status.FORBIDDEN);
 		} catch (Exception e){
+			log.error(e);
 			rb.status(Status.INTERNAL_SERVER_ERROR);
 		}
 		return rb.build();

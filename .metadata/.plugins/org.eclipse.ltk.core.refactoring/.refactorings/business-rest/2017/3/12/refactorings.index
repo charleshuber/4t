@@ -13,3 +13,6 @@
 1490244967735	Rename field 'ressourceValidationMessage'
 1490247451350	Rename method 'isUserRightValid'
 1490247466438	Rename method 'isUserRightValid'
+1490336779575	Rename resource 'logback.xml'
+1490337573526	Rename resource 'logback_bc.xml'
+1490356873436	Rename resource 'logback.xml'

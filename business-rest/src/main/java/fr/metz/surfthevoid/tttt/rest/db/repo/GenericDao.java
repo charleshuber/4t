@@ -2,10 +2,12 @@ package fr.metz.surfthevoid.tttt.rest.db.repo;
 
 import java.lang.reflect.ParameterizedType;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Root;
@@ -39,7 +41,7 @@ public abstract class GenericDao<T extends GenericDbo> {
 	
 	public T read(Long id){
 		if(id != null){
-			return em.getReference(type, id);
+			return em.find(type, id);
 		}
 		return null;
 	}
@@ -56,5 +58,13 @@ public abstract class GenericDao<T extends GenericDbo> {
 		cq.select(table);
 		results.addAll(em.createQuery(cq).getResultList());
 		return results;
+	}
+	
+	protected <O> O getSingleResult(TypedQuery<O> tq) {
+		List<O> results = tq.getResultList();
+		if(results != null && results.size() > 0){
+			return results.get(0);
+		}
+		return null;
 	}
 } 

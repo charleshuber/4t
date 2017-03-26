@@ -6,6 +6,8 @@ import java.util.stream.Collectors;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
+
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
@@ -55,5 +57,24 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 		user.setFirstName(dbo.getFirstName());
 		user.setLastName(dbo.getLastName());
 		return user;
+	}
+
+	@Override
+	protected User clean(User res) {
+		if(res != null){
+			if(StringUtils.isNotEmpty(res.getEmail())){
+				res.setEmail(res.getEmail().trim());
+			}
+			if(StringUtils.isNotEmpty(res.getPassword())){
+				res.setPassword(res.getPassword().trim());
+			}
+			if(StringUtils.isNotEmpty(res.getFirstName())){
+				res.setFirstName(res.getFirstName().trim());
+			}
+			if(StringUtils.isNotEmpty(res.getLastName())){
+				res.setLastName(res.getLastName().trim());
+			}
+		}
+		return res;
 	}
 }

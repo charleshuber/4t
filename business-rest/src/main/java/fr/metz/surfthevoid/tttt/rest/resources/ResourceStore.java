@@ -5,6 +5,8 @@ import javax.transaction.Transactional.TxType;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.GenericDao;
+import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Errors;
+import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
 
 
 @Transactional(TxType.REQUIRES_NEW)
@@ -21,7 +23,11 @@ public abstract class ResourceStore<R extends Resource, T extends GenericDbo> {
 	
 	public R read(Long id) throws ValidationException{
 		getValidator().validateId(id);
-		return extract(getDao().read(id));
+		T dboToDelete = getDao().read(id);
+		if(dboToDelete == null){
+			throw new ValidationException(Type.NO_CONTENT, new Errors());
+		}
+		return extract(dboToDelete);
 	}
 	
 	public R update(R res) throws ValidationException{
@@ -33,15 +39,19 @@ public abstract class ResourceStore<R extends Resource, T extends GenericDbo> {
 	public R delete(Long id) throws ValidationException{
 		getValidator().validateId(id);
 		T dboToDelete = getDao().read(id);
-		R deletedResource = extract(dboToDelete);
+		if(dboToDelete == null){
+			throw new ValidationException(Type.NO_CONTENT, new Errors());
+		}
 		getDao().delete(dboToDelete);
-		return deletedResource;
+		return extract(dboToDelete);
 	}
 	
-	private T validateAndTransform(R res, Operation op) throws ValidationException{
-		getValidator().validate(res, op);
+	protected T validateAndTransform(R res, Operation op) throws ValidationException{
+		getValidator().validate(clean(res), op);
 		return transform(res);
 	}
+	
+	protected R clean(R res) { return res; };
 	protected abstract T transform(R res);
 	protected abstract R extract(T dbo);
 }

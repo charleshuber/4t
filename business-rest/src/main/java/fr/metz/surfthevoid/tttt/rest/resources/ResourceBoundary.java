@@ -47,6 +47,10 @@ public abstract class ResourceBoundary<R extends Resource>{
 		} catch (ValidationException e) {
 			if(e.getType() == Type.INVALID_RIGHT){
 				rb.status(Status.FORBIDDEN);
+			} else if(e.getType() == Type.NO_CONTENT){
+				rb.status(Status.NO_CONTENT);
+			} else if(e.getType() == Type.CONFLICT){
+				rb.status(Status.CONFLICT);
 			} else {
 				rb.status(Status.BAD_REQUEST);
 			}

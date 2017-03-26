@@ -3,6 +3,9 @@ package fr.metz.surfthevoid.tttt.rest.resources.user;
 import fr.metz.surfthevoid.tttt.rest.resources.Resource;
 
 public class User extends Resource {
+	
+	public static final String EMAIL_FIELD_NAME = "email";
+	
 	private String email;
 	private String password;
 	private String lastName;

@@ -21,11 +21,14 @@ public abstract class Validator<R extends Resource, T extends GenericDbo> {
 		}
 		validateState(input, op, errors);
 		validateInput(input, op, errors);
+		if(errors.hasErrors()){
+			throw new ValidationException(Type.INVALID_INPUT, errors);
+		}
 	}
 	
 	protected void validateState(R input, Operation op, Errors errors) throws ValidationException {
 		if(op == Operation.CREATE && input.getId() != null){
-			throw new ValidationException(Type.INVALID_STATE, errors);
+			throw new ValidationException(Type.CONFLICT, errors);
 		} else if(op == Operation.UDPDATE){ 
 			if(input.getId() == null){
 				throw new ValidationException(Type.INVALID_STATE, errors);
@@ -40,9 +43,9 @@ public abstract class Validator<R extends Resource, T extends GenericDbo> {
 	public void validateId(Long id) throws ValidationException {
 		Errors errors = new Errors();
 		if(id == null || getDao().read(id) == null){
-			throw new ValidationException(Type.NOT_FOUND, errors);
+			throw new ValidationException(Type.NO_CONTENT, errors);
 		}
-		if(doUserCanAccessData(id, errors)){
+		if(!doUserCanAccessData(id, errors)){
 			throw new ValidationException(Type.INVALID_RIGHT, errors);
 		}
 	}

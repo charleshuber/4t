@@ -1,0 +1,14 @@
+package fr.metz.surfthevoid.tttt.rest.resources.user;
+
+public enum UserValidationErrors {
+	
+	EMAIL_IS_MANDATORY("","");
+	
+	UserValidationErrors(String code, String description){
+		this.code = code;
+		this.description = description;
+	}
+	
+	private String code;
+	private String description;
+}

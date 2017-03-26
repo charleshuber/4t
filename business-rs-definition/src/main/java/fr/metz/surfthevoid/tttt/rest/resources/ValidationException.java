@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 public class ValidationException extends Exception {
@@ -43,7 +42,7 @@ public class ValidationException extends Exception {
 		
 		public Boolean hasErrors(){
 			return (fieldsValidationMessages != null && fieldsValidationMessages.size() > 0) 
-					|| !CollectionUtils.isEmpty(this.globalValidationMessages);
+					|| (globalValidationMessages != null && globalValidationMessages.size() > 0);
 		}
 		
 		public Map<String, List<String>> getFieldsValidationMessages() {
@@ -82,10 +81,10 @@ public class ValidationException extends Exception {
 	}
 	
 	public static enum Type {
-		NOT_FOUND,
+		NO_CONTENT,
 		INVALID_INPUT,
 		INVALID_STATE,
 		INVALID_INPUT_DATA,
-		INVALID_RIGHT
+		INVALID_RIGHT, CONFLICT
 	}
 }

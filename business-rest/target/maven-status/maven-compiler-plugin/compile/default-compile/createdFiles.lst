@@ -1,0 +1,4 @@
+fr/metz/surfthevoid/tttt/rest/resources/Validator.class
+fr/metz/surfthevoid/tttt/rest/db/entity/UserDbo.class
+fr/metz/surfthevoid/tttt/rest/resources/user/UserValidator.class
+fr/metz/surfthevoid/tttt/rest/db/entity/GenericDbo.class

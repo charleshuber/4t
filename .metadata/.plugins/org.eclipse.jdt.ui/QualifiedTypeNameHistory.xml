@@ -4,4 +4,11 @@
 <fullyQualifiedTypeName name="javax.ws.rs.core.MediaType"/>
 <fullyQualifiedTypeName name="fr.metz.surfthevoid.tttt.rest.resources.IResourceBoudary"/>
 <fullyQualifiedTypeName name="fr.metz.surfthevoid.tttt.rest.resources.Resource"/>
+<fullyQualifiedTypeName name="org.apache.commons.logging.LogFactory"/>
+<fullyQualifiedTypeName name="org.apache.commons.logging.Log"/>
+<fullyQualifiedTypeName name="fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type"/>
+<fullyQualifiedTypeName name="javax.persistence.criteria.CriteriaQuery"/>
+<fullyQualifiedTypeName name="fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo"/>
+<fullyQualifiedTypeName name="java.util.List"/>
+<fullyQualifiedTypeName name="org.apache.commons.lang3.StringUtils"/>
 </qualifiedTypeNameHistroy>

@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+   4tDbMysql:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     restart: always
+     environment:
+       MYSQL_ROOT_PASSWORD: pwd4root 
+       MYSQL_DATABASE: 4tDB 
+       MYSQL_USER: tatoutontan 
+       MYSQL_PASSWORD: pwd44t 
+
+   4tRest:
+     depends_on:
+       - 4tDbMysql
+     build:
+        context: .
+        dockerfile: tomcat85alpine-dockerfile
+     image: tomcat:8.5-alpine-dev-debug
+     command: ["./wait-mysql.sh", "4tDbMysql", "3306", "catalina.sh", "run"]
+     volumes:
+       - /home/charles/dockervolumes/tomcat85webapps:/usr/local/tomcat/webapps
+     ports:
+       - "80:8080"
+       - "8000:8000"
+     restart: always
+     environment:
+       MYSQL_DB_HOST: 4tDbMysql
+       MYSQL_DB_PORT: 3306
+       MYSQL_DATABASE: 4tDB
+       MYSQL_USER: tatoutontan
+       MYSQL_PASSWORD: pwd44t 
+volumes:
+    db_data:

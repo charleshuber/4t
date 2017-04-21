@@ -1,0 +1,9 @@
+FROM tomcat:8.5-alpine
+
+COPY wait-mysql.sh .
+
+EXPOSE 8000
+
+CMD ["catalina.sh", "run"]
+
+

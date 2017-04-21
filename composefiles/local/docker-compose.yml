@@ -29,7 +29,7 @@ services:
      environment:
        MYSQL_DB_HOST: 4tDbMysql
        MYSQL_DB_PORT: 3306
-       MYSQL_DATABASE: 4tDB
+       MYSQL_DB_NAME: 4tDB
        MYSQL_USER: tatoutontan
        MYSQL_PASSWORD: pwd44t 
 volumes:

@@ -10,9 +10,9 @@
    	 	name="jdbc/4tDb"
    	 	auth="Container"
      	type="javax.sql.DataSource"
-     	username="${MYSQL_USER}"
-        password="${MYSQL_PASSWORD}"
+     	username="tatoutontan"
+        password="pwd44t"
         driverClassName="com.mysql.cj.jdbc.Driver"
-	    url="jdbc:mysql://${MYSQL_DB_HOST}:${MYSQL_DB_PORT}/${MYSQL_DB_NAME}"/>
+	    url="jdbc:mysql://4tDbMysql:3306/4tDB"/>
 
 </Context>

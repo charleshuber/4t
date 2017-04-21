@@ -19,7 +19,7 @@ services:
         context: .
         dockerfile: tomcat85alpine-dockerfile
      image: tomcat:8.5-alpine-dev-debug
-     command: ["./wait-mysql.sh", "4tDbMysql", "3306", "catalina.sh", "run"]
+     command: ["./wait-mysql.sh", "4tDbMysql", "3306", "catalina.sh", "jpda", "run"]
      volumes:
        - /home/charles/dockervolumes/tomcat85webapps:/usr/local/tomcat/webapps
      ports:
@@ -27,6 +27,10 @@ services:
        - "8000:8000"
      restart: always
      environment:
+       JPDA_ADDRESS: 8000
+       JPDA_TRANSPORT: dt_socket
+       JPDA_SUSPEND: n
+       # JPDA_OPTS: -agentlib:jdwp=transport=$JPDA_TRANSPORT,address=$JPDA_ADDRESS,server=y,suspend=$JPDA_SUSPEND      
        MYSQL_DB_HOST: 4tDbMysql
        MYSQL_DB_PORT: 3306
        MYSQL_DB_NAME: 4tDB

@@ -26,14 +26,14 @@ public class UserValidator extends Validator<User, UserDbo>{
 	protected void validateEmail(User input, Operation op, Errors errors) {
 		if(StringUtils.isEmpty(input.getEmail())){
 			errors.addFieldError(User.EMAIL_FIELD_NAME, UserValidationErrors.EMAIL_IS_MANDATORY.getCode());
+		} else {
+			UserDbo anyuser = dao.readByMail(input.getEmail());
+			if(op == Operation.CREATE && anyuser != null){
+				errors.addFieldError(User.EMAIL_FIELD_NAME, UserValidationErrors.EMAIL_IS_ALREADY_USED.getCode());
+			} else if(op == Operation.UDPDATE && (anyuser == null || anyuser.getId() != input.getId())){
+				errors.addFieldError(User.EMAIL_FIELD_NAME, UserValidationErrors.EMAIL_IS_ALREADY_USED.getCode());
+			}	
 		}
-		UserDbo anyuser = dao.readByMail(input.getEmail());
-		if(op == Operation.CREATE && anyuser != null){
-			errors.addFieldError(User.EMAIL_FIELD_NAME, UserValidationErrors.EMAIL_IS_ALREADY_USED.getCode());
-		} else if(op == Operation.UDPDATE && (anyuser.getId() != input.getId())){
-			errors.addFieldError(User.EMAIL_FIELD_NAME, UserValidationErrors.EMAIL_IS_ALREADY_USED.getCode());
-		}
-		
 	}
 
 	@Override

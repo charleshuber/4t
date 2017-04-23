@@ -7271,3 +7271,92 @@ org.eclipse.core.runtime.CoreException: Could not resolve artifact org.hibernate
 2017-04-21 13:20:50,408 [Worker-49] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/business-rest/src/test/resources
 2017-04-21 13:20:50,417 [Worker-49] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
 2017-04-21 13:20:50,418 [Worker-49] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:08:47,213 [Worker-0] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/pom.xml.
+2017-04-23 10:08:47,213 [Worker-5] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/pom.xml.
+2017-04-23 10:08:56,094 [Worker-0] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:08:56,103 [Worker-0] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-04-23 10:08:56,536 [Worker-0] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:08:56,536 [Worker-0] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:08:56,546 [Worker-17] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/pom.xml.
+2017-04-23 10:08:57,469 [Worker-17] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest-definition:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/pom.xml.
+2017-04-23 10:08:57,479 [Worker-17] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using NULL lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:common:0.0.1-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/common/pom.xml.
+2017-04-23 10:08:57,773 [Worker-0] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:08:57,776 [Worker-0] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-04-23 10:08:59,894 [Worker-16] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:08:59,896 [Worker-16] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/src/main/resources
+2017-04-23 10:08:59,902 [Worker-16] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:08:59,903 [Worker-16] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/src/test/resources
+2017-04-23 10:09:00,949 [Worker-13] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:09:00,953 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:09:00,956 [Worker-13] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:09:00,956 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:09:00,976 [Worker-13] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:09:00,978 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:10:46,507 [Worker-13] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:10:46,508 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:10:46,513 [Worker-13] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:10:46,513 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:10:46,519 [Worker-13] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:10:46,520 [Worker-13] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:10:58,882 [Worker-22] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:10:58,883 [Worker-22] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:10:58,885 [Worker-22] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:10:58,886 [Worker-22] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:10:58,892 [Worker-22] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:10:58,892 [Worker-22] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:11:15,748 [Worker-2] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:11:15,749 [Worker-2] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install
+2017-04-23 10:17:04,064 [Worker-24] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:17:04,064 [Worker-24] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install
+2017-04-23 10:18:10,896 [Worker-14] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:18:10,896 [Worker-14] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install
+2017-04-23 10:25:45,919 [Worker-32] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:25:45,920 [Worker-32] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:25:45,922 [Worker-32] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:25:45,922 [Worker-32] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:25:45,928 [Worker-32] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:25:45,929 [Worker-32] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:41:26,242 [Worker-31] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:41:26,243 [Worker-31] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install
+2017-04-23 10:43:47,882 [Worker-36] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/pom.xml.
+2017-04-23 10:43:49,195 [Worker-36] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:43:49,198 [Worker-36] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:43:49,200 [Worker-36] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:43:49,201 [Worker-36] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:43:49,201 [Worker-36] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of business-rest
+2017-04-23 10:43:49,202 [Worker-36] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for business-rest
+2017-04-23 10:43:49,208 [Worker-36] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:43:49,219 [Worker-36] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:43:49,220 [Worker-36] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:43:50,485 [Worker-36] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:43:50,486 [Worker-36] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:43:50,489 [Worker-36] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:43:50,490 [Worker-36] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:43:50,498 [Worker-36] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:43:50,499 [Worker-36] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-04-23 10:43:53,362 [Worker-38] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:43:53,362 [Worker-38] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install
+2017-04-23 10:45:26,445 [Worker-37] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:45:26,446 [Worker-37] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B clean
+2017-04-23 10:45:31,278 [Worker-37] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:31,279 [Worker-37] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-04-23 10:45:31,298 [Worker-37] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:31,299 [Worker-37] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:45:31,299 [Worker-37] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of business-rest
+2017-04-23 10:45:31,299 [Worker-37] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for business-rest
+2017-04-23 10:45:31,307 [Worker-37] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:31,322 [Worker-37] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:31,323 [Worker-37] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:45:54,358 [Worker-36] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:45:54,358 [Worker-36] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B clean
+2017-04-23 10:45:57,977 [Worker-38] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:57,977 [Worker-38] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-04-23 10:45:57,979 [Worker-38] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:57,979 [Worker-38] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-04-23 10:45:57,980 [Worker-38] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Changed resources require a complete clean of filtered resources of business-rest
+2017-04-23 10:45:57,980 [Worker-38] INFO  o.e.m.w.i.f.ResourceFilteringBuildParticipant - Executing resource filtering for business-rest
+2017-04-23 10:45:57,994 [Worker-38] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:58,005 [Worker-38] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-04-23 10:45:58,006 [Worker-38] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-04-23 10:47:41,342 [Worker-41] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-04-23 10:47:41,342 [Worker-41] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install

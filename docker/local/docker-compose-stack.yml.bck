@@ -1,0 +1,78 @@
+version: '3'
+
+services:
+   4tDbMysql:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     environment:
+       MYSQL_ROOT_PASSWORD: pwd4root 
+       MYSQL_DATABASE: 4tDB 
+       MYSQL_USER: tatoutontan 
+       MYSQL_PASSWORD: pwd44t
+     deploy:
+       replicas: 1
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints: [node.role == manager]
+     networks:
+       - webnet 
+
+   4tRest:
+     depends_on:
+       - 4tDbMysql
+     build:
+        context: .
+        dockerfile: tomcat85alpine-dockerfile
+     image: tomcat:8.5-alpine-dev-debug
+     command: ["./wait-mysql.sh", "4tDbMysql", "3306", "catalina.sh", "jpda", "run"]
+     volumes:
+       - /home/charles/dockervolumes/tomcat85webapps:/usr/local/tomcat/webapps
+     ports:
+       - "8080:8080"
+       - "8000:8000"
+       - "8009:8009"
+     environment:
+       JPDA_ADDRESS: 8000
+       JPDA_TRANSPORT: dt_socket
+       JPDA_SUSPEND: "n"
+       MYSQL_DB_HOST: 4tDbMysql
+       MYSQL_DB_PORT: 3306
+       MYSQL_DB_NAME: 4tDB
+       MYSQL_USER: tatoutontan
+       MYSQL_PASSWORD: pwd44t
+     deploy:
+       replicas: 1
+       restart_policy:
+         condition: on-failure
+     networks:
+       - webnet
+
+   4tClient:
+     depends_on:
+       - 4tRest
+     build:
+       context: .
+       dockerfile: apache-dockerfile
+     image: apache-dev
+     command: ["./wait-tomcat.sh", "4tRest", "8080", "/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+     volumes:
+       - /home/charles/dockervolumes/apache2html:/var/www/html
+     ports:
+       - "80:80"
+       - "443:443"
+     deploy:
+       replicas: 1
+       restart_policy:
+         condition: on-failure
+     networks:
+       - webnet
+
+volumes:
+    db_data:
+
+networks:
+  webnet:
+
+

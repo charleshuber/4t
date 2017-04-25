@@ -46,7 +46,7 @@ services:
      image: apache-dev
      command: ["./wait-tomcat.sh", "4tRest", "8080", "/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
      volumes:
-       - /home/charles/dockervolumes/apache2html:/var/www/html
+       - /home/charles/workspace/surfthevoid/getting-started-as2/angular2-webpack-starter/dist:/var/www/html
      ports:
        - "80:80"
        - "443:443"

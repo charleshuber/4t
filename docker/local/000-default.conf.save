@@ -6,7 +6,7 @@
 	# match this virtual host. For the default virtual host (this file) this
 	# value is not decisive as it is used as a last resort host regardless.
 	# However, you must set it for any further virtual host explicitly.
-	# ServerName www.example.com
+	#ServerName www.example.com
 
 	ServerAdmin webmaster@localhost
 	DocumentRoot /var/www/html
@@ -17,29 +17,17 @@
 	# modules, e.g.
 	#LogLevel info ssl:warn
 
-		ErrorLog ${APACHE_LOG_DIR}/error.log
-		CustomLog ${APACHE_LOG_DIR}/access.log combined
-		
-		RewriteEngine On
-		# If an existing asset or directory is requested go to it as it is
-		RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -f [OR]
-		RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} -d
-		RewriteRule ^ - [L]
-
-		# If the requested resource doesn't exist, use index.html
-		# and if the request is not for the backend
-        RewriteCond %{REQUEST_URI} !^/4TRest
-		RewriteRule ^ /index.html
-
-		<Proxy *>
+	ErrorLog ${APACHE_LOG_DIR}/error.log
+	CustomLog ${APACHE_LOG_DIR}/access.log combined
+	
+	<Proxy *>
           AddDefaultCharset Off
           Order deny,allow
           Allow from all
         </Proxy>
 
-        ProxyPass /4TRest ajp://172.19.0.3:8009/4TRest
-        # ProxyPass /4TRest http://172.16.0.3:8080/4TRest
-        # ProxyPassReverse /4TRest ajp://172.16.0.3:8009/4TRest
+        ProxyPass /4TRest http://172.18.0.*":8080/4TRest
+        # ProxyPassReverse /4TRest ajp://4tRest:8009/4TRest
 	
 	# For most configuration files from conf-available/, which are
 	# enabled or disabled at a global level, it is possible to

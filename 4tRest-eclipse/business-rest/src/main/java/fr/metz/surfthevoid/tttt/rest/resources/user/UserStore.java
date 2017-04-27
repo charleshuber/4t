@@ -11,6 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
+import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 
 @Named
 public class UserStore extends ResourceStore<User, UserDbo>{
@@ -31,7 +32,7 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 		return validator;
 	}
 	
-	public Set<User> readAll(){
+	public Set<User> readAll() throws ValidationException{
 		return dao.readAll().stream()
 				.map(dbo -> extract(dbo))
 				.collect(Collectors.toSet());

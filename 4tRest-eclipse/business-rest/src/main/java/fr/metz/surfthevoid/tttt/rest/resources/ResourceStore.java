@@ -23,11 +23,11 @@ public abstract class ResourceStore<R extends Resource, T extends GenericDbo> {
 	
 	public R read(Long id) throws ValidationException{
 		getValidator().validateId(id);
-		T dboToDelete = getDao().read(id);
-		if(dboToDelete == null){
+		T dboToRead = getDao().read(id);
+		if(dboToRead == null){
 			throw new ValidationException(Type.NO_CONTENT, new Errors());
 		}
-		return extract(dboToDelete);
+		return extract(dboToRead);
 	}
 	
 	public R update(R res) throws ValidationException{

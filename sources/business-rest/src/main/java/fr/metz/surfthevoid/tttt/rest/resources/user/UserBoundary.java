@@ -19,6 +19,9 @@ import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
 
+/**
+ * Rest access point to manipulate user resources
+ */
 @Named("userBoundary")
 public class UserBoundary extends ResourceBoundary<User> implements IUserBoundary{
 	

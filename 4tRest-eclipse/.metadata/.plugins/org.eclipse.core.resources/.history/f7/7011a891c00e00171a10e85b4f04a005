@@ -1,9 +1,0 @@
-package fr.metz.surfthevoid.tttt.rest.resources;
-
-import fr.metz.surfthevoid.tttt.rest.db.entity.GenericDbo;
-import fr.metz.surfthevoid.tttt.rest.db.repo.GenericDao;
-
-public abstract class ResourceStore<T extends GenericDbo> {
-	
-	protected abstract GenericDao<T> getDao();
-}

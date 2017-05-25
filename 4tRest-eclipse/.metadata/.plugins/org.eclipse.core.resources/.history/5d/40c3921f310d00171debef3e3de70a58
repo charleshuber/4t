@@ -1,8 +1,0 @@
-package fr.metz.surfthevoid.tttt.rest.resources;
-
-import javax.ws.rs.core.Response;
-
-public interface IResourceBoudary <R extends Resource>{
-	
-	public Response create(R resource);
-}

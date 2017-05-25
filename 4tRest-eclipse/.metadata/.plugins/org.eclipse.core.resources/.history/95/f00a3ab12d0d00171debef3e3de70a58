@@ -1,6 +1,0 @@
-package fr.metz.surfthevoid.tttt.rest.resources.user;
-
-@Path("/user")
-public interface IUserBoundary {
-	
-}

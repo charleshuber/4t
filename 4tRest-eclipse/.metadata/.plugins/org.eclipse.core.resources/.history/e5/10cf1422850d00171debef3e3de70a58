@@ -1,7 +1,0 @@
-package fr.metz.surfthevoid.tttt.rest.resources.user;
-
-import fr.metz.surfthevoid.tttt.rest.resources.IResourceBoundary;
-
-public class ResourceBoundary<R> implements IResourceBoundary<R> {
-
-}

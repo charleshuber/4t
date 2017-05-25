@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<session version="1.0">
-<refactoring comment="Rename local variable &apos;dboToDelete&apos; in &apos;fr.metz.surfthevoid.tttt.rest.resources.ResourceStore.read(...)&apos; to &apos;dboToRead&apos;&#x0A;- Original project: &apos;business-rest&apos;&#x0A;- Original element: &apos;fr.metz.surfthevoid.tttt.rest.resources.ResourceStore.read(Long).dboToDelete&apos;&#x0A;- Renamed element: &apos;dboToDelete&apos;&#x0A;- Update references to refactored element" description="Rename local variable &apos;dboToDelete&apos;" id="org.eclipse.jdt.ui.rename.local.variable" input="/src\/main\/java&lt;fr.metz.surfthevoid.tttt.rest.resources{ResourceStore.java[ResourceStore~read~QLong;@dboToDelete!889!922!891!901!QT;!0!false" name="dboToRead" references="true" stamp="1493180173049" version="1.0"/>
-</session>

@@ -1,5 +1,0 @@
-#Tomcat publish data
-#Sun Mar 26 16:49:43 CEST 2017
-org.eclipse.jst.jee.server\:business-rest=/usr/local/tomcats/8.0.42/wtpwebapps/business-rest
-org.eclipse.jst.j2ee.server\:business-rs-definition=/usr/local/tomcats/8.0.42/wtpwebapps/business-rest/WEB-INF/lib/business-rest-definition-0.0.2-SNAPSHOT.jar
-org.eclipse.jst.jee.server\:/binary\:/home/charles/.m2/repository/org/springframework/spring-web/4.3.5.RELEASE/spring-web-4.3.5.RELEASE.jar=/usr/local/tomcats/8.0.42/wtpwebapps/business-rest/WEB-INF/lib/spring-web-4.3.5.RELEASE.jar

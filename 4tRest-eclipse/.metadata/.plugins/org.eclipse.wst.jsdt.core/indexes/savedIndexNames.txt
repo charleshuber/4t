@@ -1,7 +1,0 @@
-INDEX VERSION 1.3+/home/charles/workspace/surfthevoid/4t/4tRest-eclipse/.metadata/.plugins/org.eclipse.wst.jsdt.core/indexes
-1607636946.index
-1805804313.index
-1955032195.index
-4060609448.index
-395796159.index
-342746724.index

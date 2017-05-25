@@ -1,5 +1,0 @@
-package fr.metz.surfthevoid.tttt.rest.resources;
-
-class Resource {
-	public Integer id;
-}

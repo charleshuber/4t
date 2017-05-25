@@ -14,7 +14,6 @@
 
 	<properties>
 		<tomcat-servlet-api-version>8.5.0</tomcat-servlet-api-version>
-		<local-deployment-directory>/home/charles/dockervolumes/tomcat85webapps</local-deployment-directory>
 		<spring.version>4.3.3.RELEASE</spring.version>
 		<spring.security.version>4.2.2.RELEASE</spring.security.version>
 		<hibernate.version>5.2.9.Final</hibernate.version>
@@ -89,44 +88,6 @@
 	<build>
 		<finalName>4TRest</finalName>
 		<plugins>
-			<plugin>
-				<artifactId>maven-clean-plugin</artifactId>
-				<version>3.0.0</version>
-				<configuration>
-					<filesets>
-						<fileset>
-							<directory>${project.build.directory}</directory>
-						</fileset>
-						<fileset>
-							<directory>${local-deployment-directory}</directory>
-						</fileset>
-					</filesets>
-				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>2.7</version>
-				<executions>
-					<execution>
-						<id>copy-resource-one</id>
-						<phase>install</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${local-deployment-directory}</outputDirectory>
-							<resources>
-								<resource>
-									<directory>${project.build.directory}</directory>
-									<includes>
-										<include>${project.build.finalName}.${project.packaging}</include>
-									</includes>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>

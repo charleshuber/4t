@@ -1,0 +1,76 @@
+version: '3'
+
+services:
+   4tmysql:
+     image: mysql:5.7
+     volumes:
+       - db_data:/var/lib/mysql
+     environment:
+       MYSQL_ROOT_PASSWORD: pwd4root 
+       MYSQL_DATABASE: 4tDB 
+       MYSQL_USER: tatoutontan 
+       MYSQL_PASSWORD: pwd44t
+     deploy:
+       replicas: 1
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints: [node.role == manager]
+     networks:
+       - webnet 
+
+   4trest:
+     depends_on:
+       - 4tmysql
+     image: tomcat2
+     command: ["./wait-mysql.sh", "4tmysql", "3306", "catalina.sh", "jpda", "run"]
+     volumes:
+       - /home/charles/dockervolumes/tomcat85webapps:/usr/local/tomcat/webapps
+     ports:
+       - "8080:8080"
+       - "8000:8000"
+       - "8009:8009"
+     environment:
+       JPDA_ADDRESS: 8000
+       JPDA_TRANSPORT: dt_socket
+       JPDA_SUSPEND: "n"
+       MYSQL_DB_HOST: 4tmysql
+       MYSQL_DB_PORT: 3306
+       MYSQL_DB_NAME: 4tDB
+       MYSQL_USER: tatoutontan
+       MYSQL_PASSWORD: pwd44t
+     deploy:
+       replicas: 2
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints: [node.role == manager]
+     networks:
+       - webnet
+
+   4tclient:
+     depends_on:
+       - 4trest
+     image: apache
+     command: ["./wait-tomcat.sh", "4trest", "8080", "/usr/sbin/apache2ctl", "-D", "FOREGROUND"]
+     volumes:
+       - /home/charles/workspace/surfthevoid/getting-started-as2/angular2-webpack-starter/dist:/var/www/html
+     ports:
+       - "80:80"
+       - "443:443"
+     deploy:
+       replicas: 1
+       restart_policy:
+         condition: on-failure
+       placement:
+         constraints: [node.role == manager]
+     networks:
+       - webnet
+
+volumes:
+    db_data:
+
+networks:
+  webnet:
+
+

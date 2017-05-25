@@ -5,7 +5,7 @@
 	<Valve className="org.apache.catalina.valves.AccessLogValve"
          prefix="4TRest_access_log" suffix=".txt"
          pattern="common"/>
-    <!--      
+         
    	<Resource 
    	 	name="jdbc/4tDb"
    	 	auth="Container"
@@ -14,8 +14,8 @@
         password="${MYSQL_PASSWORD}"
         driverClassName="com.mysql.cj.jdbc.Driver"
 	    url="jdbc:mysql://${MYSQL_DB_HOST}:${MYSQL_DB_PORT}/${MYSQL_DB_NAME}"/>
-	-->
-	   
+	
+	<!--    
    	<Resource 
    	 	name="jdbc/4tDb"
    	 	auth="Container"
@@ -24,5 +24,5 @@
         password="pwd44t"
         driverClassName="com.mysql.cj.jdbc.Driver"
 	    url="jdbc:mysql://4tDbMysql:3306/4tDB"/>
-
+		-->
 </Context>

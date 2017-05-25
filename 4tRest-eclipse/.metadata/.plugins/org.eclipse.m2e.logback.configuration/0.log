@@ -7506,3 +7506,34 @@ org.eclipse.core.runtime.CoreException: Could not resolve artifact org.hibernate
 2017-04-26 17:01:28,108 [Worker-50] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install
 2017-04-26 17:24:58,429 [Stop Help Server] INFO  o.e.jetty.server.AbstractConnector - Stopped ServerConnector@4dba491a{HTTP/1.1,[http/1.1]}{127.0.0.1:0}
 2017-04-26 17:24:58,537 [Stop Help Server] INFO  o.e.j.server.handler.ContextHandler - Stopped o.e.j.s.ServletContextHandler@21358316{/help,null,UNAVAILABLE}
+2017-05-24 17:08:58,793 [Worker-2] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest-definition:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/pom.xml.
+2017-05-24 17:08:58,844 [Worker-3] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/pom.xml.
+2017-05-24 17:09:03,777 [Worker-2] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:03,830 [Worker-2] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/src/test/resources
+2017-05-24 17:09:04,292 [Worker-14] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.maven.ide.eclipse.wtp.WarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/pom.xml.
+2017-05-24 17:09:05,081 [Worker-14] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using org.eclipse.m2e.jdt.JarLifecycleMapping lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:business-rest-definition:0.0.2-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/pom.xml.
+2017-05-24 17:09:05,093 [Worker-14] INFO  o.e.m.c.i.l.LifecycleMappingFactory - Using NULL lifecycle mapping for MavenProject: fr.metz.surfthevoid.4t:common:0.0.1-SNAPSHOT @ /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/common/pom.xml.
+2017-05-24 17:09:08,426 [Worker-1] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:08,429 [Worker-1] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/src/main/resources
+2017-05-24 17:09:08,431 [Worker-1] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:08,431 [Worker-1] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rs-definition/src/test/resources
+2017-05-24 17:09:10,084 [Worker-1] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:10,096 [Worker-1] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-05-24 17:09:10,141 [Worker-1] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:10,155 [Worker-1] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-05-24 17:09:10,205 [Worker-1] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:10,208 [Worker-1] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-05-24 17:09:39,598 [Worker-9] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:39,602 [Worker-9] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-05-24 17:09:39,604 [Worker-9] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:39,604 [Worker-9] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-05-24 17:09:39,608 [Worker-9] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:09:39,610 [Worker-9] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 1 resource
+2017-05-24 17:11:20,443 [Worker-20] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:11:20,444 [Worker-20] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-05-24 17:11:20,446 [Worker-20] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:11:20,447 [Worker-20] INFO  o.e.m.c.i.embedder.EclipseLogger - skip non existing resourceDirectory /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest/src/test/resources
+2017-05-24 17:11:20,471 [Worker-20] WARN  o.e.m.c.i.embedder.EclipseLogger - Using platform encoding (UTF-8 actually) to copy filtered resources, i.e. build is platform dependent!
+2017-05-24 17:11:20,472 [Worker-20] INFO  o.e.m.c.i.embedder.EclipseLogger - Copying 0 resource
+2017-05-25 08:23:07,575 [Worker-71] INFO  o.e.m.i.launch.MavenLaunchDelegate - /home/charles/workspace/surfthevoid/4t/4tRest-eclipse/business-rest
+2017-05-25 08:23:07,576 [Worker-71] INFO  o.e.m.i.launch.MavenLaunchDelegate -  mvn -B -Dmaven.test.skip=true -DskipTests install

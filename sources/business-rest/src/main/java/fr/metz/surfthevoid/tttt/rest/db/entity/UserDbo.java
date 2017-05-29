@@ -6,7 +6,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name="USER")
-public class UserDbo extends GenericDbo {
+public class UserDbo extends GroupableDbo {
 	
 	@Column(name="EMAIL", unique=true, nullable=false)
 	private String email;

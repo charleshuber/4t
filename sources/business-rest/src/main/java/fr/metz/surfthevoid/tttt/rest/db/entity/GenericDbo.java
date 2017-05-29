@@ -1,5 +1,6 @@
 package fr.metz.surfthevoid.tttt.rest.db.entity;
 
+import javax.persistence.Column;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -10,6 +11,7 @@ public abstract class GenericDbo {
 	
 	@Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+	@Column(name = "ID")
     private Long id;
 
 	public Long getId() {

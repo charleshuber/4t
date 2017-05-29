@@ -1,20 +1,22 @@
 package fr.metz.surfthevoid.tttt.rest.db.entity;
 
 import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
 @Entity
-@Table(name="USER")
+@Table(name="USR")
+@DiscriminatorValue("U")
 public class UserDbo extends GroupableDbo {
 	
 	@Column(name="EMAIL", unique=true, nullable=false)
 	private String email;
 	@Column(name="PWD", nullable=false)
 	private String password;
-	@Column(name="LASTNAME")
+	@Column(name="LASTNAME", nullable=false)
 	private String lastName;
-	@Column(name="FIRSTNAME")
+	@Column(name="FIRSTNAME", nullable=false)
 	private String firstName;
 	
 	public String getEmail() {

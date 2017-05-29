@@ -2,14 +2,18 @@ package fr.metz.surfthevoid.tttt.rest.db.entity;
 
 import java.util.Set;
 
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
 import javax.persistence.InheritanceType;
 import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 @Entity
-@Inheritance(strategy=InheritanceType.TABLE_PER_CLASS)
-public class GroupableDbo extends GenericDbo {
+@Table(name="GRP_ABLE")
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="TYPE")
+public abstract class GroupableDbo extends GenericDbo {
 	
 	@ManyToMany(mappedBy="childreen")
 	public Set<GroupDbo> parents;

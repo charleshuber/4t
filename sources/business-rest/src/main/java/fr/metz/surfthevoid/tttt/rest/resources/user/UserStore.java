@@ -1,20 +1,18 @@
 package fr.metz.surfthevoid.tttt.rest.resources.user;
 
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import javax.inject.Inject;
 import javax.inject.Named;
 
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
+import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
-import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
-import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
+import fr.metz.surfthevoid.tttt.rest.resources.ListStore;
 
 @Named
-public class UserStore extends ResourceStore<User, UserDbo>{
+public class UserStore extends ListStore<User, UserDbo>{
 	
 	@Inject
 	protected UserDao dao;
@@ -31,19 +29,16 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 	protected UserValidator getValidator() {
 		return validator;
 	}
-	
-	public Set<User> readAll() throws ValidationException{
-		return dao.readAll().stream()
-				.map(dbo -> extract(dbo))
-				.collect(Collectors.toSet());
-	}
 
 	@Override
 	protected UserDbo transform(User res) {
 		UserDbo userDbo = new UserDbo();
 		userDbo.setId(res.getId());
 		userDbo.setEmail(res.getEmail());
-		userDbo.setPassword(res.getPassword());
+		if(StringUtils.isNotEmpty(res.getNewPassword())){
+			String encodedPassword = getEncoder().encodePassword(res.getNewPassword(), null);
+			userDbo.setPassword(encodedPassword);
+		}
 		userDbo.setFirstName(res.getFirstName());
 		userDbo.setLastName(res.getLastName());
 		return userDbo;
@@ -54,7 +49,6 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 		User user = new User();
 		user.setId(dbo.getId());
 		user.setEmail(dbo.getEmail());
-		user.setPassword(dbo.getPassword());
 		user.setFirstName(dbo.getFirstName());
 		user.setLastName(dbo.getLastName());
 		return user;
@@ -66,8 +60,11 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 			if(StringUtils.isNotEmpty(res.getEmail())){
 				res.setEmail(res.getEmail().trim());
 			}
-			if(StringUtils.isNotEmpty(res.getPassword())){
-				res.setPassword(res.getPassword().trim());
+			if(StringUtils.isNotEmpty(res.getNewPassword())){
+				res.setNewPassword(res.getNewPassword().trim());
+			}
+			if(StringUtils.isNotEmpty(res.getNewPasswordCheck())){
+				res.setNewPasswordCheck(res.getNewPasswordCheck().trim());
 			}
 			if(StringUtils.isNotEmpty(res.getFirstName())){
 				res.setFirstName(res.getFirstName().trim());
@@ -77,5 +74,9 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 			}
 		}
 		return res;
+	}
+	
+	protected MessageDigestPasswordEncoder getEncoder(){
+		return new Md5PasswordEncoder();
 	}
 }

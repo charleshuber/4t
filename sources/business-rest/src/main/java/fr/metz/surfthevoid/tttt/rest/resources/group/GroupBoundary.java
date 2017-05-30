@@ -5,6 +5,7 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceBoundary;
+import fr.metz.surfthevoid.tttt.rest.resources.user.User;
 
 /**
  * Rest access point to manipulate group resources
@@ -37,7 +38,13 @@ public class GroupBoundary extends ResourceBoundary<Group> implements IGroupBoun
 		ReadSetInterface<Group> readSetAction = () -> groupStore.parents(groupId);
 		return readSet(readSetAction);
 	}
-
+	
+	@Override
+	public Response users(Long groupId) {
+		ReadSetInterface<User> readSetAction = () -> groupStore.users(groupId);
+		return readSet(readSetAction);
+	}
+	
 	@Override
 	public Response addChild(Long groupId, Long childId) {
 		return executePingAction(() -> groupStore.addChild(groupId, childId));

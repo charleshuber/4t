@@ -12,7 +12,7 @@ import javax.persistence.Table;
 import org.apache.commons.collections.CollectionUtils;
 
 @Entity
-@Table(name="USR")
+@Table(name="GRP")
 public class GroupDbo extends GenericDbo {
 	
 	@Column(name="NAME", unique=true, nullable=false)

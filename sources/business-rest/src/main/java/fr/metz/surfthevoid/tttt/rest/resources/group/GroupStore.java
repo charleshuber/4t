@@ -14,10 +14,13 @@ import fr.metz.surfthevoid.tttt.rest.db.entity.GroupDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.GroupDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
+import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Errors;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
+import fr.metz.surfthevoid.tttt.rest.resources.user.User;
+import fr.metz.surfthevoid.tttt.rest.resources.user.UserStore;
 
 @Named
 public class GroupStore extends ResourceStore<Group, GroupDbo>{
@@ -27,6 +30,9 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 	
 	@Inject
 	protected UserDao userDao;
+	
+	@Inject
+	protected UserStore userStore;
 	
 	@Inject
 	protected GroupValidator validator;
@@ -63,6 +69,19 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
 	
+	public Set<User> users(Long id) throws ValidationException {
+		GroupDbo dbGroup = dao.read(id);			
+		if(dbGroup != null){
+			if(CollectionUtils.isNotEmpty(dbGroup.getUsers())){
+				return dbGroup.getUsers().stream()
+				.map(dbUser -> userStore.extract(dbUser))
+				.collect(Collectors.toSet());
+			}
+			return new HashSet<User>();
+		} 
+		throw new ValidationException(Type.BAD_REQUEST, null);
+	}
+	
 	public Boolean addChild(Long groupId, Long childGroupId) throws ValidationException {
 		GroupDbo dbGroup = dao.read(groupId);
 		GroupDbo dbChildGroup = dao.read(childGroupId);
@@ -79,6 +98,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			}
 			if(dbGroup.getChildren() == null) dbGroup.setChildren(new HashSet<GroupDbo>());
 			dbGroup.getChildren().add(dbChildGroup);
+			return true;
 		} 
 		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
@@ -90,6 +110,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			if(CollectionUtils.isNotEmpty(dbGroup.getChildren()) 
 					&& dbGroup.getChildren().contains(dbChildGroup)){
 				dbGroup.getChildren().remove(dbChildGroup);
+				return true;
 			}
 		} 
 		throw new ValidationException(Type.BAD_REQUEST, null);
@@ -107,6 +128,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			}
 			if(dbGroup.getUsers() == null) dbGroup.setUsers(new HashSet<UserDbo>());
 			dbGroup.getUsers().add(dbUser);
+			return true;
 		} 
 		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
@@ -118,6 +140,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			if(CollectionUtils.isNotEmpty(dbGroup.getUsers()) 
 					&& dbGroup.getUsers().contains(dbUser)){
 				dbGroup.getUsers().remove(dbUser);
+				return true;
 			}
 		} 
 		throw new ValidationException(Type.BAD_REQUEST, null);
@@ -150,7 +173,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 	}
 
 	@Override
-	protected Group clean(Group res) {
+	protected Group clean(Group res, Operation op) {
 		if(res != null){
 			if(StringUtils.isNotEmpty(res.getName())){
 				res.setName(res.getName().trim());

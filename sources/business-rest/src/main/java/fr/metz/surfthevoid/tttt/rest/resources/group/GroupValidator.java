@@ -30,7 +30,7 @@ public class GroupValidator extends Validator<Group, GroupDbo>{
 			GroupDbo anyGroup = dao.readByName(input.getName());
 			if(op == Operation.CREATE && anyGroup != null){
 				errors.addFieldError(Group.NAME_FIELD_NAME, GroupValidationErrors.NAME_IS_ALREADY_USED.getCode());
-			} else if(op == Operation.UDPDATE && (anyGroup == null || anyGroup.getId() != input.getId())){
+			} else if(op == Operation.UDPDATE && (anyGroup != null && anyGroup.getId() != input.getId())){
 				errors.addFieldError(Group.NAME_FIELD_NAME, GroupValidationErrors.NAME_IS_ALREADY_USED.getCode());
 			}	
 		}

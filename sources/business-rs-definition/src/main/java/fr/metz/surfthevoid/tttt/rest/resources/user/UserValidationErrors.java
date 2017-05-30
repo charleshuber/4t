@@ -6,7 +6,7 @@ public enum UserValidationErrors {
 	EMAIL_IS_ALREADY_USED("user.email.already.used", "This email is used by another user"),
 	PWD_IS_MANDATORY("user.password.cannot.be.empty", "The user's password cannot be empty"),
 	PWD_CHECK_IS_MANDATORY("user.password.check.cannot.be.empty", "The user's password verification cannot be empty"),
-	PWD_CHECK_IS_NOT_VALID("user.password.check.cannot.be.empty", "The user's password verification cannot be empty"),
+	PWD_CHECK_IS_NOT_VALID("user.password.check.not.valid", "The user's password verification is not valid"),
 	LASTNAME_IS_MANDATORY("user.lastname.cannot.be.empty", "The user's lastname cannot be empty"),
 	FIRSTNAME_IS_MANDATORY("user.firstname.cannot.be.empty", "The user's firstname cannot be empty");
 	

@@ -14,6 +14,7 @@ import org.springframework.security.authentication.encoding.MessageDigestPasswor
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
+import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
@@ -66,17 +67,14 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 		UserDbo userDbo = new UserDbo();
 		userDbo.setId(res.getId());
 		userDbo.setEmail(res.getEmail());
-		if(StringUtils.isNotEmpty(res.getNewPassword())){
-			String encodedPassword = getEncoder().encodePassword(res.getNewPassword(), null);
-			userDbo.setPassword(encodedPassword);
-		}
+		userDbo.setPassword(res.getNewPassword());
 		userDbo.setFirstName(res.getFirstName());
 		userDbo.setLastName(res.getLastName());
 		return userDbo;
 	}
 
 	@Override
-	protected User extract(UserDbo dbo) {
+	public User extract(UserDbo dbo) {
 		User user = new User();
 		user.setId(dbo.getId());
 		user.setEmail(dbo.getEmail());
@@ -86,7 +84,7 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 	}
 
 	@Override
-	protected User clean(User res) {
+	protected User clean(User res, Operation op) {
 		if(res != null){
 			if(StringUtils.isNotEmpty(res.getEmail())){
 				res.setEmail(res.getEmail().trim());
@@ -105,6 +103,23 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 			}
 		}
 		return res;
+	}
+	
+	@Override
+	protected User postValidationActions(User res, Operation op){
+		preparePassword(res, op);
+		return res;
+	}
+
+	protected void preparePassword(User res, Operation op) {
+		if(StringUtils.isNotEmpty(res.getNewPassword())){
+			String encodedPassword = getEncoder().encodePassword(res.getNewPassword(), null);
+			res.setNewPassword(encodedPassword);
+		} else if(op == Operation.UDPDATE){
+			UserDbo dbUser = dao.read(res.getId());
+			String notModifiedPwd = dbUser.getPassword();
+			res.setNewPassword(notModifiedPwd);
+		}
 	}
 	
 	protected MessageDigestPasswordEncoder getEncoder(){

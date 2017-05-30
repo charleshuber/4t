@@ -47,11 +47,18 @@ public abstract class ResourceStore<R extends Resource, T extends GenericDbo> {
 	}
 	
 	protected T validateAndTransform(R res, Operation op) throws ValidationException{
-		getValidator().validate(clean(res), op);
+		if(res != null){
+			res = fillWithDefault(res, op);
+			res = clean(res, op);	
+		}
+		getValidator().validate(res, op);
+		res = postValidationActions(res, op);
 		return transform(res);
 	}
 	
-	protected R clean(R res) { return res; };
+	protected R postValidationActions(R res, Operation op) { return res; };
+	protected R fillWithDefault(R res, Operation op) { return res; };
+	protected R clean(R res, Operation op) { return res; };
 	protected abstract T transform(R res);
 	protected abstract R extract(T dbo);
 }

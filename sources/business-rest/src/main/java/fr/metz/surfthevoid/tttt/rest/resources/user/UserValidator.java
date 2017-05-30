@@ -33,7 +33,7 @@ public class UserValidator extends Validator<User, UserDbo>{
 			UserDbo anyuser = dao.readByMail(input.getEmail());
 			if(op == Operation.CREATE && anyuser != null){
 				errors.addFieldError(User.EMAIL_FIELD_NAME, UserValidationErrors.EMAIL_IS_ALREADY_USED.getCode());
-			} else if(op == Operation.UDPDATE && (anyuser == null || anyuser.getId() != input.getId())){
+			} else if(op == Operation.UDPDATE && (anyuser != null && anyuser.getId() != input.getId())){
 				errors.addFieldError(User.EMAIL_FIELD_NAME, UserValidationErrors.EMAIL_IS_ALREADY_USED.getCode());
 			}	
 		}
@@ -42,7 +42,7 @@ public class UserValidator extends Validator<User, UserDbo>{
 	protected void validatePwd(User input, Operation op, Errors errors){
 		if(op == Operation.CREATE){
 			validatePwdAtCreation(input, errors);
-		} else if(op == Operation.UDPDATE && StringUtils.isEmpty(input.getNewPassword())){
+		} else if(op == Operation.UDPDATE){
 			validatePwdAtUpdate(input, errors);
 		}
 	}
@@ -63,10 +63,12 @@ public class UserValidator extends Validator<User, UserDbo>{
 	}
 	
 	protected void validatePwdAtUpdate(User input, Errors errors) {
-		if(StringUtils.isEmpty(input.getNewPasswordCheck())){
-			errors.addFieldError(User.NEW_PASSWORD_CHECK_FIELD_NAME, UserValidationErrors.PWD_CHECK_IS_MANDATORY.getCode());
-		} else if(!input.getNewPassword().equals(input.getNewPasswordCheck())){
-			errors.addFieldError(User.NEW_PASSWORD_CHECK_FIELD_NAME, UserValidationErrors.PWD_CHECK_IS_NOT_VALID.getCode());
+		if(StringUtils.isNotEmpty(input.getNewPassword())){
+			if(StringUtils.isEmpty(input.getNewPasswordCheck())){
+				errors.addFieldError(User.NEW_PASSWORD_CHECK_FIELD_NAME, UserValidationErrors.PWD_CHECK_IS_MANDATORY.getCode());
+			} else if(!input.getNewPassword().equals(input.getNewPasswordCheck())){
+				errors.addFieldError(User.NEW_PASSWORD_CHECK_FIELD_NAME, UserValidationErrors.PWD_CHECK_IS_NOT_VALID.getCode());
+			}
 		}
 	}
 	

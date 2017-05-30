@@ -28,6 +28,11 @@ public interface IGroupBoundary extends IResourceBoundary<Group>{
 	public Response parents(@PathParam("groupId") Long groupId);
 	
 	@GET
+	@Path("/{groupId}/users")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response users(@PathParam("groupId") Long groupId);
+	
+	@GET
 	@Path("/{groupId}/addChild/{childId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addChild(@PathParam("groupId") Long groupId, @PathParam("childId") Long childId);

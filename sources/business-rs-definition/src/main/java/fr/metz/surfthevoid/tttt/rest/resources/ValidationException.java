@@ -13,7 +13,7 @@ public class ValidationException extends Exception {
 	private Type type;
 	private Errors errors;
 	
-	protected ValidationException(Type type, Errors errors){
+	public ValidationException(Type type, Errors errors){
 		this.type = type;
 		this.errors = errors;
 	}
@@ -38,7 +38,7 @@ public class ValidationException extends Exception {
 		private Map<String, List<String>> fieldsValidationMessages;
 		private List<String> globalValidationMessages;
 		
-		protected Errors(){}
+		public Errors(){}
 		
 		public Boolean hasErrors(){
 			return (fieldsValidationMessages != null && fieldsValidationMessages.size() > 0) 
@@ -81,10 +81,12 @@ public class ValidationException extends Exception {
 	}
 	
 	public static enum Type {
+		BAD_REQUEST,
 		NO_CONTENT,
 		INVALID_INPUT,
 		INVALID_STATE,
 		INVALID_INPUT_DATA,
-		INVALID_RIGHT, CONFLICT
+		INVALID_RIGHT, 
+		CONFLICT
 	}
 }

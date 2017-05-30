@@ -1,7 +1,10 @@
 package fr.metz.surfthevoid.tttt.rest.resources;
 
+import java.util.Set;
+
 import javax.transaction.Transactional;
 import javax.transaction.Transactional.TxType;
+import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
@@ -25,7 +28,7 @@ public abstract class ResourceBoundary<R extends Resource>{
 	}
 
 	public Response read(Long id) {
-		OperationalInterface<Long> operation = input -> getStore().read(id);
+		OperationalInterface<Long> operation = input -> getStore().read(input);
 		return doOperate(id, Status.OK, operation);
 	}
 	
@@ -35,7 +38,7 @@ public abstract class ResourceBoundary<R extends Resource>{
 	}
 	
 	public Response delete(Long id) {
-		OperationalInterface<Long> operation = input -> getStore().delete(id);
+		OperationalInterface<Long> operation = input -> getStore().delete(input);
 		return doOperate(id, Status.OK, operation);
 	}
 	
@@ -45,19 +48,7 @@ public abstract class ResourceBoundary<R extends Resource>{
 			Object entity = operation.operate(input);
 			rb.status(successStatus).entity(entity);
 		} catch (ValidationException e) {
-			if(e.getType() == Type.INVALID_RIGHT){
-				rb.status(Status.FORBIDDEN);
-			} else if(e.getType() == Type.NO_CONTENT){
-				rb.status(Status.NO_CONTENT);
-			} else if(e.getType() == Type.CONFLICT){
-				rb.status(Status.CONFLICT);
-			} else {
-				rb.status(Status.BAD_REQUEST);
-			}
-			if(e.hasErrors()){
-				rb.header(IResourceBoundary.VALIDATION_HEADER, true);
-				rb.entity(e.getErrors());
-			}
+			handleValidationException(rb, e);
 		} catch(AccessDeniedException e){
 			rb.status(Status.FORBIDDEN);
 		} catch (Exception e){
@@ -67,10 +58,69 @@ public abstract class ResourceBoundary<R extends Resource>{
 		return rb.build();
 	}
 	
+	public <L> Response readSet(ReadSetInterface<L> readCollectionInterface) {
+		ResponseBuilder rb = new ResponseBuilderImpl();
+		try {
+			Set<L> entity = readCollectionInterface.readSet();
+			rb.status(Status.OK).entity(new GenericEntity<Set<L>>(entity, Set.class));
+		} catch (ValidationException e) {
+			handleValidationException(rb, e);
+		} catch(AccessDeniedException e){
+			rb.status(Status.FORBIDDEN);
+		} catch (Exception e){
+			log.error(e);
+			rb.status(Status.INTERNAL_SERVER_ERROR);
+		}
+		return rb.build();
+	}
+	
+	public Response executePingAction(PingActionInterface pingActionInterface) {
+		ResponseBuilder rb = new ResponseBuilderImpl();
+		try {
+			if(pingActionInterface.pingAction()){
+				rb.status(Status.OK);
+			}
+		} catch (ValidationException e) {
+			handleValidationException(rb, e);
+		} catch(AccessDeniedException e){
+			rb.status(Status.FORBIDDEN);
+		} catch (Exception e){
+			log.error(e);
+			rb.status(Status.INTERNAL_SERVER_ERROR);
+		}
+		return rb.build();
+	}
+
+	protected void handleValidationException(ResponseBuilder rb, ValidationException e) {
+		if(e.getType() == Type.INVALID_RIGHT){
+			rb.status(Status.FORBIDDEN);
+		} else if(e.getType() == Type.NO_CONTENT){
+			rb.status(Status.NO_CONTENT);
+		} else if(e.getType() == Type.CONFLICT){
+			rb.status(Status.CONFLICT);
+		} else {
+			rb.status(Status.BAD_REQUEST);
+		}
+		if(e.hasErrors()){
+			rb.header(IResourceBoundary.VALIDATION_HEADER, true);
+			rb.entity(e.getErrors());
+		}
+	}
+	
 	protected abstract ResourceStore<R, ? extends GenericDbo> getStore();
 	
 	@FunctionalInterface
-	private static interface OperationalInterface<T> {
+	protected static interface OperationalInterface<T> {
 		public Object operate(T arg) throws ValidationException;  
+	}
+	
+	@FunctionalInterface
+	protected static interface ReadSetInterface<L> {
+		public Set<L> readSet() throws ValidationException;  
+	}
+	
+	@FunctionalInterface
+	protected static interface PingActionInterface {
+		public Boolean pingAction() throws ValidationException;  
 	}
 }

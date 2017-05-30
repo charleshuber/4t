@@ -18,6 +18,7 @@
 		<spring.security.version>4.2.2.RELEASE</spring.security.version>
 		<hibernate.version>5.2.9.Final</hibernate.version>
 		<cxf.version>3.1.10</cxf.version>
+		<deployment.directory>/home/charles/workspaces/surfthevoid/4t/4tswarms/git-project/4tswarms/local/webapps</deployment.directory>
 	</properties>
 
 	<dependencies>
@@ -96,6 +97,13 @@
 					<compilerArguments>
 						<processor>org.hibernate.jpamodelgen.JPAMetaModelEntityProcessor</processor>
 					</compilerArguments>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-war-plugin</artifactId>
+				<configuration>
+					<outputDirectory>${deployment.directory}</outputDirectory>
 				</configuration>
 			</plugin>
 		</plugins>

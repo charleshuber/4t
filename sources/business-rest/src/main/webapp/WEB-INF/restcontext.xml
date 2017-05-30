@@ -11,6 +11,7 @@
 	<jaxrs:server id="resources_endpoint" address="/resources">
 		<jaxrs:serviceBeans>
 			<ref bean="userBoundary" />
+			<ref bean="groupBoundary" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />

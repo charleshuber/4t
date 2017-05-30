@@ -34,4 +34,10 @@ public interface IResourceBoundary <R extends Resource>{
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response delete(@PathParam("id") Long id);
+	
+	@GET
+	@Path("/all")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response all();
+	
 }

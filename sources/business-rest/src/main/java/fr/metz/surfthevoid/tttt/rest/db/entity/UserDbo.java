@@ -1,14 +1,15 @@
 package fr.metz.surfthevoid.tttt.rest.db.entity;
 
+import java.util.Set;
+
 import javax.persistence.Column;
-import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="USR")
-@DiscriminatorValue("U")
-public class UserDbo extends GroupableDbo {
+public class UserDbo extends GenericDbo {
 	
 	@Column(name="EMAIL", unique=true, nullable=false)
 	private String email;
@@ -18,6 +19,9 @@ public class UserDbo extends GroupableDbo {
 	private String lastName;
 	@Column(name="FIRSTNAME", nullable=false)
 	private String firstName;
+	
+	@ManyToMany(mappedBy="users")
+	public Set<GroupDbo> groups;
 	
 	public String getEmail() {
 		return email;
@@ -42,5 +46,11 @@ public class UserDbo extends GroupableDbo {
 	}
 	public void setFirstName(String firstName) {
 		this.firstName = firstName;
+	}
+	public Set<GroupDbo> getGroups() {
+		return groups;
+	}
+	public void setGroups(Set<GroupDbo> groups) {
+		this.groups = groups;
 	}
 }

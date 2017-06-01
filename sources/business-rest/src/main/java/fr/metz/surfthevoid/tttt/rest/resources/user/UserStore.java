@@ -1,7 +1,10 @@
 package fr.metz.surfthevoid.tttt.rest.resources.user;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -39,7 +42,7 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 			if(CollectionUtils.isNotEmpty(dbUser.getGroups())){
 				return dbUser.getGroups().stream()
 				.map(dbGroup -> groupStore.extract(dbGroup))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(groupStore.getOrderedByName()));
 			}
 			return new HashSet<Group>();
 		} 
@@ -59,7 +62,7 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 	public Set<User> readAll() throws ValidationException {
 		return dao.readAll().stream()
 				.map(dbo -> extract(dbo))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(getOrderedById()));
 	}
 
 	@Override
@@ -124,5 +127,9 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 	
 	protected MessageDigestPasswordEncoder getEncoder(){
 		return new Md5PasswordEncoder();
+	}
+	
+	public Supplier<TreeSet<User>> getOrderedById(){
+		return () -> new TreeSet<User>(Comparator.comparing(User::getId));
 	}
 }

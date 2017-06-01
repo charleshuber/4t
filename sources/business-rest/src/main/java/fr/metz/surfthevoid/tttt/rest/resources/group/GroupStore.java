@@ -1,7 +1,10 @@
 package fr.metz.surfthevoid.tttt.rest.resources.group;
 
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import javax.inject.Inject;
@@ -40,7 +43,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 	public Set<Group> readAll() throws ValidationException {
 		return dao.readAll().stream()
 				.map(dbo -> extract(dbo))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(getOrderedByName()));
 	}
 	
 	public Set<Group> children(Long id) throws ValidationException {
@@ -49,7 +52,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			if(CollectionUtils.isNotEmpty(dbGroup.getChildren())){
 				return dbGroup.getChildren().stream()
 				.map(dbChild -> extract(dbChild))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(getOrderedByName()));
 			}
 			return new HashSet<Group>();
 		} 
@@ -62,7 +65,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			if(CollectionUtils.isNotEmpty(dbGroup.getParents())){
 				return dbGroup.getParents().stream()
 				.map(dbChild -> extract(dbChild))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(getOrderedByName()));
 			}
 			return new HashSet<Group>();
 		} 
@@ -75,7 +78,7 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			if(CollectionUtils.isNotEmpty(dbGroup.getUsers())){
 				return dbGroup.getUsers().stream()
 				.map(dbUser -> userStore.extract(dbUser))
-				.collect(Collectors.toSet());
+				.collect(Collectors.toCollection(userStore.getOrderedById()));
 			}
 			return new HashSet<User>();
 		} 
@@ -180,5 +183,9 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 			}
 		}
 		return res;
+	}
+	
+	public Supplier<TreeSet<Group>> getOrderedByName(){
+		return () -> new TreeSet<Group>(Comparator.comparing(Group::getName));
 	}
 }

@@ -18,8 +18,17 @@
 		<spring.security.version>4.2.2.RELEASE</spring.security.version>
 		<hibernate.version>5.2.9.Final</hibernate.version>
 		<cxf.version>3.1.10</cxf.version>
-		<deployment.directory>/home/charles/workspaces/surfthevoid/4t/4tswarms/git-project/4tswarms/local/webapps</deployment.directory>
+		<docker.deployment.directory>../..</docker.deployment.directory>
 	</properties>
+
+	<profiles>
+		<profile>
+			<id>local</id>
+			<properties>
+				<docker.deployment.directory>/home/charles/workspaces/surfthevoid/4t/4tswarms/git-project/4tswarms/local/webapps</docker.deployment.directory>
+			</properties>
+		</profile>
+	</profiles>
 
 	<dependencies>
 		<dependency>
@@ -100,11 +109,23 @@
 				</configuration>
 			</plugin>
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<configuration>
-					<outputDirectory>${deployment.directory}</outputDirectory>
-				</configuration>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>1.8</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<configuration>
+							<target>
+								<copy
+									file="${project.build.directory}/${project.build.finalName}.war"
+									todir="${docker.deployment.directory}" />
+							</target>
+						</configuration>
+						<goals>
+							<goal>run</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

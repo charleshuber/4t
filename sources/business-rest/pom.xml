@@ -28,7 +28,7 @@
 				<docker.deployment.directory>/home/charles/workspaces/surfthevoid/4t/4tswarms/git-project/4tswarms/local/webapps</docker.deployment.directory>
 			</properties>
 		</profile>
-	</profiles>
+	</profiles> 
 
 	<dependencies>
 		<dependency>

@@ -7,6 +7,6 @@
 <title>TaTouTonTan</title>
 </head>
 <body>
-	Bienvenue sur TaTouTonTan ! Mis à jour !
+	Bienvenue sur TaTouTonTan ! Mis à jour ! Enfin !!!!!
 </body>
 </html>

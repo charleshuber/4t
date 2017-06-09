@@ -9,36 +9,36 @@ import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Errors;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
 
 /**
- * Classe abstraite générique de services pour la validation des ressources
+ * Classe abstraite gÃ©nÃ©rique de services pour la validation des ressources
  * @author charles
  *
  * @param <R>
  * @param <T>
  */
-// Toutes les méthodes publiques appelées depuis un autre composant 
-// doivent être executées au sein d'un transaction 
+// Toutes les mÃ©thodes publiques appelÃ©es depuis un autre composant 
+// doivent Ãªtre executÃ©es au sein d'un transaction 
 @Transactional(TxType.REQUIRED)
 public abstract class Validator<R extends Resource, T extends GenericDbo> {
 	
 	/**
-	 * Methode générique pour la validation d'une ressource 
+	 * Methode gÃ©nÃ©rique pour la validation d'une ressource 
 	 * @param input
 	 * @param op
 	 * @throws ValidationException
 	 */
 	public void validate(R input, Operation op) throws ValidationException {
 		Errors errors = new Errors();
-		// On vérifie que la ressource est présente
+		// On vÃ©rifie que la ressource est prÃ©sente
 		if(input == null){
 			throw new ValidationException(Type.INVALID_INPUT, errors);
 		}
-		// On vérifie que l'utilisateur a un droit d'accès à la ressource
+		// On vÃ©rifie que l'utilisateur a un droit d'accÃ©s Ã  la ressource
 		if(!doUserCanAccessData(input, op, errors)){
 			throw new ValidationException(Type.INVALID_RIGHT, errors);
 		}
-		// On vérifie que l'opération effectuée correspond à l'état de la ressource
+		// On vÃ©rifie que l'opÃ©ration effectuÃ©e correspond Ã  l'Ã©tat de la ressource
 		validateState(input, op, errors);
-		// On valide la valeur des données de la ressource
+		// On valide la valeur des donnÃ©es de la ressource
 		validateInput(input, op, errors);
 		// Si il y a des erreurs de validation on lance une exception
 		if(errors.hasErrors()){
@@ -47,19 +47,19 @@ public abstract class Validator<R extends Resource, T extends GenericDbo> {
 	}
 	
 	/**
-	 * Méthode générique servant à verifier la validité d'une opération,
-	 *  par rapport à l'état de la ressource 
+	 * MÃ©thode gÃ©nÃ©rique servant Ã  verifier la validitÃ© d'une opÃ©ration,
+	 *  par rapport Ã  l'Ã©tat de la ressource 
 	 * @param input
 	 * @param op
 	 * @param errors
 	 * @throws ValidationException
 	 */
 	protected void validateState(R input, Operation op, Errors errors) throws ValidationException {
-		// Si la ressource à déjà un identifiant elle ne peut pas être créée
+		// Si la ressource a dÃ©jÃ  un identifiant elle ne peut pas Ãªtre crÃ©Ã©e
 		if(op == Operation.CREATE && input.getId() != null){
 			throw new ValidationException(Type.CONFLICT, errors);
 		} 
-		// Si la ressource doit être mise à jour elle doit avoir un identifiant référencé en base de donnée
+		// Si la ressource doit Ãªtre mise Ã  jour elle doit avoir un identifiant rÃ©fÃ©rencÃ© en base de donnÃ©e
 		else if(op == Operation.UDPDATE){ 
 			if(input.getId() == null){
 				throw new ValidationException(Type.INVALID_STATE, errors);
@@ -72,39 +72,39 @@ public abstract class Validator<R extends Resource, T extends GenericDbo> {
 	}
 	
 	/**
-	 * Méthode générique de validation d'un identifiant
+	 * MÃ©thode gÃ©nÃ©rique de validation d'un identifiant
 	 * @param id
 	 * @throws ValidationException
 	 */
 	public void validateId(Long id) throws ValidationException {
 		Errors errors = new Errors();
-		// On vérifie que l'identifiant existe et correspond à une ressource en base de donnée
+		// On vÃ©rifie que l'identifiant existe et correspond Ã  une ressource en base de donnÃ©e
 		if(id == null || getDao().read(id) == null){
 			throw new ValidationException(Type.NO_CONTENT, errors);
 		}
-		// On vérifie que l'utilisateur à un droit d'accès à la ressource
+		// On vÃ©rifie que l'utilisateur a un droit d'accÃ©s Ã  la ressource
 		if(!doUserCanAccessData(id, errors)){
 			throw new ValidationException(Type.INVALID_RIGHT, errors);
 		}
 	}
 	
 	/**
-	 * Méthode abstraite devant être implémentée par les classes filles,
-	 * pour valider que l'utilisateur à un droit d'accès en écriture à une ressource
+	 * MÃ©thode abstraite devant Ãªtre implÃ©mentÃ©e par les classes filles,
+	 * pour valider que l'utilisateur a un droit d'accÃ©s en Ã©criture Ã  une ressource
 	 * @return
 	 */
 	protected Boolean doUserCanAccessData(R input, Operation op, Errors errors){return true;}
 	
 	/**
-	 * Méthode abstraite devant être implémentée par les classes filles,
-	 * pour valider que l'utilisateur à un droit d'accès en lecture à une ressource
+	 * MÃ©thode abstraite devant Ãªtre implÃ©mentÃ©e par les classes filles,
+	 * pour valider que l'utilisateur a un droit d'accÃ©s en lecture Ã  une ressource
 	 * @return
 	 */
 	protected Boolean doUserCanAccessData(Long id, Errors errors){return true;}
 	
 	/**
-	 * Méthode abstraite devant être implémentée par les classes filles,
-	 * pour certifier que les données d'une ressource sont valides 
+	 * MÃ©thode abstraite devant Ãªtre implÃ©mentÃ©e par les classes filles,
+	 * pour certifier que les donnÃ©es d'une ressource sont valides 
 	 * @return
 	 */
 	protected abstract void validateInput(R input, Operation op, Errors errors) throws ValidationException;

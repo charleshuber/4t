@@ -4,9 +4,9 @@
    xmlns:jee="http://www.springframework.org/schema/jee"
    xmlns:tx="http://www.springframework.org/schema/tx"
    xsi:schemaLocation="
-      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd
-      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.2.xsd
-      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd">
+      http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+      http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-4.3.xsd
+      http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
       
    <jee:jndi-lookup id="dataSource" jndi-name="jdbc/4tDb" expected-type="javax.sql.DataSource" />
  
@@ -24,16 +24,12 @@
 			<prop key="hibernate.hbm2ddl.auto">update</prop>
 			<prop key="hibernate.hbm2ddl.auto">create</prop>
 			-->
-			<prop key="hibernate.hbm2ddl.auto">update</prop>
+			<prop key="hibernate.hbm2ddl.auto">validate</prop>
             <prop key="hibernate.dialect">org.hibernate.dialect.MySQL57Dialect</prop>
          </props>
       </property>
    </bean>
    
-   
-
- 
- 
    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
       <property name="entityManagerFactory" ref="emf" />
    </bean>

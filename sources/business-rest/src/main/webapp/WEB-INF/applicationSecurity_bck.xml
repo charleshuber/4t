@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"    
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"    
+	xmlns:security="http://www.springframework.org/schema/security"    
+	xmlns:p="http://www.springframework.org/schema/p"    
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd         
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd" >
+						
+	<!-- Placeholders for application properties -->
+    <bean id="placeholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="location" value="classpath:registreAdmin.properties" />
+    </bean>
+	
+	<security:global-method-security secured-annotations="enabled" />
+						
+	<!--
+    	This is the basic configuration of Spring security using the namespace.
+    	We add our custom filter to its predefined list of filters
+  	-->
+  	<security:http entry-point-ref="preAuthenticatedEntryPoint" access-decision-manager-ref="urlAccessDecisionManager" use-expressions="true">
+    	<security:custom-filter after="SECURITY_CONTEXT_FILTER" ref="jaasPreAuthenticatedProcessingFilter" />
+    	<!--
+      	Insert here the Spring secured URLs using <security:intercept-url> elements.
+      	Example: <security:intercept-url pattern="/admin/**.htm" access="hasRole('admin')" requires-channel="https" />
+      	Note: we recommend to stick to the standard, i.e. secured URL's declared in the web.xml configuration file,
+      	however for advanced usage scenario Spring secured URLs combined with SpEL can constitute a valid alternative.     
+      	Don't forget "Great power involves great responsibility" (Voltaire, but also Spider-Man's uncle ;-))
+    	-->
+    	<!-- The entire application must be accessed by authenticated user. Fine grained security is managed by security annotations-->
+    	<security:intercept-url pattern="/**" access="isAuthenticated()" />
+    	<security:access-denied-handler error-page="/403.htm"/>
+  	</security:http>
+ 
+  	<!--
+    	JAAS has already done the Authentication and retrieved the ROLES.
+   		We are therefore using a Pre-Authenticated EntryPoint.
+  	-->
+  	<bean id="preAuthenticatedEntryPoint" class="org.springframework.security.web.authentication.Http403ForbiddenEntryPoint" />
+ 	 <!--
+    	A filter that gets the JAAS Authentication information. It retrieves ROLES from a ThreadLocal contributed by the EP Security Login Modules.
+    	Default behaviour is not to add "ROLE_" prefix to roles. You may set this back on by adding a role prefix as a Constructor argument.
+  	-->
+  	<bean id="jaasPreAuthenticatedProcessingFilter" class="ec.ep.dit.isp.security.spring.preauth.filter.JaasPreAuthenticatedProcessingFilter"
+        	p:authenticationManager-ref="authenticationManager"/>
+ 
+  	<!--
+    	An authentication manager that registers the custom authentication provider defined below.
+  	-->
+  	<security:authentication-manager alias="authenticationManager">
+    	<security:authentication-provider ref="authenticationProvider" />
+  	</security:authentication-manager>
+  	<!--
+    This is a custom authentication provider that just retrieves the roles gathered by the PreAuthentication filter.
+  	-->
+  	<bean id="authenticationProvider" class="org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider" >
+  		<property name="preAuthenticatedUserDetailsService" ref="customUserDetailsService"/>
+  	</bean> 	
+	
+	<bean id="activeDirectoryDAO" class="ec.ep.dit.isp.foundry.directory.dao.implementations.ActiveDirectoryDAO">
+        <constructor-arg index="0" ref="activeDirectoryOptions" />
+    </bean>
+    
+    <bean id="activeDirectoryOptions" class="ec.ep.dit.isp.foundry.directory.dao.implementations.ActiveDirectoryConnectionOptions">
+        <property name="ldapUrl" value="${activeDirectory.ldapUrl}"/>
+        <property name="securityPrincipal" value="${activeDirectory.securityPrincipal}"/>
+        <property name="securityCredential">
+    		<bean class="ec.ep.dit.isp.foundry.util.Strings" factory-method="obfuscate">
+    			<constructor-arg>
+    				<bean class="ec.ep.dit.isp.foundry.util.Strings"
+    					factory-method="fromHex">
+    					<constructor-arg value="${activeDirectory.securityCredential}" />
+    				</bean>
+    			</constructor-arg>
+    			<constructor-arg value="${activeDirectory.securityPrincipal}" />
+    		</bean>
+    	</property>
+        <property name="baseDN" value="${activeDirectory.baseDN}"/>
+    </bean>
+    	
+  	<bean id="abstractDecisionManager" class="org.springframework.security.access.vote.UnanimousBased" abstract="true">
+    	<property name="decisionVoters">
+        	<set>
+            	<!--
+            	You need to customize this because Spring Security assumes a default "ROLE_" prefix for each role.
+           		This specific configuration ensures that the roles prefix is set to "".
+           	 	-->
+            	<bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter" p:rolePrefix="" />
+        	</set>
+    	</property> 
+  	</bean>
+  
+  	<bean id="urlAccessDecisionManager" parent="abstractDecisionManager">
+    	<property name="decisionVoters">
+        	<set merge="true">
+            	<bean class="org.springframework.security.web.access.expression.WebExpressionVoter" />             
+        	</set>
+    	</property>
+  	</bean>
+   
+  	<bean id="methodAccessDecisionManager" parent="abstractDecisionManager">
+    	<property name="decisionVoters">
+        	<set merge="true">
+            	<bean class="org.springframework.security.access.annotation.Jsr250Voter" />
+            	<bean class="org.springframework.security.access.prepost.PreInvocationAuthorizationAdviceVoter">
+                	<constructor-arg>
+                    	<bean class="org.springframework.security.access.expression.method.ExpressionBasedPreInvocationAdvice" />
+                	</constructor-arg>
+            	</bean>
+        	</set>
+    	</property>
+  	</bean>
+	
+</beans>

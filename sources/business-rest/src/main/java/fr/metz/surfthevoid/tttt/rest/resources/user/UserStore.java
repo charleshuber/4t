@@ -116,13 +116,18 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 
 	protected void preparePassword(User res, Operation op) {
 		if(StringUtils.isNotEmpty(res.getNewPassword())){
-			String encodedPassword = getEncoder().encodePassword(res.getNewPassword(), null);
-			res.setNewPassword(encodedPassword);
+			res.setNewPassword(encodePassword(res.getNewPassword()));
 		} else if(op == Operation.UDPDATE){
 			UserDbo dbUser = dao.read(res.getId());
 			String notModifiedPwd = dbUser.getPassword();
 			res.setNewPassword(notModifiedPwd);
 		}
+	}
+	
+	public String encodePassword(String password){
+		if(StringUtils.isNotEmpty(password))
+		return getEncoder().encodePassword(password, null);
+		return StringUtils.EMPTY;
 	}
 	
 	protected MessageDigestPasswordEncoder getEncoder(){

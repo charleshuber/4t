@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:security="http://www.springframework.org/schema/security"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd         
+						http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-4.2.xsd">
+
+	<security:global-method-security
+		secured-annotations="enabled" />
+
+	<!-- This is the digest configuration of Spring security using the namespace. 
+		We add our custom filter to its predefined list of filters -->
+	<security:http entry-point-ref="digestAuthenticatedEntryPoint"
+		access-decision-manager-ref="urlAccessDecisionManager"
+		use-expressions="true">
+		<security:custom-filter after="BASIC_AUTH_FILTER"
+			ref="digestAuthenticatedProcessingFilter" />
+		<!-- Insert here the Spring secured URLs using <security:intercept-url> 
+			elements. Example: <security:intercept-url pattern="/admin/**.htm" access="hasRole('admin')" 
+			requires-channel="https" /> Note: we recommend to stick to the standard, 
+			i.e. secured URL's declared in the web.xml configuration file, however for 
+			advanced usage scenario Spring secured URLs combined with SpEL can constitute 
+			a valid alternative. Don't forget "Great power involves great responsibility" 
+			(Voltaire, but also Spider-Man's uncle ;-)) -->
+		<!-- The entire application must be accessed by authenticated user. Fine 
+			grained security is managed by security annotations -->
+		<security:intercept-url pattern="/**"
+			access="isAuthenticated()" />
+		<!-- <security:access-denied-handler error-page="/403.htm"/> -->
+	</security:http>
+
+	<bean id="digestAuthenticatedEntryPoint"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationEntryPoint">
+		<property name="realmName" value="${REALM_NAME}" />
+		<property name="key" value="4tRestKey" />
+	</bean>
+	
+	<bean id="digestAuthenticatedProcessingFilter"
+		class="org.springframework.security.web.authentication.www.DigestAuthenticationFilter">
+		<property name="authenticationEntryPoint" ref="digestAuthenticatedEntryPoint" />
+		<property name="userDetailsService" ref="appAuthenticationService" />
+		<property name="passwordAlreadyEncoded" value="true" />
+	</bean>
+
+	<bean id="abstractDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
+		abstract="true">
+		<constructor-arg name="decisionVoters">
+			<list>
+				<!-- You need to customize this because Spring Security assumes a default 
+					"ROLE_" prefix for each role. This specific configuration ensures that the 
+					roles prefix is set to "". -->
+				<bean id="roleVoter" class="org.springframework.security.access.vote.RoleVoter"
+					p:rolePrefix="" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="urlAccessDecisionManager" parent="abstractDecisionManager">
+		<constructor-arg name="decisionVoters">
+			<list merge="true">
+				<bean
+					class="org.springframework.security.web.access.expression.WebExpressionVoter" />
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="methodAccessDecisionManager" parent="abstractDecisionManager">
+		<constructor-arg name="decisionVoters">
+			<list merge="true">
+				<bean class="org.springframework.security.access.annotation.Jsr250Voter" />
+				<bean
+					class="org.springframework.security.access.prepost.PreInvocationAuthorizationAdviceVoter">
+					<constructor-arg>
+						<bean
+							class="org.springframework.security.access.expression.method.ExpressionBasedPreInvocationAdvice" />
+					</constructor-arg>
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+
+</beans>

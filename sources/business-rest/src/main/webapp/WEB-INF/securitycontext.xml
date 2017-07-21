@@ -10,20 +10,23 @@
 
 	<!-- This is the basic configuration of Spring security using the namespace. 
 		We add our custom filter to its predefined list of filters -->
-	<security:http realm="${REALM_NAME}"
+	<security:http
+		entry-point-ref="appBasicAuthenticationEntryPoint"
+		authentication-manager-ref="appAuthenticationManager"
 		create-session="never"
 		access-decision-manager-ref="urlAccessDecisionManager"
 		use-expressions="true">
 		<security:intercept-url pattern="/**"
 			access="isAuthenticated()" />
+		<security:custom-filter ref="basicAuthenticationFilter" position="BASIC_AUTH_FILTER"/>
 		<!-- <security:access-denied-handler error-page="/403.htm"/> -->
-		<security:http-basic/>
 	</security:http>
 	
-	<security:authentication-manager>
-		<security:authentication-provider ref="appAuthenticationProvider" />
-	</security:authentication-manager>
-
+	<bean id="basicAuthenticationFilter" class="org.springframework.security.web.authentication.www.BasicAuthenticationFilter">
+		<constructor-arg name="authenticationManager" ref="appAuthenticationManager"/>
+		<constructor-arg name="authenticationEntryPoint" ref="appBasicAuthenticationEntryPoint"/>
+	</bean>
+	
 	<bean id="abstractDecisionManager" class="org.springframework.security.access.vote.UnanimousBased"
 		abstract="true">
 		<constructor-arg name="decisionVoters">

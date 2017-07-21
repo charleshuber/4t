@@ -8,7 +8,7 @@ import javax.inject.Inject;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -23,10 +23,10 @@ import org.springframework.util.DigestUtils;
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
 
-@Service("appAuthenticationProvider")
-public class AppAuthenticationProvider implements AuthenticationProvider {
+@Service("appAuthenticationManager")
+public class AppAuthenticationManager implements AuthenticationManager {
 	
-	Log logger = LogFactory.getLog(AppAuthenticationProvider.class);
+	Log logger = LogFactory.getLog(AppAuthenticationManager.class);
 	
 	@Inject
 	protected UserDao userDao;
@@ -45,11 +45,6 @@ public class AppAuthenticationProvider implements AuthenticationProvider {
 			throw new BadCredentialsException("Incorrect password for user " + name);
 		}
 		return new UsernamePasswordAuthenticationToken(name, null, userDetail.getAuthorities());
-	}
-
-	@Override
-	public boolean supports(Class<?> authentication) {
-		return authentication.equals(UsernamePasswordAuthenticationToken.class);
 	}
 	
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {

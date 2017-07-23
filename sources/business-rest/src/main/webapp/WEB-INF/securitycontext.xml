@@ -16,6 +16,7 @@
 		create-session="never"
 		access-decision-manager-ref="urlAccessDecisionManager"
 		use-expressions="true">
+		<security:csrf disabled="true"/>
 		<security:intercept-url pattern="/**"
 			access="isAuthenticated()" />
 		<security:custom-filter ref="basicAuthenticationFilter" position="BASIC_AUTH_FILTER"/>

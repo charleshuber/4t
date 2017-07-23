@@ -12,9 +12,10 @@
 		</encoder>
 	</appender>
 	
-	<root level="DEBUG">
+	<root level="TRACE">
 		<appender-ref ref="CONSOLE" />
 	</root>
-	<logger name="org.apache.cxf" level="INFO" />
+	<logger name="*" level="TRACE" />
+	<logger name="org.apache.cxf" level="DEBUG" />
 	<logger name="org.springframework" level="DEBUG" />
 </configuration>

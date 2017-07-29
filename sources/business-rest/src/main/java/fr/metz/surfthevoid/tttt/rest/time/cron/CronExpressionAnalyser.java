@@ -4,25 +4,24 @@ import java.text.ParseException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import java.util.TreeSet;
 
 import org.quartz.CronExpression;
 
-import fr.metz.surfthevoid.tttt.rest.time.cron.AbstractTimeParser.ParsingResult;
+import fr.metz.surfthevoid.tttt.rest.time.cron.AbstractTimeParser.BasicParsingResult;
 import fr.metz.surfthevoid.tttt.rest.time.cron.DaysInMonthParser.DaysInMonthParsingResult;
 import fr.metz.surfthevoid.tttt.rest.time.cron.DaysInWeekParser.DaysInWeekParsingResult;
+import fr.metz.surfthevoid.tttt.rest.time.cron.YearsParser.YearsParsingResult;
 
 public class CronExpressionAnalyser {
 	
 	protected String expression;
-	protected ParsingResult seconds;
-    protected ParsingResult minutes;
-    protected ParsingResult hours;
+	protected BasicParsingResult seconds;
+    protected BasicParsingResult minutes;
+    protected BasicParsingResult hours;
     protected DaysInMonthParsingResult daysOfMonth;
-    protected ParsingResult months;
+    protected BasicParsingResult months;
     protected DaysInWeekParsingResult daysOfWeek;
-    
-    protected transient TreeSet<Integer> years;
+    protected YearsParsingResult years;
 	
 	public static void main(String...strings) throws ParseException{
 		/*
@@ -32,10 +31,10 @@ public class CronExpressionAnalyser {
 		*/
 		
 		List<String> expressions = Arrays.asList(
-		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ?",
-		"5-27 10/5  23 ? * L-2",
-		"10/5 5-27 12,21,2-4,3/5 ? * MONL",
-		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3");
+		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2001",
+		"5-27 10/5  23 ? * L-2 2001,2003,2440-2441,2100/3",
+		"10/5 5-27 12,21,2-4,3/5 ? * MONL 2440-2441",
+		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2100/3");
 		
 		for(String expression : expressions){
 
@@ -48,6 +47,8 @@ public class CronExpressionAnalyser {
 			CronExpression exp2 = new CronExpression(expression);
 			t2 = new Date().getTime();
 			System.out.println("cron:" + (t2 - t1) + "; exp:" + exp2);
+			System.out.println("");
+			System.out.println("");
 		}
 		
 	}
@@ -58,18 +59,17 @@ public class CronExpressionAnalyser {
 			throw new IllegalArgumentException();
 		}
 		SecondsMinutesParser smParser = new SecondsMinutesParser();
-		HoursParser hParser = new HoursParser();
-		DaysInMonthParser domParser = new DaysInMonthParser();
-		MonthsParser monthParser = new MonthsParser();
-		DaysInWeekParser dowParser = new DaysInWeekParser();
+
 		
 		seconds = smParser.parse(individuals[0]);
 		minutes = smParser.parse(individuals[1]);
-		hours = hParser.parse(individuals[2]);
-		daysOfMonth = domParser.parse(individuals[3]);
-		months = monthParser.parse(individuals[4]);
-		daysOfWeek = dowParser.parse(individuals[5]);
-		
+		hours = new HoursParser().parse(individuals[2]);
+		daysOfMonth = new DaysInMonthParser().parse(individuals[3]);
+		months = new MonthsParser().parse(individuals[4]);
+		daysOfWeek = new DaysInWeekParser().parse(individuals[5]);
+		if(individuals.length == 7){
+			years = new YearsParser().parse(individuals[6]);
+		}
 		this.expression = cronExpression;
 	}
 
@@ -90,9 +90,9 @@ public class CronExpressionAnalyser {
 		builder.append(months);
 		builder.append(", daysOfWeek=");
 		builder.append(daysOfWeek);
+		builder.append(", years=");
+		builder.append(years);
 		builder.append("]");
 		return builder.toString();
-	}
-	
-	
+	}		
 }

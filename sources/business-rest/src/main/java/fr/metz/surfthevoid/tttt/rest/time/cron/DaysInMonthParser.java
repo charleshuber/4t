@@ -24,7 +24,7 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 	}
 
 	@Override
-	protected Boolean doSpecificTreatement(String value, DaysInMonthParsingResult result) {
+	protected Boolean extractSpecificPattern(String value, DaysInMonthParsingResult result) {
 		Integer nearestWeekday = null;
 		if(lastWeekDayOfMonth.equals(value)){
 			result.lastWeekday = true;

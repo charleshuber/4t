@@ -1,13 +1,12 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public abstract class AbstractTimeParser {
+import fr.metz.surfthevoid.tttt.rest.time.cron.AbstractTimeParser.BasicParsingResult;
+
+public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 	
     protected String timevalue;
     protected String timerange;
@@ -32,85 +31,79 @@ public abstract class AbstractTimeParser {
     	this.tvp = Pattern.compile(timevalue);
     }
     
-    public ParsingResult parse(String value){
-    	ParsingResult parsingResult = new ParsingResult();
-    	parsingResult.values = this.extractTimeValues(value);
+    public T parse(String value){
+    	T parsingResult = newDayParsingResult();
+    	this.extractTimeValues(value, parsingResult);
     	return parsingResult;
     }
     
-	protected TreeSet<Integer> extractTimeValues(String value){
-		TreeSet<Integer> results = new TreeSet<Integer>();
-		if(isIgnore(value)){
-			return results;
+	protected void extractTimeValues(String value, T parsingResult){
+		if(isIgnored(value)){
+			return;
 		} else if(isTimeList(value)){
 			String[] values = value.split(",");
 			for(int i=0; i< values.length; i++){
-				results.addAll(extractTimelistItem(values[i]));
+				extractTimelistItem(values[i], parsingResult);
 			}
 		} else {
-			results.addAll(extractTimelistItem(value));
+			extractTimelistItem(value, parsingResult);
 		}
-		return results;
 	}
 	
-	protected Boolean isIgnore(String value) {
+	protected Boolean isIgnored(String value) {
 		return value.equals("*");
 	}
 
-	protected List<Integer> extractTimelistItem(String value){
-		if (isTimeInterval(value)){
-			return extractTimeInterval(value);
-		} else if(isTimeRange(value)){
-			return extractTimeRange(value);
+	protected void extractTimelistItem(String value, T parsingResult){
+		if (extractTimeInterval(value, parsingResult)){
+			return;
+		} else if(extractTimeRange(value, parsingResult)){
+			return;
 		} else if(isTimeValue(value)){
-			return Arrays.asList(Integer.parseInt(value));
+			parsingResult.values.add(Integer.parseInt(value));
+			return;
 		}
 		throw new IllegalArgumentException();
 	}
 	
-	protected List<Integer> extractTimeInterval(String value){
-		List<Integer> results = new ArrayList<Integer>();
+	protected Boolean extractTimeInterval(String value, T parsingResult){
 		Matcher tim = tip.matcher(value);
-		if(tim.find()){
+		if(tim.matches() && tim.reset().find()){
 			int start = Integer.parseInt(tim.group(2));
 			int itv = Integer.parseInt(tim.group(3));
 			for(int i=start; i <= getMaxTimeValue(); i+=itv){
-				results.add(i);
+				parsingResult.values.add(i);
 			}
+			return true;
 		}
-		return results;
+		return false;
 	}
 	
-	protected abstract Integer getMaxTimeValue();
-	
-	protected List<Integer> extractTimeRange(String value){
-		List<Integer> results = new ArrayList<Integer>();
+	protected Boolean extractTimeRange(String value, T parsingResult){
 		Matcher trm = trp.matcher(value);
-		if(trm.find()){
+		if(trm.matches() && trm.reset().find()){
 			int start = Integer.parseInt(trm.group(2));
 			int end = Integer.parseInt(trm.group(3));
 			for(int i=start; i <= end; i++){
-				results.add(i);
+				parsingResult.values.add(i);
 			}
+			return true;
 		}
-		return results;
+		return false;
 	}
 	
 	protected Boolean isTimeList(String value){
 		return tlp.matcher(value).matches();
 	}
-	protected Boolean isTimeInterval(String value){
-		return tip.matcher(value).matches();
-	}
-	protected Boolean isTimeRange(String value){
-		return trp.matcher(value).matches();
-	}
 	protected Boolean isTimeValue(String value){
 		return tvp.matcher(value).matches();
 	}
 	
-	public static class ParsingResult {
-		protected TreeSet<Integer> values;
+	protected abstract Integer getMaxTimeValue();
+	protected abstract T newDayParsingResult();
+	
+	public static class BasicParsingResult {
+		protected final TreeSet<Integer> values = new TreeSet<Integer>();
 		public TreeSet<Integer> getValues() {
 			return values;
 		}

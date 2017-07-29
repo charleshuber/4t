@@ -44,7 +44,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 	}
 
 	@Override
-	protected Boolean doSpecificTreatement(String value, DaysInWeekParsingResult result) {
+	protected Boolean extractSpecificPattern(String value, DaysInWeekParsingResult result) {
 		DayPosition dayPosition = null;
 		Integer lastXOfMonth = null;
 		if((lastXOfMonth = getLastXOfMonth(value)) != null){

@@ -1,6 +1,8 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
-public class HoursParser extends AbstractTimeParser {
+import fr.metz.surfthevoid.tttt.rest.time.cron.AbstractTimeParser.BasicParsingResult;
+
+public class HoursParser extends AbstractTimeParser<BasicParsingResult> {
 	
 	public static final String value = "([0-9]|1[0-9]|2[0-3])";
 	
@@ -11,5 +13,10 @@ public class HoursParser extends AbstractTimeParser {
 	@Override
 	protected Integer getMaxTimeValue() {
 		return 23;
+	}
+	
+	@Override
+	protected BasicParsingResult newDayParsingResult() {
+		return new BasicParsingResult();
 	}
 }

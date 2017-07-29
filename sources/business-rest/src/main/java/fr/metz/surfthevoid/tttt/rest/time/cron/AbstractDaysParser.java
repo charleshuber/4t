@@ -5,7 +5,7 @@ import java.util.regex.Pattern;
 
 import fr.metz.surfthevoid.tttt.rest.time.cron.AbstractDaysParser.DaysParsingResult;
 
-public abstract class AbstractDaysParser<T extends DaysParsingResult> extends AbstractTimeParser {
+public abstract class AbstractDaysParser<T extends DaysParsingResult> extends AbstractTimeParser<T> {
 	
 	public static final String unknown = "?";
 	public static final String lastDay = "L";
@@ -22,25 +22,24 @@ public abstract class AbstractDaysParser<T extends DaysParsingResult> extends Ab
 	@Override
 	public T parse(String value){
 		Integer lastdayOffset = null;
-		T result = newDayParsingResult();
+		T parsingResults = newDayParsingResult();
 		if(unknown.equals(value)){
-			result.unknown = true;
+			parsingResults.unknown = true;
 		} else if(lastDay.equals(value)){
-			result.lastDay = true;
+			parsingResults.lastDay = true;
 		} else if((lastdayOffset = getBeforeLastDay(value)) != null){
-			result.lastDayOffset = lastdayOffset;
-		} else if(!doSpecificTreatement(value, result)){
-			result.values = extractTimeValues(value);
+			parsingResults.lastDayOffset = lastdayOffset;
+		} else if(!extractSpecificPattern(value, parsingResults)){
+			extractTimeValues(value, parsingResults);
 		}
-		return result;
+		return parsingResults;
 	}
 	
-	protected abstract T newDayParsingResult();
-	protected abstract Boolean doSpecificTreatement(String value, T result);
+	protected abstract Boolean extractSpecificPattern(String value, T result);
 	
 	@Override
-	protected Boolean isIgnore(String value) {
-		return super.isIgnore(value) || value.equals(unknown);
+	protected Boolean isIgnored(String value) {
+		return super.isIgnored(value) || value.equals(unknown);
 	}
 	
 	protected Integer getBeforeLastDay(String value){
@@ -51,7 +50,7 @@ public abstract class AbstractDaysParser<T extends DaysParsingResult> extends Ab
 		return null;
 	}
 	
-	public static abstract class DaysParsingResult extends ParsingResult {
+	public static abstract class DaysParsingResult extends BasicParsingResult {
 		protected Boolean unknown;
 		protected Boolean lastDay;
 		protected Integer lastDayOffset;

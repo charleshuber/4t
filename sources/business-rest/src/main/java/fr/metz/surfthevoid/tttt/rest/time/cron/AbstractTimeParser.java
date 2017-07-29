@@ -39,6 +39,7 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
     
 	protected void extractTimeValues(String value, T parsingResult){
 		if(isIgnored(value)){
+			parsingResult.all = true;
 			return;
 		} else if(isTimeList(value)){
 			String[] values = value.split(",");
@@ -103,14 +104,40 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 	protected abstract T newDayParsingResult();
 	
 	public static class BasicParsingResult {
+		protected Boolean all = false;
 		protected final TreeSet<Integer> values = new TreeSet<Integer>();
+		
 		public TreeSet<Integer> getValues() {
 			return values;
 		}
+		
+		public Boolean getAll() {
+			return all;
+		}
+
+		public Boolean isValid(Integer value){
+			if(all) return true;
+			return values.contains(values);
+		}
+		
+		public Integer next(Integer value){
+			if(all) return value + 1;
+			Integer next = values.higher(value);
+			return next == null ? values.first() : next;
+		}
+		
+		public Integer previous(Integer value){
+			if(all) return -1;
+			Integer previous = values.lower(value);
+			return previous == null ? values.last() : previous;
+		}
+
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("ParsingResult [values=");
+			builder.append("BasicParsingResult [all=");
+			builder.append(all);
+			builder.append(", values=");
 			builder.append(values);
 			builder.append("]");
 			return builder.toString();

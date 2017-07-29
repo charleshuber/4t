@@ -64,18 +64,24 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("DaysInMonthParsingResult [lastDayOfMonth=");
-			builder.append(lastDay);
-			builder.append(", lastWeekday=");
+			builder.append("DaysInMonthParsingResult [lastWeekday=");
 			builder.append(lastWeekday);
 			builder.append(", nearestWeekday=");
 			builder.append(nearestWeekday);
-			builder.append(", lastdayOffset=");
+			builder.append(", unknown=");
+			builder.append(unknown);
+			builder.append(", lastDay=");
+			builder.append(lastDay);
+			builder.append(", lastDayOffset=");
 			builder.append(lastDayOffset);
+			builder.append(", all=");
+			builder.append(all);
 			builder.append(", values=");
 			builder.append(values);
 			builder.append("]");
 			return builder.toString();
 		}
+		
+		
 	}
 }

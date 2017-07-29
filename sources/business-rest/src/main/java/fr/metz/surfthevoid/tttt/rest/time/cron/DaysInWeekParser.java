@@ -110,11 +110,14 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 			builder.append(lastDay);
 			builder.append(", lastDayOffset=");
 			builder.append(lastDayOffset);
+			builder.append(", all=");
+			builder.append(all);
 			builder.append(", values=");
 			builder.append(values);
 			builder.append("]");
 			return builder.toString();
 		}
+		
 	}
 	
 	public static class DayPosition{

@@ -44,18 +44,42 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 		public TreeSet<YearInterval> getIntervals() {
 			return intervals;
 		}
+		
+		@Override
+		public Boolean isValid(Integer value){
+			if(all) return true;
+			if(intervals.size() > 0){
+				do the stuff
+			}
+			return values.contains(values);
+		}
+		
+		@Override
+		public Integer next(Integer value){
+			if(all) return value + 1;
+			Integer next = values.higher(value);
+			return next == null ? values.first() : next;
+		}
+		
+		@Override
+		public Integer previous(Integer value){
+			if(all) return -1;
+			Integer previous = values.lower(value);
+			return previous == null ? values.last() : previous;
+		}
 
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("YearParsingResult [intervals=");
+			builder.append("YearsParsingResult [intervals=");
 			builder.append(intervals);
+			builder.append(", all=");
+			builder.append(all);
 			builder.append(", values=");
 			builder.append(values);
 			builder.append("]");
 			return builder.toString();
 		}
-	
 	}
 	
 	public static class YearInterval implements Comparable<YearInterval>{

@@ -32,8 +32,8 @@ public class CronExpressionAnalyser {
 		
 		List<String> expressions = Arrays.asList(
 		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2001",
-		"5-27 10/5  23 ? * L-2 2001,2003,2440-2441,2100/3",
-		"10/5 5-27 12,21,2-4,3/5 ? * MONL 2440-2441",
+		"5-27 10/5  23 ? * L-2 2001,2003,2440-2444,2100/3,2102/4",
+		"10/5 5-27 12,21,2-4,3/5 ? * MONL 2440-2444",
 		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2100/3");
 		
 		for(String expression : expressions){
@@ -55,12 +55,10 @@ public class CronExpressionAnalyser {
 	
 	public CronExpressionAnalyser(String cronExpression){
 		String[] individuals = cronExpression.split("\\s+");
-		if(individuals.length < 6){
+		if(individuals.length < 6 || individuals.length > 7){
 			throw new IllegalArgumentException();
 		}
 		SecondsMinutesParser smParser = new SecondsMinutesParser();
-
-		
 		seconds = smParser.parse(individuals[0]);
 		minutes = smParser.parse(individuals[1]);
 		hours = new HoursParser().parse(individuals[2]);

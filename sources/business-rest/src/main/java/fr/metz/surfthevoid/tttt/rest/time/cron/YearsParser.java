@@ -2,6 +2,7 @@ package fr.metz.surfthevoid.tttt.rest.time.cron;
 
 import java.util.TreeSet;
 import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.NotImplementedException;
 
@@ -48,25 +49,76 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 		@Override
 		public Boolean isValid(Integer value){
 			if(all) return true;
-			if(intervals.size() > 0){
-				do the stuff
+			if(intervals.stream().filter((itv) -> {
+					return itv.startYear == value || 
+							(itv.startYear < value && (value - itv.startYear) % itv.interval == 0);
+				}).findFirst().isPresent()){
+				return true;
 			}
-			return values.contains(values);
+			return values.contains(value);
 		}
 		
 		@Override
 		public Integer next(Integer value){
 			if(all) return value + 1;
-			Integer next = values.higher(value);
-			return next == null ? values.first() : next;
+			Integer nextItvValue = nextInterval(value);
+			Integer nextValue = values.higher(value);
+			if(nextItvValue != null){
+				if(nextValue == null){
+					return nextItvValue;
+				}
+				//return the lower element
+				return nextItvValue - nextValue > 0 ? nextValue : nextItvValue;
+			}
+			return nextValue;
 		}
 		
 		@Override
 		public Integer previous(Integer value){
 			if(all) return -1;
-			Integer previous = values.lower(value);
-			return previous == null ? values.last() : previous;
+			Integer previousItvValue = previousInterval(value);
+			Integer previousValue = values.lower(value);
+			if(previousItvValue != null){
+				if(previousValue == null){
+					return previousItvValue;
+				}
+				//return the greater element
+				return previousItvValue - previousValue > 0 ? previousItvValue : previousValue;
+			}
+			return previousValue;
 		}
+		
+		protected Integer nextInterval(Integer value){
+			TreeSet<Integer> itvValues = intervals.stream()
+			.filter(itv -> value > itv.startYear)
+			.map(itv -> {
+				//if: 2010/6 && value == 2046 => modulo: (2046-2010)%6=0 => result: 2046-0+6=2052
+				//if: 2010/6 && value == 2047 => modulo: (2047-2010)%6=1 => result: 2047-1+6=2052
+				int modulo = (value - itv.startYear) % itv.interval;
+				return value - modulo + itv.interval;
+			}).collect(Collectors.toCollection(() -> new TreeSet<Integer>()));
+			if(itvValues.isEmpty()) return null;
+			// return the lower element
+			return itvValues.first();
+		}
+		
+		protected Integer previousInterval(Integer value){
+			TreeSet<Integer> itvValues = intervals.stream()
+			.filter(itv -> value > itv.startYear)
+			.map(itv -> {
+				//if: 2010/6 && value == 2046 => modulo: (2046-2010)%6=0 => result: 2046-6=2040
+				//if: 2010/6 && value == 2047 => modulo: (2047-2010)%6=1 => result: 2047-1=2046
+				int modulo = (value - itv.startYear) % itv.interval;
+				if(modulo == 0){
+					return value - itv.interval;
+				}
+				return value - modulo;
+			}).collect(Collectors.toCollection(() -> new TreeSet<Integer>()));
+			if(itvValues.isEmpty()) return null;
+			// return the greater element
+			return itvValues.last();
+		}
+		
 
 		@Override
 		public String toString() {

@@ -121,12 +121,20 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 		}
 		
 		public Integer next(Integer value){
+			return rollingNext(value);
+		}
+		
+		public Integer previous(Integer value){
+			return rollingPevious(value);
+		}
+		
+		protected Integer rollingNext(Integer value){
 			if(all) return value + 1;
 			Integer next = values.higher(value);
 			return next == null ? values.first() : next;
 		}
 		
-		public Integer previous(Integer value){
+		protected Integer rollingPevious(Integer value){
 			if(all) return -1;
 			Integer previous = values.lower(value);
 			return previous == null ? values.last() : previous;

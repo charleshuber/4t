@@ -1,5 +1,10 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -62,6 +67,72 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 		}
 		
 		@Override
+		public Boolean isValid(LocalDateTime dateTime, ChronoField field){
+			if(all || unknown) return true;
+			int value = dateTime.getDayOfMonth();
+			if(lastDay){
+				
+			} else if (lastDayOffset != null){
+				
+			} else if(lastWeekday){
+				
+			} else if(nearestWeekday != null){
+				
+			}
+			return values.contains(value);
+		}
+		
+		@Override
+		public LocalDateTime rollToNext(LocalDateTime dateTime, ChronoField field){
+			if(all){
+				return dateTime.plusDays(1);
+			} 
+			int value = dateTime.getDayOfMonth();
+			if(unknown){
+				Integer next = rollToNext(getAllPermittedValues(dateTime), value);
+				return dateTime.withDayOfMonth(next);
+			} else if(lastDay){
+				
+			} else if (lastDayOffset != null){
+				
+			} else if(lastWeekday){
+				
+			} else if(nearestWeekday != null){
+				
+			}
+			return super.rollToNext(dateTime, field);
+		}
+		
+		@Override
+		public LocalDateTime rollToPrevious(LocalDateTime dateTime, ChronoField field){
+			int value = dateTime.getDayOfMonth();
+			if(unknown){
+				Integer previous = rollToNext(getAllPermittedValues(dateTime), value);
+				return dateTime.withDayOfMonth(previous);
+			} else if(lastDay){
+				
+			} else if (lastDayOffset != null){
+				
+			} else if(lastWeekday){
+				
+			} else if(nearestWeekday != null){
+				
+			}
+			return super.rollToPrevious(dateTime, field);
+		}
+		
+		@Override
+		protected TreeSet<Integer> getAllPermittedValues(LocalDateTime dateTime) {
+			long numberOfDaysInCurrentMonth = Duration.between(dateTime.truncatedTo(ChronoUnit.MONTHS), 
+					dateTime.truncatedTo(ChronoUnit.MONTHS).plusMonths(1)).toDays();
+			TreeSet<Integer> daysInCurrentMonth = new TreeSet<>();
+			for(int i=1; i <= numberOfDaysInCurrentMonth; i++){
+				daysInCurrentMonth.add(i);
+			}
+			return daysInCurrentMonth;
+		}
+		
+		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
 			builder.append("DaysInMonthParsingResult [lastWeekday=");
@@ -80,8 +151,6 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 			builder.append(values);
 			builder.append("]");
 			return builder.toString();
-		}
-		
-		
+		}	
 	}
 }

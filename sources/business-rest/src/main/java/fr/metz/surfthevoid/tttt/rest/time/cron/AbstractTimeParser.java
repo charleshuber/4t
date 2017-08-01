@@ -1,5 +1,7 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -103,7 +105,7 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 	protected abstract Integer getMaxTimeValue();
 	protected abstract T newDayParsingResult();
 	
-	public static class BasicParsingResult {
+	public static abstract class BasicParsingResult {
 		protected Boolean all = false;
 		protected final TreeSet<Integer> values = new TreeSet<Integer>();
 		
@@ -115,30 +117,44 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 			return all;
 		}
 
-		public Boolean isValid(Integer value){
+		public Boolean isValid(LocalDateTime dateTime, ChronoField field){
+			int value = dateTime.get(field);
 			if(all) return true;
-			return values.contains(values);
+			return values.contains(value);
 		}
 		
-		public Integer next(Integer value){
-			return rollingNext(value);
+		public LocalDateTime rollToNext(LocalDateTime dateTime, ChronoField field){
+			int value = dateTime.get(field);
+			TreeSet<Integer> permittedValues = values;
+			if(all) {
+				permittedValues = getAllPermittedValues(dateTime);
+			}
+			return dateTime.with(field, rollToNext(permittedValues, value));
+		}
+
+		public LocalDateTime rollToPrevious(LocalDateTime dateTime, ChronoField field){
+			int value = dateTime.get(field);
+			TreeSet<Integer> permittedValues = values;
+			if(all) {
+				permittedValues = getAllPermittedValues(dateTime);
+			}
+			return dateTime.with(field, rollToNext(permittedValues, value));
 		}
 		
-		public Integer previous(Integer value){
-			return rollingPevious(value);
-		}
-		
-		protected Integer rollingNext(Integer value){
-			if(all) return value + 1;
+		protected Integer rollToNext(TreeSet<Integer> values, Integer value){
 			Integer next = values.higher(value);
-			return next == null ? values.first() : next;
+			next = next == null ? values.first() : next;
+			return next;
 		}
 		
-		protected Integer rollingPevious(Integer value){
-			if(all) return -1;
+		protected Integer rollToNext(TreeSet<Integer> values, Integer value){
 			Integer previous = values.lower(value);
-			return previous == null ? values.last() : previous;
+			previous = previous == null ? values.last() : previous;
+			return previous;
 		}
+		
+		
+		protected abstract TreeSet<Integer> getAllPermittedValues(LocalDateTime dateTime);
 
 		@Override
 		public String toString() {

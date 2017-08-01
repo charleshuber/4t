@@ -1,5 +1,7 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.stream.Collectors;
@@ -47,55 +49,72 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 		}
 		
 		@Override
-		public Boolean isValid(Integer value){
+		public Boolean isValid(LocalDateTime dateTime, ChronoField field){
+			Integer year = dateTime.getYear();
 			if(all) return true;
 			if(intervals.stream().filter((itv) -> {
-					return itv.startYear == value || 
-							(itv.startYear < value && (value - itv.startYear) % itv.interval == 0);
+					return itv.startYear == year || 
+							(itv.startYear < year && (year - itv.startYear) % itv.interval == 0);
 				}).findFirst().isPresent()){
 				return true;
 			}
-			return values.contains(value);
+			return values.contains(year);
 		}
 		
 		@Override
-		public Integer next(Integer value){
-			if(all) return value + 1;
-			Integer nextItvValue = nextInterval(value);
-			Integer nextValue = values.higher(value);
+		public LocalDateTime rollToNext(LocalDateTime dateTime, ChronoField field){
+			Integer year = dateTime.getYear();
+			if(all) return dateTime.plusYears(1);
+			Integer nextValue = values.higher(year);
+			Integer nextItvValue = nextInterval(year);
 			if(nextItvValue != null){
 				if(nextValue == null){
-					return nextItvValue;
+					nextValue = nextItvValue;
+				} else {
+					//return the lower element
+					nextValue = nextItvValue - nextValue > 0 ? nextValue : nextItvValue;
 				}
-				//return the lower element
-				return nextItvValue - nextValue > 0 ? nextValue : nextItvValue;
 			}
-			return nextValue;
+			if(nextValue != null){
+				return dateTime.withYear(nextValue);
+			}
+			return null;
 		}
 		
 		@Override
-		public Integer previous(Integer value){
-			if(all) return -1;
-			Integer previousItvValue = previousInterval(value);
-			Integer previousValue = values.lower(value);
+		public LocalDateTime rollToPrevious(LocalDateTime dateTime, ChronoField field){
+			Integer year = dateTime.getYear();
+			if(all) return dateTime.minusYears(1);
+			Integer previousValue = values.lower(year);
+			Integer previousItvValue = previousInterval(year);
 			if(previousItvValue != null){
 				if(previousValue == null){
-					return previousItvValue;
+					previousValue = previousItvValue;
+				} else {
+					previousValue = previousItvValue - previousValue > 0 ? previousItvValue : previousValue;
 				}
-				//return the greater element
-				return previousItvValue - previousValue > 0 ? previousItvValue : previousValue;
 			}
-			return previousValue;
+			if(previousValue != null){
+				return dateTime.withYear(previousValue);
+			}
+			return null;
 		}
 		
 		protected Integer nextInterval(Integer value){
 			TreeSet<Integer> itvValues = intervals.stream()
-			.filter(itv -> value > itv.startYear)
 			.map(itv -> {
+				//if: 2010/6 && value == 2010 => result: 2010 + 6 = 2016
 				//if: 2010/6 && value == 2046 => modulo: (2046-2010)%6=0 => result: 2046-0+6=2052
 				//if: 2010/6 && value == 2047 => modulo: (2047-2010)%6=1 => result: 2047-1+6=2052
-				int modulo = (value - itv.startYear) % itv.interval;
-				return value - modulo + itv.interval;
+				//if: 2010/6 && value == 1980 => result: 2010
+				int gap = value - itv.startYear;
+				if(gap == 0) return value + itv.interval;
+				if(gap > 0){
+					int modulo = gap % itv.interval;
+					return value - modulo + itv.interval;
+				} else {
+					return itv.startYear;
+				}
 			}).collect(Collectors.toCollection(() -> new TreeSet<Integer>()));
 			if(itvValues.isEmpty()) return null;
 			// return the lower element
@@ -108,7 +127,7 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 			.map(itv -> {
 				//if: 2010/6 && value == 2046 => modulo: (2046-2010)%6=0 => result: 2046-6=2040
 				//if: 2010/6 && value == 2047 => modulo: (2047-2010)%6=1 => result: 2047-1=2046
-				int modulo = (value - itv.startYear) % itv.interval;
+				int modulo = value - itv.startYear % itv.interval;
 				if(modulo == 0){
 					return value - itv.interval;
 				}
@@ -131,6 +150,11 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 			builder.append(values);
 			builder.append("]");
 			return builder.toString();
+		}
+
+		@Override
+		protected TreeSet<Integer> getAllPermittedValues(LocalDateTime dateTime) {
+			throw new NotImplementedException("All values are permitted");
 		}
 	}
 	

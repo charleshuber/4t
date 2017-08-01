@@ -1,8 +1,10 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
+import java.time.LocalDateTime;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -27,6 +29,9 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		    new SimpleEntry<String, String>("THU", "5"),
 		    new SimpleEntry<String, String>("FRI", "6"),
 		    new SimpleEntry<String, String>("SAT", "7"));
+	
+	private static final TreeSet<Integer> allPeriodValues = new TreeSet<>(Arrays.asList(
+			1, 2, 3, 4, 5, 6, 7));
 			
 	protected DaysInWeekParser() {
 		super(value);
@@ -59,7 +64,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 
 	@Override
 	protected Integer getMaxTimeValue() {
-		return 7;
+		return allPeriodValues.last();
 	}
 	
 	protected Integer getLastXOfMonth(String value){
@@ -94,9 +99,16 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		public Integer getLastXOfMonth() {
 			return lastXOfMonth;
 		}
+		
 		public DayPosition getDayPosition() {
 			return dayPosition;
 		}
+		
+		@Override
+		protected TreeSet<Integer> getAllPermittedValues(LocalDateTime dateTime) {
+			return allPeriodValues;
+		}
+		
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
@@ -117,10 +129,9 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 			builder.append("]");
 			return builder.toString();
 		}
-		
 	}
 	
-	public static class DayPosition{
+	public static class DayPosition {
 		
 		private final Integer day;
 		private final Integer position;

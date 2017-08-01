@@ -147,7 +147,7 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 			return next;
 		}
 		
-		protected Integer rollToNext(TreeSet<Integer> values, Integer value){
+		protected Integer rollToPrevious(TreeSet<Integer> values, Integer value){
 			Integer previous = values.lower(value);
 			previous = previous == null ? values.last() : previous;
 			return previous;

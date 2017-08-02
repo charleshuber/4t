@@ -69,15 +69,16 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 		@Override
 		public Boolean isValid(LocalDateTime dateTime, ChronoField field){
 			if(all || unknown) return true;
-			int value = dateTime.getDayOfMonth();
+			Integer value = dateTime.getDayOfMonth();
 			if(lastDay){
-				return new Integer(value).equals(getAllPermittedValues(dateTime).last());
+				return value.equals(getAllPermittedValues(dateTime).last());
 			} else if (lastDayOffset != null){
-				
+				LocalDateTime searchedDate = getLastDayOffsetDate(dateTime);
+				return searchedDate != null && value.equals(searchedDate.getDayOfMonth());
 			} else if(lastWeekday){
-				
+				return value.equals(getLastDayOfWeekDate(dateTime).getDayOfMonth());
 			} else if(nearestWeekday != null){
-				
+				return value.equals(getNearestWeekdayDate(dateTime).getDayOfMonth());
 			}
 			return values.contains(value);
 		}
@@ -96,13 +97,7 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 			} else if(lastWeekday){
 				return getLastDayOfWeekDate(dateTime);
 			} else if(nearestWeekday != null){
-				Integer next = rollToNext(getAllPermittedValues(dateTime), value);
-				dateTime = dateTime.withDayOfMonth(next);
-				while(dateTime.getDayOfWeek().getValue() == 1 
-						|| dateTime.getDayOfWeek().getValue() == 7){
-					hrere
-				}
-				return dateTime;
+				return getNearestWeekdayDate(dateTime);
 			}
 			return super.rollToNext(dateTime, field);
 		}
@@ -121,15 +116,36 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 			} else if(lastWeekday){
 				return getLastDayOfWeekDate(dateTime);
 			} else if(nearestWeekday != null){
-				Integer previous = rollToPrevious(getAllPermittedValues(dateTime), value);
-				dateTime = dateTime.withDayOfMonth(previous);
-				while(dateTime.getDayOfWeek().getValue() == 1 
-						|| dateTime.getDayOfWeek().getValue() == 7){
-					heare
-				}
-				return dateTime;
+				return getNearestWeekdayDate(dateTime);
 			}
 			return super.rollToPrevious(dateTime, field);
+		}
+		
+		private LocalDateTime getNearestWeekdayDate(LocalDateTime dateTime){
+			LocalDateTime nearestWeekDayDate = dateTime.withDayOfMonth(nearestWeekday);
+			Integer currentWeekDay = nearestWeekDayDate.getDayOfWeek().getValue();
+			//current weekday is neither a Sunday nor a Saturday
+			if(currentWeekDay != 1 || currentWeekDay != 7)
+				return nearestWeekDayDate;
+			// if current week day is a Sunday
+			if(currentWeekDay == 1){
+				Integer lastDayOfMonth = getAllPermittedValues(dateTime).last();
+				// if it is not the last day of month we jump to the next monday
+				if(nearestWeekDayDate.getDayOfMonth() < lastDayOfMonth){
+					return nearestWeekDayDate.plusDays(1);
+				} 
+				// otherwise we go back to the previous Friday
+				else {
+					return nearestWeekDayDate.minusDays(2);
+				}
+			}
+			// Here the current weekday is a Saturday
+			// if it is not the first day of the month we go back to the previous Tuesday
+			if(nearestWeekDayDate.getDayOfMonth() > 1){
+				return nearestWeekDayDate.minusDays(1);
+			} 
+			// Otherwise we jump to the next Monday
+			return nearestWeekDayDate.plusDays(2);
 		}
 		
 		private LocalDateTime getLastDayOfWeekDate(LocalDateTime dateTime){
@@ -144,9 +160,9 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 		
 		private LocalDateTime getLastDayOffsetDate(LocalDateTime dateTime){
 			Integer beforeLastDay = getAllPermittedValues(dateTime).last() - lastDayOffset;
-			// If the searched day does not exist we do not manipulate the date
+			// If the searched day does not exist we return a null date
 			if(beforeLastDay < 1){
-				return dateTime;
+				return null;
 			}
 			return dateTime.withDayOfMonth(beforeLastDay);
 		}

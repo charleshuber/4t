@@ -104,7 +104,9 @@ public class CronExpressionAnalyser {
 			} else {
 				nextDay = daysOfMonth.rollToNext(nextHour, ChronoField.DAY_OF_MONTH);
 			}
-			if(nextHour.isAfter(current)) return nextMinute;
+			//Warn a day of month can be null if its definition does not match any day of the current month
+			if(nextDay != null && nextDay.isAfter(current)) 
+				return nextDay;
 		}
 		
 		LocalDateTime nextYear = years.rollToNext(current, ChronoField.YEAR);

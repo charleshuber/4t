@@ -1,6 +1,8 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.List;
@@ -105,6 +107,99 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		}
 		
 		@Override
+		public Boolean isValid(LocalDateTime dateTime, ChronoField field){
+			if(all || unknown) return true;
+			Integer value = dateTime.getDayOfWeek().getValue();
+			if(lastDay){
+				return value.equals(getAllPermittedValues(dateTime).last());
+			} else if (lastDayOffset != null){
+				Integer searchedValue = getAllPermittedValues(dateTime).last() - lastDayOffset;
+				return value.equals(searchedValue);
+			} else if(lastXOfMonth != null){
+				return value.equals(getLastXOfMonth(dateTime).getDayOfMonth());
+			} else if(dayPosition != null){
+				return value.equals(getPositionedDay(dateTime).getDayOfMonth());
+			}
+			return values.contains(value);
+		}
+		
+		@Override
+		public LocalDateTime rollToNext(LocalDateTime dateTime, ChronoField field){
+			int value = dateTime.getDayOfMonth();
+			if(unknown){
+				Integer next = rollToNext(getAllPermittedValues(dateTime), value);
+				return dateTime.withDayOfMonth(next);
+			} else if(lastDay){
+				return rollToNext(dateTime, 7);
+			} else if (lastDayOffset != null){
+				return getLastDayOffsetDate(dateTime);
+			} else if(lastXOfMonth != null){
+				return getLastXOfMonth(dateTime);
+			} else if(dayPosition != null){
+				return getPositionedDay(dateTime);
+			}
+			wrong: return super.rollToNext(dateTime, field);
+		}
+		
+		private LocalDateTime rollToNext(LocalDateTime dateTime, int value) {
+			int currentMonth = dateTime.getMonthValue();
+			if(currentMonth == dateTime.with(ChronoField.DAY_OF_WEEK, value).getMonthValue()){
+				return dateTime.with(ChronoField.DAY_OF_WEEK, value);
+			}
+			return null;
+		}
+		
+
+		@Override
+		public LocalDateTime rollToPrevious(LocalDateTime dateTime, ChronoField field){
+			int value = dateTime.getDayOfMonth();
+			if(unknown){
+				Integer previous = rollToPrevious(getAllPermittedValues(dateTime), value);
+				return dateTime.withDayOfMonth(previous);
+			} else if(lastDay){
+				Integer lastDayValue = getAllPermittedValues(dateTime).last();
+				return dateTime.withDayOfMonth(lastDayValue);
+			} else if (lastDayOffset != null){
+				return getLastDayOffsetDate(dateTime);
+			} else if(lastXOfMonth != null){
+				return getLastXOfMonth(dateTime);
+			} else if(dayPosition != null){
+				return getPositionedDay(dateTime);
+			}
+			wrong: return super.rollToPrevious(dateTime, field);
+		}
+		
+		private LocalDateTime getLastXOfMonth(LocalDateTime dateTime){
+			//go to the last day of the month
+			LocalDateTime startDate = dateTime.truncatedTo(ChronoUnit.MONTHS)
+					.plusMonths(1)
+					.minusDays(1);
+			while(startDate.getDayOfWeek().getValue() != lastXOfMonth){
+				startDate = startDate.minusDays(1);
+			}
+			return dateTime.withDayOfMonth(startDate.getDayOfMonth());
+		}
+		
+		private LocalDateTime getPositionedDay(LocalDateTime dateTime){
+			//go to the first day of the month
+			LocalDateTime startDate = dateTime.truncatedTo(ChronoUnit.MONTHS);
+			int currentPosition = 0;
+			int currentMonth = startDate.getMonthValue();
+			while(currentPosition < dayPosition.position 
+					&& currentMonth == startDate.getMonthValue()){
+				if(startDate.getDayOfWeek().getValue() == dayPosition.day){
+					currentPosition++;
+					if(currentPosition == dayPosition.position) break;
+				}
+				startDate = startDate.plusDays(1);
+			}
+			if(currentMonth == startDate.getMonthValue()){
+				return dateTime.withDayOfMonth(startDate.getDayOfMonth());
+			} 
+			return null;
+		}
+		
+		@Override
 		protected TreeSet<Integer> getAllPermittedValues(LocalDateTime dateTime) {
 			return allPeriodValues;
 		}
@@ -133,19 +228,19 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 	
 	public static class DayPosition {
 		
-		private final Integer day;
-		private final Integer position;
+		private final int day;
+		private final int position;
 		
-		DayPosition(Integer day, Integer position){
+		DayPosition(int day, int position){
 			this.day = day;
 			this.position = position;
 		}
 
-		public Integer getDay() {
+		public int getDay() {
 			return day;
 		}
 
-		public Integer getPosition() {
+		public int getPosition() {
 			return position;
 		}
 		

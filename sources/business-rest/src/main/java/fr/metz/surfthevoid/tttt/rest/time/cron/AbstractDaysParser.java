@@ -1,5 +1,7 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -51,8 +53,8 @@ public abstract class AbstractDaysParser<T extends DaysParsingResult> extends Ab
 	}
 	
 	public static abstract class DaysParsingResult extends BasicParsingResult {
-		protected Boolean unknown;
-		protected Boolean lastDay;
+		protected boolean unknown;
+		protected boolean lastDay;
 		protected Integer lastDayOffset;
 		
 		public Boolean getUnknown() {
@@ -63,6 +65,9 @@ public abstract class AbstractDaysParser<T extends DaysParsingResult> extends Ab
 		}
 		public Integer getLastDayOffset() {
 			return lastDayOffset;
-		}	
+		}
+		protected LocalDateTime resetMonth(LocalDateTime dateTime){
+			return dateTime.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
+		}
 	}
 }

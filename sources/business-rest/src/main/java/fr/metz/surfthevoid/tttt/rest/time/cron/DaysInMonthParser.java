@@ -3,7 +3,6 @@ package fr.metz.surfthevoid.tttt.rest.time.cron;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -169,8 +168,9 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 		
 		@Override
 		protected TreeSet<Integer> getAllPermittedValues(LocalDateTime dateTime) {
-			long numberOfDaysInCurrentMonth = Duration.between(dateTime.truncatedTo(ChronoUnit.MONTHS), 
-					dateTime.truncatedTo(ChronoUnit.MONTHS).plusMonths(1)).toDays();
+			LocalDateTime monthStart = resetMonth(dateTime);
+			long numberOfDaysInCurrentMonth = Duration.between(monthStart, 
+					monthStart.plusMonths(1)).toDays();
 			TreeSet<Integer> daysInCurrentMonth = new TreeSet<>();
 			for(int i=1; i <= numberOfDaysInCurrentMonth; i++){
 				daysInCurrentMonth.add(i);

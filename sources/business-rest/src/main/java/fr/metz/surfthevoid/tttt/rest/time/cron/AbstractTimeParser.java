@@ -106,7 +106,7 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 	protected abstract T newDayParsingResult();
 	
 	public static abstract class BasicParsingResult {
-		protected Boolean all = false;
+		protected boolean all = false;
 		protected final TreeSet<Integer> values = new TreeSet<Integer>();
 		
 		public TreeSet<Integer> getValues() {

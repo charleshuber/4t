@@ -10,6 +10,8 @@ import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
+
 import fr.metz.surfthevoid.tttt.rest.time.cron.AbstractDaysParser.DaysParsingResult;
 import fr.metz.surfthevoid.tttt.rest.time.cron.DaysInWeekParser.DaysInWeekParsingResult;
 
@@ -193,7 +195,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		
 		protected LocalDateTime getLastXOfMonth(LocalDateTime dateTime){
 			//go to the last day of the month
-			LocalDateTime startDate = dateTime.truncatedTo(ChronoUnit.MONTHS)
+			LocalDateTime startDate = resetMonth(dateTime)
 					.plusMonths(1)
 					.minusDays(1);
 			while(startDate.getDayOfWeek().getValue() != lastXOfMonth){
@@ -204,7 +206,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		
 		protected LocalDateTime getPositionedDay(LocalDateTime dateTime){
 			//go to the first day of the month
-			LocalDateTime startDate = dateTime.truncatedTo(ChronoUnit.MONTHS);
+			LocalDateTime startDate = resetMonth(dateTime);
 			int currentPosition = 0;
 			int currentMonth = startDate.getMonthValue();
 			while(currentPosition < dayPosition.position 

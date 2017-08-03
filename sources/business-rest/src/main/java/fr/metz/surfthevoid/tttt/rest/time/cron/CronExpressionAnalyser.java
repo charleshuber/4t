@@ -1,11 +1,15 @@
 package fr.metz.surfthevoid.tttt.rest.time.cron;
 
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.quartz.CronExpression;
 
@@ -26,6 +30,10 @@ public class CronExpressionAnalyser {
     protected MonthsParsingResult months;
     protected DaysInWeekParsingResult daysOfWeek;
     protected YearsParsingResult years;
+    
+    static String datePattern = "dd/MM/yyyy hh:mm:ss";
+    static DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
+    static SimpleDateFormat df = new SimpleDateFormat(datePattern);
 	
 	public static void main(String...strings) throws ParseException{
 		/*
@@ -35,8 +43,8 @@ public class CronExpressionAnalyser {
 		*/
 		
 		List<String> expressions = Arrays.asList(
-		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2001",
-		"5-27 10/5 23 ? * L-2 2001,2003,2440-2444,2100/3,2012/6",
+		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2020",
+		"5-27 10/5 23 ? * L 2001,2003,2440-2444,2100/3,2012/6",
 		"10/5 5-27 12,21,2-4,3/5 ? * MONL 2440-2444",
 		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2100/3",
 		"0 10 4 ? * 7 2020");
@@ -44,28 +52,43 @@ public class CronExpressionAnalyser {
 		for(String expression : expressions){
 
 			Long t1 = new Date().getTime();
-			//CronExpressionAnalyser exp = new CronExpressionAnalyser(expression);
+			CronExpressionAnalyser exp = new CronExpressionAnalyser(expression);
 			Long t2 = new Date().getTime();
-			//System.out.println("toi:" + (t2 - t1) + "; exp:" + exp);
-			
-			//exp.next(LocalDateTime.now());
-
+			System.out.println("toi:" + (t2 - t1) + "; exp:" + exp);
 			
 			t1 = new Date().getTime();
 			CronExpression exp2 = new CronExpression(expression);
 			t2 = new Date().getTime();
 			System.out.println("cron:" + (t2 - t1) + "; exp:" + exp2);
 			System.out.println("");
+			
+			
+			Optional<LocalDateTime> dateTime = exp.next(LocalDateTime.now());
+			if(dateTime.isPresent())
+				System.out.println("toi next:" + dateTime.get().format(dtf));
+			else System.out.println("toi next:" + "null");
+			
+			Date date = exp2.getTimeAfter(new Date());
+			if(date != null)
+				System.out.println("cro next:" + df.format(date));
+			else System.out.println("cro next:" + "null");
+
 			System.out.println("");
-			System.out.println(exp2.getTimeAfter(new Date()));
+			System.out.println("");
 		}
 		
 	}
 	
-	public LocalDateTime next(LocalDateTime current){
-		
-		DateValidity validity = new DateValidity(current);
-		
+	public Optional<LocalDateTime> next(LocalDateTime current){
+		try{
+			return Optional.of(nextDate(current, null));
+		} catch(NoMoreEventException e){
+			return Optional.empty();
+		}
+	}
+	
+	protected LocalDateTime nextDate(LocalDateTime current, DateValidity validity) throws NoMoreEventException{
+		validity = validity == null ? new DateValidity(current) : validity;
 		if(validity.isCurrentMinuteValid){
 			LocalDateTime nextSecond = seconds.rollToNext(current, ChronoField.SECOND_OF_MINUTE);
 			// Next date can be before current date due to rolling next implementation. Minute cannot be incremented
@@ -74,7 +97,6 @@ public class CronExpressionAnalyser {
 				return nextSecond;
 			}
 		} 
-		
 		if(validity.isCurrentHourValid){
 			LocalDateTime nextSecond = seconds.rollToNext(current.withSecond(0), ChronoField.SECOND_OF_MINUTE);
 			LocalDateTime nextMinute = minutes.rollToNext(nextSecond, ChronoField.MINUTE_OF_HOUR);
@@ -84,7 +106,6 @@ public class CronExpressionAnalyser {
 				return nextMinute;
 			}
 		}
-		
 		if(validity.isCurrentDayValid){
 			LocalDateTime nextSecond = seconds.rollToNext(current.withSecond(0), ChronoField.SECOND_OF_MINUTE);
 			LocalDateTime nextMinute = minutes.rollToNext(nextSecond.withMinute(0), ChronoField.MINUTE_OF_HOUR);
@@ -95,7 +116,6 @@ public class CronExpressionAnalyser {
 				return nextHour;
 			}
 		}
-		
 		if(validity.isCurrentMonthValid){
 			LocalDateTime nextSecond = seconds.rollToNext(current.withSecond(0), ChronoField.SECOND_OF_MINUTE);
 			LocalDateTime nextMinute = minutes.rollToNext(nextSecond.withMinute(0), ChronoField.MINUTE_OF_HOUR);
@@ -111,9 +131,21 @@ public class CronExpressionAnalyser {
 				return nextDay;
 		}
 		
-		LocalDateTime nextYear = years.rollToNext(current, ChronoField.YEAR);
 		
-		return null;
+		// at this step there is no more event for the current year, one step forward
+		LocalDateTime nextYear = years.rollToNext(current, ChronoField.YEAR);
+ 		if(nextYear == null){
+			throw new NoMoreEventException();
+		}
+		
+ 		//reset the nextYear
+ 		nextYear = nextYear.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1).withMonth(1);
+		DateValidity nextDateValidity = new DateValidity(nextYear);
+		
+ 		if(nextDateValidity.isCurrentSecondValid)
+ 			return nextYear;
+		
+		return nextDate(nextYear, nextDateValidity);
 	}
 	
 	private class DateValidity{
@@ -122,6 +154,7 @@ public class CronExpressionAnalyser {
 		private Boolean isCurrentDayValid = false;
 		private Boolean isCurrentHourValid = false;
 		private Boolean isCurrentMinuteValid = false;
+		private Boolean isCurrentSecondValid = false;
 		
 		private DateValidity(LocalDateTime current){
 			this.isCurrentYearValid = years.isValid(current, ChronoField.YEAR);
@@ -136,6 +169,8 @@ public class CronExpressionAnalyser {
 							this.isCurrentHourValid = true;
 							if(minutes.isValid(current, ChronoField.MINUTE_OF_HOUR)){
 								this.isCurrentMinuteValid = true;
+								if(seconds.isValid(current, ChronoField.SECOND_OF_MINUTE))
+									this.isCurrentSecondValid = true;
 							}
 						}
 					}
@@ -164,6 +199,11 @@ public class CronExpressionAnalyser {
 		//TODO validate exclusivity of day policy
 		
 		this.expression = cronExpression;
+	}
+	
+	public class NoMoreEventException extends Exception {
+		private static final long serialVersionUID = 4179478162562343723L;
+	
 	}
 
 	@Override

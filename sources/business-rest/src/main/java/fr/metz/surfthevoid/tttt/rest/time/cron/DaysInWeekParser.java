@@ -125,51 +125,73 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		
 		@Override
 		public LocalDateTime rollToNext(LocalDateTime dateTime, ChronoField field){
-			int value = dateTime.getDayOfMonth();
 			if(unknown){
-				Integer next = rollToNext(getAllPermittedValues(dateTime), value);
-				return dateTime.withDayOfMonth(next);
+				return rollToNextDayOfWeek(dateTime, getAllPermittedValues(dateTime));
 			} else if(lastDay){
-				return rollToNext(dateTime, 7);
+				return rollToNextDayOfWeek(dateTime, 7);
 			} else if (lastDayOffset != null){
-				return getLastDayOffsetDate(dateTime);
+				return rollToNextDayOfWeek(dateTime, 7 - lastDayOffset);
 			} else if(lastXOfMonth != null){
 				return getLastXOfMonth(dateTime);
 			} else if(dayPosition != null){
 				return getPositionedDay(dateTime);
 			}
-			wrong: return super.rollToNext(dateTime, field);
+			return rollToNextDayOfWeek(dateTime, values);
+		}
+
+		@Override
+		public LocalDateTime rollToPrevious(LocalDateTime dateTime, ChronoField field){
+			if(unknown){
+				return rollToPreviousDayOfWeek(dateTime, getAllPermittedValues(dateTime));
+			} else if(lastDay){
+				return rollToPreviousDayOfWeek(dateTime, 7);
+			} else if (lastDayOffset != null){
+				return rollToPreviousDayOfWeek(dateTime, 7 - lastDayOffset);
+			} else if(lastXOfMonth != null){
+				return getLastXOfMonth(dateTime);
+			} else if(dayPosition != null){
+				return getPositionedDay(dateTime);
+			}
+			return rollToPreviousDayOfWeek(dateTime, values);
 		}
 		
-		private LocalDateTime rollToNext(LocalDateTime dateTime, int value) {
+		protected LocalDateTime rollToNextDayOfWeek(LocalDateTime dateTime, TreeSet<Integer> values) {
+			int currentDayOfWeek = dateTime.getDayOfWeek().getValue();
+			int nextDayOfWeek = rollToNext(values, currentDayOfWeek);
+			return rollToNextDayOfWeek(dateTime, nextDayOfWeek);
+		}
+		
+		protected LocalDateTime rollToNextDayOfWeek(LocalDateTime dateTime, int nextDayOfWeek) {
 			int currentMonth = dateTime.getMonthValue();
-			if(currentMonth == dateTime.with(ChronoField.DAY_OF_WEEK, value).getMonthValue()){
-				return dateTime.with(ChronoField.DAY_OF_WEEK, value);
+			LocalDateTime startDate = dateTime.plusDays(1);
+			while(currentMonth == startDate.getMonthValue()){
+				if(startDate.getDayOfWeek().getValue() == nextDayOfWeek){
+					return startDate;
+				}
+				startDate = startDate.plusDays(1);
 			}
 			return null;
 		}
 		
-
-		@Override
-		public LocalDateTime rollToPrevious(LocalDateTime dateTime, ChronoField field){
-			int value = dateTime.getDayOfMonth();
-			if(unknown){
-				Integer previous = rollToPrevious(getAllPermittedValues(dateTime), value);
-				return dateTime.withDayOfMonth(previous);
-			} else if(lastDay){
-				Integer lastDayValue = getAllPermittedValues(dateTime).last();
-				return dateTime.withDayOfMonth(lastDayValue);
-			} else if (lastDayOffset != null){
-				return getLastDayOffsetDate(dateTime);
-			} else if(lastXOfMonth != null){
-				return getLastXOfMonth(dateTime);
-			} else if(dayPosition != null){
-				return getPositionedDay(dateTime);
-			}
-			wrong: return super.rollToPrevious(dateTime, field);
+		protected LocalDateTime rollToPreviousDayOfWeek(LocalDateTime dateTime, TreeSet<Integer> values) {
+			int currentDayOfWeek = dateTime.getDayOfWeek().getValue();
+			int previousDayOfWeek = rollToPrevious(values, currentDayOfWeek);
+			return rollToPreviousDayOfWeek(dateTime, previousDayOfWeek);
 		}
 		
-		private LocalDateTime getLastXOfMonth(LocalDateTime dateTime){
+		protected LocalDateTime rollToPreviousDayOfWeek(LocalDateTime dateTime, int previousDayOfWeek) {
+			int currentMonth = dateTime.getMonthValue();
+			LocalDateTime startDate = dateTime.minusDays(1);
+			while(currentMonth == startDate.getMonthValue()){
+				if(startDate.getDayOfWeek().getValue() == previousDayOfWeek){
+					return startDate;
+				}
+				startDate = startDate.minusDays(1);
+			}
+			return null;
+		}
+		
+		protected LocalDateTime getLastXOfMonth(LocalDateTime dateTime){
 			//go to the last day of the month
 			LocalDateTime startDate = dateTime.truncatedTo(ChronoUnit.MONTHS)
 					.plusMonths(1)
@@ -180,7 +202,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 			return dateTime.withDayOfMonth(startDate.getDayOfMonth());
 		}
 		
-		private LocalDateTime getPositionedDay(LocalDateTime dateTime){
+		protected LocalDateTime getPositionedDay(LocalDateTime dateTime){
 			//go to the first day of the month
 			LocalDateTime startDate = dateTime.truncatedTo(ChronoUnit.MONTHS);
 			int currentPosition = 0;

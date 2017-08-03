@@ -38,16 +38,17 @@ public class CronExpressionAnalyser {
 		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2001",
 		"5-27 10/5 23 ? * L-2 2001,2003,2440-2444,2100/3,2012/6",
 		"10/5 5-27 12,21,2-4,3/5 ? * MONL 2440-2444",
-		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2100/3");
+		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2100/3",
+		"0 10 4 ? * 7 2020");
 		
 		for(String expression : expressions){
 
 			Long t1 = new Date().getTime();
-			CronExpressionAnalyser exp = new CronExpressionAnalyser(expression);
+			//CronExpressionAnalyser exp = new CronExpressionAnalyser(expression);
 			Long t2 = new Date().getTime();
-			System.out.println("toi:" + (t2 - t1) + "; exp:" + exp);
+			//System.out.println("toi:" + (t2 - t1) + "; exp:" + exp);
 			
-			exp.next(LocalDateTime.now());
+			//exp.next(LocalDateTime.now());
 
 			
 			t1 = new Date().getTime();
@@ -56,6 +57,7 @@ public class CronExpressionAnalyser {
 			System.out.println("cron:" + (t2 - t1) + "; exp:" + exp2);
 			System.out.println("");
 			System.out.println("");
+			System.out.println(exp2.getTimeAfter(new Date()));
 		}
 		
 	}

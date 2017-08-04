@@ -142,7 +142,7 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 			if(all) {
 				permittedValues = getAllPermittedValues(dateTime);
 			}
-			return dateTime.with(field, rollToNext(permittedValues, value));
+			return dateTime.with(field, rollToPrevious(permittedValues, value));
 		}
 		
 		protected Integer rollToNext(TreeSet<Integer> values, Integer value){

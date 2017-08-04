@@ -66,7 +66,7 @@ public abstract class AbstractDaysParser<T extends DaysParsingResult> extends Ab
 		public Integer getLastDayOffset() {
 			return lastDayOffset;
 		}
-		protected LocalDateTime resetMonth(LocalDateTime dateTime){
+		protected static LocalDateTime resetMonth(LocalDateTime dateTime){
 			return dateTime.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
 		}
 	}

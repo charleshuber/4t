@@ -178,6 +178,17 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 			return daysInCurrentMonth;
 		}
 		
+		protected static TreeSet<Integer> getMonthsDays(LocalDateTime dateTime) {
+			LocalDateTime monthStart = resetMonth(dateTime);
+			long numberOfDaysInCurrentMonth = Duration.between(monthStart, 
+					monthStart.plusMonths(1)).toDays();
+			TreeSet<Integer> daysInCurrentMonth = new TreeSet<>();
+			for(int i=1; i <= numberOfDaysInCurrentMonth; i++){
+				daysInCurrentMonth.add(i);
+			}
+			return daysInCurrentMonth;
+		}
+		
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();

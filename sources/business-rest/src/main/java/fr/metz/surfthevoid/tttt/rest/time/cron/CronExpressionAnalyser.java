@@ -31,7 +31,7 @@ public class CronExpressionAnalyser {
     protected DaysInWeekParsingResult daysOfWeek;
     protected YearsParsingResult years;
     
-    static String datePattern = "dd/MM/yyyy HH:mm:ss";
+    static String datePattern = "EEE dd/MM/yyyy HH:mm:ss";
     static DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
     static SimpleDateFormat df = new SimpleDateFormat(datePattern);
 	
@@ -45,9 +45,9 @@ public class CronExpressionAnalyser {
 		List<String> expressions = Arrays.asList(
 		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2000-2012,2020",
 		"5-27 10/5 23 ? * 5/2 2001,2003,2440-2444,2100/3,2012/5",
-		"10/5 5-27 12,21,2-4,3/5 ? * 3L 2000-2012,2440-2444",
-		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2000-2012,2100/3",
-		"0 10 4 ? * 7 2020");
+		"10/5 5-27 12,21,2-4,3/5 ? 11 3L 2000-2012,2440-2444",
+		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? 4,3 MON#3 2000-2012,2100/3",
+		"0 10,50 4,5 ? 2/3 7 1810,2020");
 		
 		for(String expression : expressions){
 
@@ -112,7 +112,7 @@ public class CronExpressionAnalyser {
 			}
 		} 
 		if(validity.isCurrentHourValid){
-			LocalDateTime secondsReset = current.withSecond(0);
+			LocalDateTime secondsReset = current.truncatedTo(ChronoUnit.MINUTES);
 			LocalDateTime nextMinute = minutes.rollToNext(secondsReset, ChronoField.MINUTE_OF_HOUR);
 			// Next date can be before current date, due to rolling next implementation. Hour cannot be incremented
 			if(nextMinute.isAfter(current)) {
@@ -126,7 +126,7 @@ public class CronExpressionAnalyser {
 			}
 		}
 		if(validity.isCurrentDayValid){
-			LocalDateTime minutesReset = current.truncatedTo(ChronoUnit.MINUTES);
+			LocalDateTime minutesReset = current.truncatedTo(ChronoUnit.HOURS);
 			LocalDateTime nextHour = hours.rollToNext(minutesReset, ChronoField.HOUR_OF_DAY);
 			// Next date can be before current date due to rolling next implementation. Day cannot be incremented
 			if(nextHour.isAfter(current)) {
@@ -140,7 +140,7 @@ public class CronExpressionAnalyser {
 			}
 		}
 		if(validity.isCurrentMonthValid){
-			LocalDateTime hourReset = current.truncatedTo(ChronoUnit.HOURS);
+			LocalDateTime hourReset = current.truncatedTo(ChronoUnit.DAYS);
 			LocalDateTime nextDay = null;
 			if(daysOfMonth.unknown){
 				nextDay = daysOfWeek.rollToNext(hourReset, ChronoField.DAY_OF_WEEK);
@@ -158,8 +158,8 @@ public class CronExpressionAnalyser {
 			}
 		}		
 		if(validity.isCurrentYearValid){
-			LocalDateTime monthReset = current.withMonth(1).truncatedTo(ChronoUnit.DAYS);
-			LocalDateTime nextMonth = months.rollToNext(monthReset, ChronoField.HOUR_OF_DAY);
+			LocalDateTime monthReset = current.truncatedTo(ChronoUnit.DAYS).withDayOfMonth(1);
+			LocalDateTime nextMonth = months.rollToNext(monthReset, ChronoField.MONTH_OF_YEAR);
 			// Next date can be before current date due to rolling next implementation. Day cannot be incremented
 			if(nextMonth.isAfter(current)) {
 				//A next valid month value is available for the current valid hour
@@ -245,8 +245,9 @@ public class CronExpressionAnalyser {
 			}
 		}		
 		if(validity.isCurrentYearValid){
-			LocalDateTime monthReset = current.withSecond(59).withMinute(59).withHour(23).withMonth(12).withDayOfMonth(31);
-			LocalDateTime previousMonth = months.rollToPrevious(monthReset, ChronoField.HOUR_OF_DAY);
+			LocalDateTime monthReset = current.withSecond(59).withMinute(59).withHour(23);
+			monthReset = monthReset.withDayOfMonth(DaysInMonthParsingResult.getMonthsDays(monthReset).last());
+			LocalDateTime previousMonth = months.rollToPrevious(monthReset, ChronoField.MONTH_OF_YEAR);
 			// Previous date can be after current date due to rolling previous implementation. Day cannot be incremented
 			if(previousMonth.isBefore(current)) {
 				//A previous valid month value is available for the current valid hour

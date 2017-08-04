@@ -135,9 +135,9 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 				Integer searchedValue = getAllPermittedValues(dateTime).last() - lastDayOffset;
 				return value.equals(searchedValue);
 			} else if(lastXOfMonth != null){
-				return value.equals(getLastXOfMonth(dateTime).getDayOfMonth());
+				return dateTime.getDayOfMonth() == getLastXOfMonth(dateTime).getDayOfMonth();
 			} else if(dayPosition != null){
-				return value.equals(getPositionedDay(dateTime).getDayOfMonth());
+				return dateTime.getDayOfMonth() == getPositionedDay(dateTime).getDayOfMonth();
 			}
 			return values.contains(value);
 		}
@@ -147,9 +147,9 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 			if(unknown){
 				return rollToNextDayOfWeek(dateTime, getAllPermittedValues(dateTime));
 			} else if(lastDay){
-				return rollToNextDayOfWeek(dateTime, 7);
+				return rollToNextDayOfWeek(dateTime, getAllPermittedValues(dateTime).last());
 			} else if (lastDayOffset != null){
-				return rollToNextDayOfWeek(dateTime, 7 - lastDayOffset);
+				return rollToNextDayOfWeek(dateTime, getAllPermittedValues(dateTime).last() - lastDayOffset);
 			} else if(lastXOfMonth != null){
 				return getLastXOfMonth(dateTime);
 			} else if(dayPosition != null){
@@ -163,9 +163,9 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 			if(unknown){
 				return rollToPreviousDayOfWeek(dateTime, getAllPermittedValues(dateTime));
 			} else if(lastDay){
-				return rollToPreviousDayOfWeek(dateTime, 7);
+				return rollToPreviousDayOfWeek(dateTime, getAllPermittedValues(dateTime).last());
 			} else if (lastDayOffset != null){
-				return rollToPreviousDayOfWeek(dateTime, 7 - lastDayOffset);
+				return rollToPreviousDayOfWeek(dateTime, getAllPermittedValues(dateTime).last() - lastDayOffset);
 			} else if(lastXOfMonth != null){
 				return getLastXOfMonth(dateTime);
 			} else if(dayPosition != null){

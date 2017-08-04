@@ -31,7 +31,7 @@ public class CronExpressionAnalyser {
     protected DaysInWeekParsingResult daysOfWeek;
     protected YearsParsingResult years;
     
-    static String datePattern = "dd/MM/yyyy hh:mm:ss";
+    static String datePattern = "dd/MM/yyyy HH:mm:ss";
     static DateTimeFormatter dtf = DateTimeFormatter.ofPattern(datePattern);
     static SimpleDateFormat df = new SimpleDateFormat(datePattern);
 	
@@ -43,10 +43,10 @@ public class CronExpressionAnalyser {
 		*/
 		
 		List<String> expressions = Arrays.asList(
-		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2020",
+		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2000-2012,2020",
 		"5-27 10/5 23 ? * 5/2 2001,2003,2440-2444,2100/3,2012/5",
-		"10/5 5-27 12,21,2-4,3/5 ? * 2L 2440-2444",
-		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2100/3",
+		"10/5 5-27 12,21,2-4,3/5 ? * 3L 2000-2012,2440-2444",
+		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2000-2012,2100/3",
 		"0 10 4 ? * 7 2020");
 		
 		for(String expression : expressions){
@@ -72,7 +72,13 @@ public class CronExpressionAnalyser {
 			if(date != null)
 				System.out.println("cro next:" + df.format(date));
 			else System.out.println("cro next:" + "null");
-
+			
+			
+			Optional<LocalDateTime> dateTimePrevious = exp.previous(LocalDateTime.now());
+			if(dateTimePrevious.isPresent())
+				System.out.println("toi previous:" + dateTimePrevious.get().format(dtf));
+			else System.out.println("toi previous:" + "null");
+			
 			System.out.println("");
 			System.out.println("");
 		}
@@ -82,6 +88,14 @@ public class CronExpressionAnalyser {
 	public Optional<LocalDateTime> next(LocalDateTime current){
 		try{
 			return Optional.of(nextDate(current, null));
+		} catch(NoMoreEventException e){
+			return Optional.empty();
+		}
+	}
+	
+	public Optional<LocalDateTime> previous(LocalDateTime current){
+		try{
+			return Optional.of(previousDate(current, null));
 		} catch(NoMoreEventException e){
 			return Optional.empty();
 		}
@@ -172,6 +186,93 @@ public class CronExpressionAnalyser {
  			return nextYear;
 		
 		return nextDate(nextYear, nextDateValidity);
+	}
+	
+	protected LocalDateTime previousDate(LocalDateTime current, DateValidity validity) throws NoMoreEventException{
+		validity = validity == null ? new DateValidity(current) : validity;
+		if(validity.isCurrentMinuteValid){
+			LocalDateTime previousSecond = seconds.rollToPrevious(current, ChronoField.SECOND_OF_MINUTE);
+			// Previous date can be after current date due to rolling previous implementation. Minute cannot be incremented
+			if(previousSecond.isBefore(current)){
+				//A previous valid second value is available for the current valid minute
+				return previousSecond;
+			}
+		} 
+		if(validity.isCurrentHourValid){
+			LocalDateTime secondsReset = current.withSecond(59);
+			LocalDateTime previousMinute = minutes.rollToPrevious(secondsReset, ChronoField.MINUTE_OF_HOUR);
+			// Previous date can be after current date, due to rolling previous implementation. Hour cannot be incremented
+			if(previousMinute.isBefore(current)) {
+				//A previous valid minute value is available for the current valid hour
+				DateValidity previousMinuteValidity = new DateValidity(previousMinute);
+				if(previousMinuteValidity.isCurrentSecondValid){
+					return previousMinute;
+				} else {
+					return previousDate(previousMinute, previousMinuteValidity);
+				}
+			}
+		}
+		if(validity.isCurrentDayValid){
+			LocalDateTime minutesReset = current.withSecond(59).withMinute(59);
+			LocalDateTime previousHour = hours.rollToPrevious(minutesReset, ChronoField.HOUR_OF_DAY);
+			// Previous date can be after current date due to rolling previous implementation. Day cannot be incremented
+			if(previousHour.isBefore(current)) {
+				//A previous valid hour value is available for the current valid hour
+				DateValidity previousHourValidity = new DateValidity(previousHour);
+				if(previousHourValidity.isCurrentSecondValid){
+					return previousHour;
+				} else {
+					return previousDate(previousHour, previousHourValidity);
+				}
+			}
+		}
+		if(validity.isCurrentMonthValid){
+			LocalDateTime hourReset = current.withSecond(59).withMinute(59).withHour(23);
+			LocalDateTime previousDay = null;
+			if(daysOfMonth.unknown){
+				previousDay = daysOfWeek.rollToPrevious(hourReset, ChronoField.DAY_OF_WEEK);
+			} else {
+				previousDay = daysOfMonth.rollToPrevious(hourReset, ChronoField.DAY_OF_MONTH);
+			}
+			//Warn a day of month can be null if its definition does not match any day of the current month
+			if(previousDay != null && previousDay.isBefore(current)) {
+				DateValidity previousDayValidity = new DateValidity(previousDay);
+				if(previousDayValidity.isCurrentSecondValid){
+					return previousDay;
+				} else {
+					return previousDate(previousDay, previousDayValidity);
+				}
+			}
+		}		
+		if(validity.isCurrentYearValid){
+			LocalDateTime monthReset = current.withSecond(59).withMinute(59).withHour(23).withMonth(12).withDayOfMonth(31);
+			LocalDateTime previousMonth = months.rollToPrevious(monthReset, ChronoField.HOUR_OF_DAY);
+			// Previous date can be after current date due to rolling previous implementation. Day cannot be incremented
+			if(previousMonth.isBefore(current)) {
+				//A previous valid month value is available for the current valid hour
+				DateValidity previousMonthValidity = new DateValidity(previousMonth);
+				if(previousMonthValidity.isCurrentSecondValid){
+					return previousMonth;
+				} else {
+					return previousDate(previousMonth, previousMonthValidity);
+				}
+			}
+		}
+		
+		// at this step there is no more event for the current year, one step forward
+		LocalDateTime previousYear = years.rollToPrevious(current, ChronoField.YEAR);
+ 		if(previousYear == null){
+			throw new NoMoreEventException();
+		}
+		
+ 		//reset the previousYear
+ 		previousYear = previousYear.truncatedTo(ChronoUnit.DAYS).withSecond(59).withMinute(59).withHour(23).withMonth(12).withDayOfMonth(31);
+		DateValidity previousDateValidity = new DateValidity(previousYear);
+		
+ 		if(previousDateValidity.isCurrentSecondValid)
+ 			return previousYear;
+		
+		return previousDate(previousYear, previousDateValidity);
 	}
 	
 	private class DateValidity{

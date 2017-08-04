@@ -44,7 +44,7 @@ public class CronExpressionAnalyser {
 		
 		List<String> expressions = Arrays.asList(
 		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 L-5 * ? 2020",
-		"5-27 10/5 23 ? * L 2001,2003,2440-2444,2100/3,2012/6",
+		"5-27 10/5 23 ? * 5/2 2001,2003,2440-2444,2100/3,2012/5",
 		"10/5 5-27 12,21,2-4,3/5 ? * MONL 2440-2444",
 		"0,1,40,5-7,5/6 10/5,7,15/3 10/5 ? * MON#3 2100/3",
 		"0 10 4 ? * 7 2020");
@@ -98,39 +98,65 @@ public class CronExpressionAnalyser {
 			}
 		} 
 		if(validity.isCurrentHourValid){
-			LocalDateTime nextSecond = seconds.rollToNext(current.withSecond(0), ChronoField.SECOND_OF_MINUTE);
-			LocalDateTime nextMinute = minutes.rollToNext(nextSecond, ChronoField.MINUTE_OF_HOUR);
+			LocalDateTime secondsReset = current.withSecond(0);
+			LocalDateTime nextMinute = minutes.rollToNext(secondsReset, ChronoField.MINUTE_OF_HOUR);
 			// Next date can be before current date, due to rolling next implementation. Hour cannot be incremented
 			if(nextMinute.isAfter(current)) {
 				//A next valid minute value is available for the current valid hour
-				return nextMinute;
+				DateValidity nextMinuteValidity = new DateValidity(nextMinute);
+				if(nextMinuteValidity.isCurrentSecondValid){
+					return nextMinute;
+				} else {
+					return nextDate(nextMinute, nextMinuteValidity);
+				}
 			}
 		}
 		if(validity.isCurrentDayValid){
-			LocalDateTime nextSecond = seconds.rollToNext(current.withSecond(0), ChronoField.SECOND_OF_MINUTE);
-			LocalDateTime nextMinute = minutes.rollToNext(nextSecond.withMinute(0), ChronoField.MINUTE_OF_HOUR);
-			LocalDateTime nextHour = hours.rollToNext(nextMinute, ChronoField.HOUR_OF_DAY);
+			LocalDateTime minutesReset = current.truncatedTo(ChronoUnit.MINUTES);
+			LocalDateTime nextHour = hours.rollToNext(minutesReset, ChronoField.HOUR_OF_DAY);
 			// Next date can be before current date due to rolling next implementation. Day cannot be incremented
 			if(nextHour.isAfter(current)) {
-				//A next valid hour value is available for the current valid day
-				return nextHour;
+				//A next valid hour value is available for the current valid hour
+				DateValidity nextHourValidity = new DateValidity(nextHour);
+				if(nextHourValidity.isCurrentSecondValid){
+					return nextHour;
+				} else {
+					return nextDate(nextHour, nextHourValidity);
+				}
 			}
 		}
 		if(validity.isCurrentMonthValid){
-			LocalDateTime nextSecond = seconds.rollToNext(current.withSecond(0), ChronoField.SECOND_OF_MINUTE);
-			LocalDateTime nextMinute = minutes.rollToNext(nextSecond.withMinute(0), ChronoField.MINUTE_OF_HOUR);
-			LocalDateTime nextHour = hours.rollToNext(nextMinute.withHour(0), ChronoField.HOUR_OF_DAY);
+			LocalDateTime hourReset = current.truncatedTo(ChronoUnit.HOURS);
 			LocalDateTime nextDay = null;
 			if(daysOfMonth.unknown){
-				nextDay = daysOfWeek.rollToNext(nextHour, ChronoField.DAY_OF_WEEK);
+				nextDay = daysOfWeek.rollToNext(hourReset, ChronoField.DAY_OF_WEEK);
 			} else {
-				nextDay = daysOfMonth.rollToNext(nextHour, ChronoField.DAY_OF_MONTH);
+				nextDay = daysOfMonth.rollToNext(hourReset, ChronoField.DAY_OF_MONTH);
 			}
 			//Warn a day of month can be null if its definition does not match any day of the current month
-			if(nextDay != null && nextDay.isAfter(current)) 
-				return nextDay;
+			if(nextDay != null && nextDay.isAfter(current)) {
+				DateValidity nextDayValidity = new DateValidity(nextDay);
+				if(nextDayValidity.isCurrentSecondValid){
+					return nextDay;
+				} else {
+					return nextDate(nextDay, nextDayValidity);
+				}
+			}
+		}		
+		if(validity.isCurrentYearValid){
+			LocalDateTime monthReset = current.withMonth(1).truncatedTo(ChronoUnit.DAYS);
+			LocalDateTime nextMonth = months.rollToNext(monthReset, ChronoField.HOUR_OF_DAY);
+			// Next date can be before current date due to rolling next implementation. Day cannot be incremented
+			if(nextMonth.isAfter(current)) {
+				//A next valid month value is available for the current valid hour
+				DateValidity nextMonthValidity = new DateValidity(nextMonth);
+				if(nextMonthValidity.isCurrentSecondValid){
+					return nextMonth;
+				} else {
+					return nextDate(nextMonth, nextMonthValidity);
+				}
+			}
 		}
-		
 		
 		// at this step there is no more event for the current year, one step forward
 		LocalDateTime nextYear = years.rollToNext(current, ChronoField.YEAR);

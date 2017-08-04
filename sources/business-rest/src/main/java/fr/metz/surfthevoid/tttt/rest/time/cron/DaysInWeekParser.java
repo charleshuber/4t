@@ -2,15 +2,12 @@ package fr.metz.surfthevoid.tttt.rest.time.cron;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
-import java.time.temporal.ChronoUnit;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.Arrays;
 import java.util.List;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.omg.CORBA.TRANSACTION_UNAVAILABLE;
 
 import fr.metz.surfthevoid.tttt.rest.time.cron.AbstractDaysParser.DaysParsingResult;
 import fr.metz.surfthevoid.tttt.rest.time.cron.DaysInWeekParser.DaysInWeekParsingResult;
@@ -35,7 +32,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		    new SimpleEntry<String, String>("SAT", "7"));
 	
 	private static final TreeSet<Integer> allPeriodValues = new TreeSet<>(Arrays.asList(
-			1, 2, 3, 4, 5, 6, 7));
+			0, 1, 2, 3, 4, 5, 6));
 			
 	protected DaysInWeekParser() {
 		super(value);
@@ -65,6 +62,26 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		}
 		return false;
 	}
+	
+	@Override
+	protected void extractTimeValue(String value, DaysInWeekParsingResult parsingResult){
+		value = new Integer(Integer.parseInt(value) - 1).toString();
+		parsingResult.values.add(Integer.parseInt(value));
+	}
+	
+	@Override
+	protected Boolean extractTimeInterval(String value, DaysInWeekParsingResult parsingResult){
+		Matcher tim = tip.matcher(value);
+		if(tim.matches() && tim.reset().find()){
+			int start = Integer.parseInt(tim.group(2)) - 1;
+			int itv = Integer.parseInt(tim.group(3));
+			for(int i=start; i <= getMaxTimeValue(); i+=itv){
+				parsingResult.values.add(i);
+			}
+			return true;
+		}
+		return false;
+	}
 
 	@Override
 	protected Integer getMaxTimeValue() {
@@ -74,7 +91,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 	protected Integer getLastXOfMonth(String value){
 		Matcher lomm =  lomp.matcher(value);
 		if(lomm.matches() && lomm.reset().find()){
-			return Integer.parseInt(lomm.group(1));
+			return Integer.parseInt(lomm.group(1)) - 1;
 		}
 		return null;
 	}
@@ -82,7 +99,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 	protected DayPosition getDayPosition(String value){
 		Matcher dpm =  dpp.matcher(value);
 		if(dpm.matches() && dpm.reset().find()){
-			return new DayPosition(Integer.parseInt(dpm.group(1)), Integer.parseInt(dpm.group(2)));
+			return new DayPosition(Integer.parseInt(dpm.group(1)) - 1, Integer.parseInt(dpm.group(2)));
 		}
 		return null;
 	}

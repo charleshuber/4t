@@ -53,8 +53,9 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 			Integer year = dateTime.getYear();
 			if(all) return true;
 			if(intervals.stream().filter((itv) -> {
-					return itv.startYear == year || 
-							(itv.startYear < year && (year - itv.startYear) % itv.interval == 0);
+					int currentYear = year.intValue();
+					return itv.startYear ==  currentYear || 
+							(itv.startYear < currentYear && (currentYear - itv.startYear) % itv.interval == 0);
 				}).findFirst().isPresent()){
 				return true;
 			}
@@ -159,19 +160,19 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 	}
 	
 	public static class YearInterval implements Comparable<YearInterval>{
-		private final Integer startYear;
-		private final Integer interval;
+		private final int startYear;
+		private final int interval;
 		
-		protected YearInterval(Integer startYear, Integer interval){
+		protected YearInterval(int startYear, int interval){
 			this.startYear = startYear;
 			this.interval = interval;
 		}
 
-		public Integer getStartYear() {
+		public int getStartYear() {
 			return startYear;
 		}
 
-		public Integer getInterval() {
+		public int getInterval() {
 			return interval;
 		}
 
@@ -188,7 +189,7 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 
 		@Override
 		public int compareTo(YearInterval arg0) {
-			return startYear.compareTo(arg0.startYear);
+			return startYear - arg0.startYear;
 		}
 	}
 }

@@ -63,10 +63,14 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 		} else if(extractTimeRange(value, parsingResult)){
 			return;
 		} else if(isTimeValue(value)){
-			parsingResult.values.add(Integer.parseInt(value));
+			extractTimeValue(value, parsingResult);
 			return;
 		}
 		throw new IllegalArgumentException();
+	}
+	
+	protected void extractTimeValue(String value, T parsingResult){
+		parsingResult.values.add(Integer.parseInt(value));
 	}
 	
 	protected Boolean extractTimeInterval(String value, T parsingResult){

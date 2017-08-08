@@ -24,7 +24,7 @@ public abstract class AbstractDaysParser<T extends DaysParsingResult> extends Ab
 	@Override
 	public T parse(String value){
 		Integer lastdayOffset = null;
-		T parsingResults = newDayParsingResult();
+		T parsingResults = newParsingResult();
 		if(unknown.equals(value)){
 			parsingResults.unknown = true;
 		} else if(lastDay.equals(value)){

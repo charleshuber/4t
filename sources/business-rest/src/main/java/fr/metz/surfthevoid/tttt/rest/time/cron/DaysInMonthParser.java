@@ -12,7 +12,8 @@ import fr.metz.surfthevoid.tttt.rest.time.cron.DaysInMonthParser.DaysInMonthPars
 
 public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResult> {
 	
-	public static final String value = "([0-9]|1[0-9]|2[0-9]|3[0-1])";
+	//Be care full to put the single unit value at the end to avoid shortcut
+	public static final String value = "(1[0-9]|2[0-9]|3[0-1]|[0-9])";
 	public static final String lastWeekDayOfMonth = "LW";
 	public static final String nearestWeekday = value + "W";
 	
@@ -23,7 +24,7 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 	}
 	
 	@Override
-	protected DaysInMonthParsingResult newDayParsingResult() {
+	protected DaysInMonthParsingResult newParsingResult() {
 		return new DaysInMonthParsingResult();
 	}
 
@@ -87,6 +88,7 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 			int value = dateTime.getDayOfMonth();
 			if(unknown){
 				Integer next = rollToNext(getAllPermittedValues(dateTime), value);
+				if(next == null) return null;
 				return dateTime.withDayOfMonth(next);
 			} else if(lastDay){
 				Integer lastDayValue = getAllPermittedValues(dateTime).last();
@@ -106,6 +108,7 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 			int value = dateTime.getDayOfMonth();
 			if(unknown){
 				Integer previous = rollToPrevious(getAllPermittedValues(dateTime), value);
+				if(previous == null) return null;
 				return dateTime.withDayOfMonth(previous);
 			} else if(lastDay){
 				Integer lastDayValue = getAllPermittedValues(dateTime).last();

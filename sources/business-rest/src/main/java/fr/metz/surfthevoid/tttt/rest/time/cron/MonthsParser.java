@@ -9,7 +9,8 @@ import fr.metz.surfthevoid.tttt.rest.time.cron.MonthsParser.MonthsParsingResult;
 
 public class MonthsParser extends AbstractTimeParser<MonthsParsingResult> {
 	
-	private static final String value = "([1-9]|1[0-2])";
+	//Be care full to put the single unit value at the end to avoid shortcut
+	private static final String value = "(1[0-2]|[1-9])";
 	
 	private static final TreeSet<Integer> allPeriodValues = new TreeSet<Integer>(Arrays.asList(
 			1,2,3,4,5,6,7,8,9,10,11,12));
@@ -24,7 +25,7 @@ public class MonthsParser extends AbstractTimeParser<MonthsParsingResult> {
 	}
 	
 	@Override
-	protected MonthsParsingResult newDayParsingResult() {
+	protected MonthsParsingResult newParsingResult() {
 		return new MonthsParsingResult();
 	}
 	

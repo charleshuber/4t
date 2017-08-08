@@ -23,7 +23,7 @@ public class TimeManager {
 		
 		tl.setPeriod(tp);
 		tl.setStartTime(LocalDateTime.parse("01/01/2010 00:00:00", df));
-		tl.setEndTime(LocalDateTime.parse("02/01/2010 00:00:00", df));
+		tl.setEndTime(LocalDateTime.parse("01/01/2011 00:00:00", df));
 		tl.setCronExpression("0 0 1 * * ? *");
 		
 		TimeManager tm = new TimeManager();
@@ -39,7 +39,9 @@ public class TimeManager {
 		
 		System.out.println("---------------------------------------------");
 		
-		tl.setCronExpression("1 0 * * * ? *");
+		tl.setCronExpression("1 0 12-13 ? 1,2,3 MON#3 2002/8,2019-2021");
+		tl.setStartTime(LocalDateTime.parse("01/01/2000 00:00:00", df));
+		tl.setEndTime(LocalDateTime.parse("01/01/2030 00:00:00", df));
 		results = tm.getTimeIntervals(tl);
 		
 		for(TimeInterval ti : results) System.out.println(ti);

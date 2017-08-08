@@ -45,7 +45,7 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 	}
 	
 	@Override
-	protected DaysInWeekParsingResult newDayParsingResult() {
+	protected DaysInWeekParsingResult newParsingResult() {
 		return new DaysInWeekParsingResult();
 	}
 
@@ -176,7 +176,8 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		
 		protected LocalDateTime rollToNextDayOfWeek(LocalDateTime dateTime, TreeSet<Integer> values) {
 			int currentDayOfWeek = dateTime.getDayOfWeek().getValue();
-			int nextDayOfWeek = rollToNext(values, currentDayOfWeek);
+			Integer nextDayOfWeek = rollToNext(values, currentDayOfWeek);
+			if(nextDayOfWeek == null) return null;
 			return rollToNextDayOfWeek(dateTime, nextDayOfWeek);
 		}
 		
@@ -194,7 +195,8 @@ public class DaysInWeekParser extends AbstractDaysParser<DaysInWeekParsingResult
 		
 		protected LocalDateTime rollToPreviousDayOfWeek(LocalDateTime dateTime, TreeSet<Integer> values) {
 			int currentDayOfWeek = dateTime.getDayOfWeek().getValue();
-			int previousDayOfWeek = rollToPrevious(values, currentDayOfWeek);
+			Integer previousDayOfWeek = rollToPrevious(values, currentDayOfWeek);
+			if(previousDayOfWeek == null) return null;
 			return rollToPreviousDayOfWeek(dateTime, previousDayOfWeek);
 		}
 		

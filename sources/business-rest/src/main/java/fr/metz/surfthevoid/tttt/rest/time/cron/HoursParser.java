@@ -9,7 +9,8 @@ import fr.metz.surfthevoid.tttt.rest.time.cron.HoursParser.HoursParsingResult;
 
 public class HoursParser extends AbstractTimeParser<HoursParsingResult> {
 	
-	private static final String value = "([0-9]|1[0-9]|2[0-3])";
+	//Be care full to put the single unit value at the end to avoid shortcut
+	private static final String value = "(1[0-9]|2[0-3]|[0-9])";
 	
 	private static final TreeSet<Integer> allPeriodValues = new TreeSet<>(Arrays.asList(
 			0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 
@@ -26,7 +27,7 @@ public class HoursParser extends AbstractTimeParser<HoursParsingResult> {
 	}
 	
 	@Override
-	protected HoursParsingResult newDayParsingResult() {
+	protected HoursParsingResult newParsingResult() {
 		return new HoursParsingResult();
 	}
 	

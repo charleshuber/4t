@@ -20,7 +20,7 @@ public class YearsParser extends AbstractTimeParser<YearsParsingResult> {
 	}
 	
 	@Override
-	protected YearsParsingResult newDayParsingResult() {
+	protected YearsParsingResult newParsingResult() {
 		return new YearsParsingResult();
 	}
 

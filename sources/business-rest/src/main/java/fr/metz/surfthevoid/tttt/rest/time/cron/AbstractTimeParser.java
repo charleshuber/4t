@@ -2,6 +2,7 @@ package fr.metz.surfthevoid.tttt.rest.time.cron;
 
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoField;
+import java.util.NoSuchElementException;
 import java.util.TreeSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -34,7 +35,7 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
     }
     
     public T parse(String value){
-    	T parsingResult = newDayParsingResult();
+    	T parsingResult = newParsingResult();
     	this.extractTimeValues(value, parsingResult);
     	return parsingResult;
     }
@@ -107,7 +108,7 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 	}
 	
 	protected abstract Integer getMaxTimeValue();
-	protected abstract T newDayParsingResult();
+	protected abstract T newParsingResult();
 	
 	public static abstract class BasicParsingResult {
 		protected boolean all = false;
@@ -133,7 +134,11 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 			if(all) {
 				permittedValues = getAllPermittedValues(dateTime);
 			}
-			return dateTime.with(field, rollToNext(permittedValues, value));
+			Integer next = rollToNext(permittedValues, value);
+			if(next == null){
+				return null;
+			}
+			return dateTime.with(field, next);
 		}
 
 		public LocalDateTime rollToPrevious(LocalDateTime dateTime, ChronoField field){
@@ -142,19 +147,29 @@ public abstract class AbstractTimeParser<T extends BasicParsingResult> {
 			if(all) {
 				permittedValues = getAllPermittedValues(dateTime);
 			}
-			return dateTime.with(field, rollToPrevious(permittedValues, value));
+			Integer previous = rollToPrevious(permittedValues, value);
+			if(previous == null) return null;
+			return dateTime.with(field, previous);
 		}
 		
 		protected Integer rollToNext(TreeSet<Integer> values, Integer value){
-			Integer next = values.higher(value);
-			next = next == null ? values.first() : next;
-			return next;
+			try{
+				Integer next = values.higher(value);
+				next = next == null ? values.first() : next;
+				return next;
+			} catch(NoSuchElementException e){
+				return null;
+			}
 		}
 		
 		protected Integer rollToPrevious(TreeSet<Integer> values, Integer value){
-			Integer previous = values.lower(value);
-			previous = previous == null ? values.last() : previous;
-			return previous;
+			try{
+				Integer previous = values.lower(value);
+				previous = previous == null ? values.last() : previous;
+				return previous;
+			} catch(NoSuchElementException e){
+				return null;
+			}
 		}
 		
 		

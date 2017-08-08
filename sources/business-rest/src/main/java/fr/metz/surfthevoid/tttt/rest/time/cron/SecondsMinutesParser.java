@@ -27,7 +27,7 @@ public class SecondsMinutesParser extends AbstractTimeParser<SecondsMinutesParsi
 	}
 
 	@Override
-	protected SecondsMinutesParsingResult newDayParsingResult() {
+	protected SecondsMinutesParsingResult newParsingResult() {
 		return new SecondsMinutesParsingResult();
 	}
 	

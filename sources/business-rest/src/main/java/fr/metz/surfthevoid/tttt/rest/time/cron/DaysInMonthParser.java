@@ -55,13 +55,13 @@ public class DaysInMonthParser extends AbstractDaysParser<DaysInMonthParsingResu
 	
 	public static class DaysInMonthParsingResult extends DaysParsingResult {
 
-		protected Boolean lastWeekday;
+		protected boolean lastWeekday;
 		protected Integer nearestWeekday;
 		
 		public Integer getNearestWeekday() {
 			return nearestWeekday;
 		}
-		public Boolean getLastWeekday() {
+		public boolean getLastWeekday() {
 			return lastWeekday;
 		}
 		

@@ -1,55 +1,71 @@
 package fr.metz.surfthevoid.tttt.rest.time;
 
+import java.time.LocalDateTime;
+
 public class TimePeriod {
 	
-	private Integer years;
-	private Integer months;
-	private Integer weeks;
-	private Integer days;
-	private Integer hours;
-	private Integer minutes;
-	private Integer seconds;
+	private int years;
+	private int months;
+	private int weeks;
+	private int days;
+	private int hours;
+	private int minutes;
+	private int seconds;
 	
-	public Integer getYears() {
+	public int getYears() {
 		return years;
 	}
-	public void setYears(Integer years) {
+	public void setYears(int years) {
 		this.years = years;
 	}
-	public Integer getMonths() {
+	public int getMonths() {
 		return months;
 	}
-	public void setMonths(Integer months) {
+	public void setMonths(int months) {
 		this.months = months;
 	}
-	public Integer getWeeks() {
+	public int getWeeks() {
 		return weeks;
 	}
-	public void setWeeks(Integer weeks) {
+	public void setWeeks(int weeks) {
 		this.weeks = weeks;
 	}
-	public Integer getDays() {
+	public int getDays() {
 		return days;
 	}
-	public void setDays(Integer days) {
+	public void setDays(int days) {
 		this.days = days;
 	}
-	public Integer getHours() {
+	public int getHours() {
 		return hours;
 	}
-	public void setHours(Integer hours) {
+	public void setHours(int hours) {
 		this.hours = hours;
 	}
-	public Integer getMinutes() {
+	public int getMinutes() {
 		return minutes;
 	}
-	public void setMinutes(Integer minutes) {
+	public void setMinutes(int minutes) {
 		this.minutes = minutes;
 	}
-	public Integer getSeconds() {
+	public int getSeconds() {
 		return seconds;
 	}
-	public void setSeconds(Integer seconds) {
+	public void setSeconds(int seconds) {
 		this.seconds = seconds;
+	}
+	
+	public LocalDateTime addTo(LocalDateTime dateTime){
+		if(dateTime != null){
+			return dateTime
+					.plusYears(years)
+					.plusMonths(months)
+					.plusDays(weeks * 7)
+					.plusDays(days)
+					.plusHours(hours)
+					.plusMinutes(minutes)
+					.plusSeconds(seconds);
+		}
+		return null;
 	}
 }

@@ -4,6 +4,9 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Deque;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,12 +33,16 @@ public class TimeManager {
 		List<TimeInterval> results = tm.getTimeIntervals(tl);
 		
 		for(TimeInterval ti : results) System.out.println(ti);
+		System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+		for(TimeInterval ti : tm.optimizeIntervals(results)) System.out.println(ti);
 		System.out.println("---------------------------------------------");
 		
 		tl.setCronExpression("0 1 * * * ? *");
 		results = tm.getTimeIntervals(tl);
 		
 		for(TimeInterval ti : results) System.out.println(ti);
+		System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+		for(TimeInterval ti : tm.optimizeIntervals(results)) System.out.println(ti);
 		
 		System.out.println("---------------------------------------------");
 		
@@ -45,6 +52,8 @@ public class TimeManager {
 		results = tm.getTimeIntervals(tl);
 		
 		for(TimeInterval ti : results) System.out.println(ti);
+		System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::");
+		for(TimeInterval ti : tm.optimizeIntervals(results)) System.out.println(ti);
 		
 		
 		
@@ -82,5 +91,30 @@ public class TimeManager {
 		return results;
 	}
 	
+	protected List<TimeInterval> optimizeIntervals(List<TimeInterval> intervals){
+		LinkedList<TimeInterval> source = new LinkedList<TimeInterval>(intervals);
+		LinkedList<TimeInterval> dest = new LinkedList<TimeInterval>();
+		source.sort(Comparator.comparing(TimeInterval::getStartTime));
+		
+		TimeInterval older = source.pollFirst();
+		dest.offer(older);
+		
+		while(!source.isEmpty()){
+			TimeInterval youngerDest = dest.getLast();
+			TimeInterval olderSource = source.pollFirst();
+			
+			if(olderSource.getStartTime().isAfter(youngerDest.getEndTime())){
+				dest.offer(olderSource);
+				continue;
+			} else {
+				TimeInterval merged = new TimeInterval(youngerDest.getStartTime(), olderSource.getEndTime());
+				//replace the younger (most recent) interval by the merged one
+				dest.pollLast();
+				dest.offer(merged);
+			}
+		}
+		
+		return dest;
+	}
 	
 }

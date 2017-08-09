@@ -2,7 +2,7 @@ package fr.metz.surfthevoid.tttt.rest.time;
 
 import java.time.LocalDateTime;
 
-public class TimePeriod {
+public class TimeDuration {
 	
 	private int years;
 	private int months;

@@ -4,6 +4,7 @@ import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.LinkedList;
@@ -20,14 +21,16 @@ public class TimeManager {
 	public static DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 	
 	public static void main(String... args) throws ParseException{
-		TimePeriod tp = new TimePeriod();
+		TimeDuration tp = new TimeDuration();
 		tp.setHours(1);
 		TimeLine tl = new TimeLine();
+		CronDefinition cr = new CronDefinition();
+		tl.setCronDefintions(Arrays.asList(cr));
 		
-		tl.setPeriod(tp);
+		cr.setPeriod(tp);
 		tl.setStartTime(LocalDateTime.parse("01/01/2010 00:00:00", df));
 		tl.setEndTime(LocalDateTime.parse("01/01/2011 00:00:00", df));
-		tl.setCronExpression("0 0 1 * * ? *");
+		cr.setCronExpression("0 0 1 * * ? *");
 		
 		TimeManager tm = new TimeManager();
 		List<TimeInterval> results = tm.getTimeIntervals(tl);
@@ -37,7 +40,7 @@ public class TimeManager {
 		for(TimeInterval ti : tm.optimizeIntervals(results)) System.out.println(ti);
 		System.out.println("---------------------------------------------");
 		
-		tl.setCronExpression("0 1 * * * ? *");
+		cr.setCronExpression("0 1 * * * ? *");
 		results = tm.getTimeIntervals(tl);
 		
 		for(TimeInterval ti : results) System.out.println(ti);
@@ -46,7 +49,7 @@ public class TimeManager {
 		
 		System.out.println("---------------------------------------------");
 		
-		tl.setCronExpression("1 0 12-13 ? 1,2,3 MON#3 2002/8,2019-2021");
+		cr.setCronExpression("1 0 12-13 ? 1,2,3 MON#3 2002/8,2019-2021");
 		tl.setStartTime(LocalDateTime.parse("01/01/2000 00:00:00", df));
 		tl.setEndTime(LocalDateTime.parse("01/01/2030 00:00:00", df));
 		results = tm.getTimeIntervals(tl);
@@ -54,9 +57,7 @@ public class TimeManager {
 		for(TimeInterval ti : results) System.out.println(ti);
 		System.out.println(":::::::::::::::::::::::::::::::::::::::::::::::::::::::");
 		for(TimeInterval ti : tm.optimizeIntervals(results)) System.out.println(ti);
-		
-		
-		
+			
 	}
 	
 	protected List<TimeInterval> getTimeIntervals(TimeLine timeline) throws ParseException{
@@ -64,13 +65,14 @@ public class TimeManager {
 			
 		LocalDateTime startPoint = timeline.getStartTime();
 		LocalDateTime endPoint = timeline.getEndTime();
+		CronDefinition cronDef = timeline.getCronDefintions().get(0);
 		
-		CronExpressionAnalyser analyser = new CronExpressionAnalyser(timeline.getCronExpression());
+		CronExpressionAnalyser analyser = new CronExpressionAnalyser(cronDef.getCronExpression());
 		Optional<LocalDateTime> optPreviousEvent = analyser.previous(startPoint);
 		
 		if(optPreviousEvent.isPresent()){
 			LocalDateTime previousEvent = optPreviousEvent.get();
-			LocalDateTime previousPeriodEnd = timeline.getPeriod().addTo(previousEvent);
+			LocalDateTime previousPeriodEnd = cronDef.getPeriod().addTo(previousEvent);
 			if(previousPeriodEnd != null && previousPeriodEnd.isAfter(startPoint)){
 				results.add(new TimeInterval(startPoint, previousPeriodEnd));
 			}
@@ -80,7 +82,7 @@ public class TimeManager {
 		
 		while(optNextEvent.isPresent() && optNextEvent.get().isBefore(endPoint)){
 			LocalDateTime nextEvent = optNextEvent.get();
-			LocalDateTime nextPeriodEnd = timeline.getPeriod().addTo(nextEvent);
+			LocalDateTime nextPeriodEnd = cronDef.getPeriod().addTo(nextEvent);
 			if(nextPeriodEnd.isAfter(endPoint)){
 				nextPeriodEnd = endPoint;
 			} 

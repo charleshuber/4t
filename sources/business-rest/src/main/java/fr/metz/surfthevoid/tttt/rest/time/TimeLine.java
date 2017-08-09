@@ -1,13 +1,15 @@
 package fr.metz.surfthevoid.tttt.rest.time;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TimeLine {
 	
+	private boolean negative;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
-	private TimePeriod period;
-	private String cronExpression;
+	private List<TimeInterval> intervals;
+	private List<CronDefinition> cronDefintions;
 	
 	public LocalDateTime getStartTime() {
 		return startTime;
@@ -21,17 +23,23 @@ public class TimeLine {
 	public void setEndTime(LocalDateTime endTime) {
 		this.endTime = endTime;
 	}
-	public TimePeriod getPeriod() {
-		return period;
-	}
-	public void setPeriod(TimePeriod period) {
-		this.period = period;
-	}
-	public String getCronExpression() {
-		return cronExpression;
-	}
-	public void setCronExpression(String cronExpression) {
-		this.cronExpression = cronExpression;
-	}
 	
+	public List<TimeInterval> getIntervals() {
+		return intervals;
+	}
+	public void setIntervals(List<TimeInterval> intervals) {
+		this.intervals = intervals;
+	}
+	public List<CronDefinition> getCronDefintions() {
+		return cronDefintions;
+	}
+	public void setCronDefintions(List<CronDefinition> cronDefintions) {
+		this.cronDefintions = cronDefintions;
+	}
+	public boolean isNegative() {
+		return negative;
+	}
+	public void setNegative(boolean negative) {
+		this.negative = negative;
+	}
 }

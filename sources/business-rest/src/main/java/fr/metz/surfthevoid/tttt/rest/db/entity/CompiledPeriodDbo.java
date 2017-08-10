@@ -1,38 +1,35 @@
 package fr.metz.surfthevoid.tttt.rest.db.entity;
 
-import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name="COMP_PERIOD")
 public class CompiledPeriodDbo extends GenericDbo {
+		
+	@Column(name="NAME", unique=true, nullable=false)
+	private String name;
 	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="START_TIME", nullable=false)
-	private LocalDateTime startTime;
-	
-	@Temporal(TemporalType.TIMESTAMP)
-	@Column(name="END_TIME", nullable=false)
-	private LocalDateTime endTime;
+	@OneToMany(mappedBy="cmpPeriod")
+	private List<CPPR2TLDbo> cp2tls;
 
-	public LocalDateTime getStartTime() {
-		return startTime;
+	public String getName() {
+		return name;
 	}
 
-	public void setStartTime(LocalDateTime startTime) {
-		this.startTime = startTime;
+	public void setName(String name) {
+		this.name = name;
 	}
 
-	public LocalDateTime getEndTime() {
-		return endTime;
+	public List<CPPR2TLDbo> getCp2tls() {
+		return cp2tls;
 	}
 
-	public void setEndTime(LocalDateTime endTime) {
-		this.endTime = endTime;
+	public void setCp2tls(List<CPPR2TLDbo> cp2tls) {
+		this.cp2tls = cp2tls;
 	}
 }

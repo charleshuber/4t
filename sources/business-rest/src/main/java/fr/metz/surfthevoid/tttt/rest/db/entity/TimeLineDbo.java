@@ -2,7 +2,6 @@ package fr.metz.surfthevoid.tttt.rest.db.entity;
 
 import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -13,9 +12,6 @@ import javax.persistence.Table;
 @Table(name="TIMELINE")
 public class TimeLineDbo extends GenericDbo {
 	
-	@Column(name="NEG", unique=true, nullable=false)
-	private boolean negative; 
-	
 	@ManyToMany
 	@JoinTable(name="TL_2_PR", 
 		joinColumns = @JoinColumn(name="TL_ID" ,referencedColumnName="ID"),
@@ -23,18 +19,17 @@ public class TimeLineDbo extends GenericDbo {
 	private Set<PeriodDbo> periods;
 	
 	@ManyToMany
-	@JoinTable(name="TL_2_CP", 
+	@JoinTable(name="TL_2_CRPR", 
 		joinColumns = @JoinColumn(name="TL_ID" ,referencedColumnName="ID"),
-		inverseJoinColumns = @JoinColumn(name="CP_ID", referencedColumnName="ID"))
+		inverseJoinColumns = @JoinColumn(name="CRPR_ID", referencedColumnName="ID"))
 	private Set<CronPeriodDbo> cronPeriods;
-
-	public boolean isNegative() {
-		return negative;
-	}
-
-	public void setNegative(boolean negative) {
-		this.negative = negative;
-	}
+	
+	@ManyToMany
+	@JoinTable(name="TL_2_CPPR", 
+		joinColumns = @JoinColumn(name="TL_ID" ,referencedColumnName="ID"),
+		inverseJoinColumns = @JoinColumn(name="CPPR_ID", referencedColumnName="ID"))
+	//TODO Warn to cyclic dependencies
+	private Set<CompiledPeriodDbo> compPeriods;
 
 	public Set<PeriodDbo> getPeriods() {
 		return periods;
@@ -50,5 +45,13 @@ public class TimeLineDbo extends GenericDbo {
 
 	public void setCronPeriods(Set<CronPeriodDbo> cronPeriods) {
 		this.cronPeriods = cronPeriods;
+	}
+
+	public Set<CompiledPeriodDbo> getCompPeriods() {
+		return compPeriods;
+	}
+
+	public void setCompPeriods(Set<CompiledPeriodDbo> compPeriods) {
+		this.compPeriods = compPeriods;
 	}
 }

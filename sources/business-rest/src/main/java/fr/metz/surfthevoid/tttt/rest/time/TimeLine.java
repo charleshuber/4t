@@ -5,7 +5,6 @@ import java.util.List;
 
 public class TimeLine {
 	
-	private boolean negative;
 	private LocalDateTime startTime;
 	private LocalDateTime endTime;
 	private List<TimeInterval> intervals;
@@ -35,11 +34,5 @@ public class TimeLine {
 	}
 	public void setCronDefintions(List<CronDefinition> cronDefintions) {
 		this.cronDefintions = cronDefintions;
-	}
-	public boolean isNegative() {
-		return negative;
-	}
-	public void setNegative(boolean negative) {
-		this.negative = negative;
 	}
 }

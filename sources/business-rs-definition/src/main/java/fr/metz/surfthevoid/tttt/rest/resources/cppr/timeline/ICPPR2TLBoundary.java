@@ -13,12 +13,6 @@ import fr.metz.surfthevoid.tttt.rest.resources.IResourceBoundary;
 public interface ICPPR2TLBoundary extends IResourceBoundary<CPPR2TL>{
 	
 	@GET
-	@Path("/all")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response all();
-	
-	
-	@GET
 	@Path("/all/{cpprId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response allOfCPPR(@PathParam("cpprId") Long id);

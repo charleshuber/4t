@@ -27,7 +27,7 @@ public class CPPR2TLDbo extends GenericDbo {
 	@Column(name="ORDER", nullable=false)
 	private Integer order;
 
-	public boolean isNegative() {
+	public boolean getNegative() {
 		return negative;
 	}
 

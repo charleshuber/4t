@@ -5,8 +5,6 @@ import javax.inject.Named;
 import javax.ws.rs.core.Response;
 
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceBoundary;
-import fr.metz.surfthevoid.tttt.rest.resources.ResourceBoundary.ReadSetInterface;
-import fr.metz.surfthevoid.tttt.rest.resources.cppr.CompiledPeriod;
 
 /**
  * Rest access point to manipulate compiled periods resources
@@ -30,7 +28,7 @@ public class CPPR2TLBoundary extends ResourceBoundary<CPPR2TL> implements ICPPR2
 
 	@Override
 	public Response allOfCPPR(Long id) {
-		ReadSetInterface<CPPR2TL> readSetAction = () -> cppr2tlStore.allOfCPPR(tlid);
+		ReadSetInterface<CPPR2TL> readSetAction = () -> cppr2tlStore.allOfCPPR(id);
 		return readSet(readSetAction);
 	}
 

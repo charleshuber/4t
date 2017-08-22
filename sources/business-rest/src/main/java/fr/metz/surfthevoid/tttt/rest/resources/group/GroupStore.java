@@ -177,10 +177,8 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 
 	@Override
 	protected Group clean(Group res, Operation op) {
-		if(res != null){
-			if(StringUtils.isNotEmpty(res.getName())){
-				res.setName(res.getName().trim());
-			}
+		if(StringUtils.isNotEmpty(res.getName())){
+			res.setName(res.getName().trim());
 		}
 		return res;
 	}

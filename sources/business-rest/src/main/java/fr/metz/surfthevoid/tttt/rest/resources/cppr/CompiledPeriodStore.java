@@ -81,10 +81,8 @@ public class CompiledPeriodStore extends ResourceStore<CompiledPeriod, CompiledP
 
 	@Override
 	protected CompiledPeriod clean(CompiledPeriod res, Operation op) {
-		if(res != null){
-			if(StringUtils.isNotEmpty(res.getName())){
-				res.setName(res.getName().trim());
-			}
+		if(StringUtils.isNotEmpty(res.getName())){
+			res.setName(res.getName().trim());
 		}
 		return res;
 	}

@@ -88,22 +88,20 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 
 	@Override
 	protected User clean(User res, Operation op) {
-		if(res != null){
-			if(StringUtils.isNotEmpty(res.getEmail())){
-				res.setEmail(res.getEmail().trim());
-			}
-			if(StringUtils.isNotEmpty(res.getNewPassword())){
-				res.setNewPassword(res.getNewPassword().trim());
-			}
-			if(StringUtils.isNotEmpty(res.getNewPasswordCheck())){
-				res.setNewPasswordCheck(res.getNewPasswordCheck().trim());
-			}
-			if(StringUtils.isNotEmpty(res.getFirstName())){
-				res.setFirstName(res.getFirstName().trim());
-			}
-			if(StringUtils.isNotEmpty(res.getLastName())){
-				res.setLastName(res.getLastName().trim());
-			}
+		if(StringUtils.isNotEmpty(res.getEmail())){
+			res.setEmail(res.getEmail().trim());
+		}
+		if(StringUtils.isNotEmpty(res.getNewPassword())){
+			res.setNewPassword(res.getNewPassword().trim());
+		}
+		if(StringUtils.isNotEmpty(res.getNewPasswordCheck())){
+			res.setNewPasswordCheck(res.getNewPasswordCheck().trim());
+		}
+		if(StringUtils.isNotEmpty(res.getFirstName())){
+			res.setFirstName(res.getFirstName().trim());
+		}
+		if(StringUtils.isNotEmpty(res.getLastName())){
+			res.setLastName(res.getLastName().trim());
 		}
 		return res;
 	}

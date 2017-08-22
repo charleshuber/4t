@@ -1,7 +1,9 @@
 package fr.metz.surfthevoid.tttt.rest.resources.cppr.timeline;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Supplier;
@@ -73,9 +75,45 @@ public class CPPR2TLStore extends ResourceStore<CPPR2TL, CPPR2TLDbo>{
 		CPPR2TLDbo.setCmpPeriod(cpprDao.read(res.getCompiledPeriodId()));
 		CPPR2TLDbo.setTimeline(tlDao.read(res.getTimelineId()));
 		CPPR2TLDbo.setNegative(res.getNegative());
-		CPPR2TLDbo.setOrder(res.getOrder());
+		updateOrders(CPPR2TLDbo, res.getOrder());
 		return CPPR2TLDbo;
 	}
+	
+	
+	protected void updateOrders(CPPR2TLDbo cppr2TLDbo, Integer order){
+		List<CPPR2TLDbo> dbCollection = cppr2TLDbo.getCmpPeriod().getCp2tls();
+		//If there is no other link we set it as the first one and we leave
+		if(CollectionUtils.isEmpty(dbCollection)){
+			cppr2TLDbo.setOrder(1);
+			return;
+		}
+		if(order == null || order.intValue() > dbCollection.size()){
+			order = dbCollection.size() + 1;
+		} else if(order.intValue() < 0){
+			cppr2TLDbo.setOrder(1);
+		}
+		cppr2TLDbo.setOrder(order);
+		updateOrders(cppr2TLDbo);
+	}
+	
+	
+	protected void updateOrders(CPPR2TLDbo cppr2TLDbo){
+		ArrayList<CPPR2TLDbo> tmpOrderedCollection = new ArrayList<>(cppr2TLDbo.getCmpPeriod().getCp2tls());
+		//we remove the updated element from the temporary list
+		if(cppr2TLDbo.getId() != null){
+			tmpOrderedCollection = tmpOrderedCollection.stream()
+			.filter(link -> !link.getId().equals(cppr2TLDbo.getId()))
+			.collect(Collectors.toCollection(() -> new ArrayList<>()));
+		}
+		tmpOrderedCollection.add(cppr2TLDbo.getOrder().intValue() - 1, cppr2TLDbo);
+		tmpOrderedCollection.sort(Comparator.comparing(CPPR2TLDbo::getOrder));
+		for(int i=0; i < tmpOrderedCollection.size(); i++){
+			tmpOrderedCollection.get(i).setOrder(i+1);
+		}
+	}
+	
+	
+	
 
 	@Override
 	public CPPR2TL extract(CPPR2TLDbo dbo) {
@@ -89,11 +127,9 @@ public class CPPR2TLStore extends ResourceStore<CPPR2TL, CPPR2TLDbo>{
 	}
 
 	@Override
-	protected CPPR2TL clean(CPPR2TL res, Operation op) {
-		if(res != null){
-			if(res.getNegative() == null){
-				res.setNegative(false);
-			}
+	protected CPPR2TL fillWithDefault(CPPR2TL res, Operation op) {
+		if(res.getNegative() == null){
+			res.setNegative(false);
 		}
 		return res;
 	}

@@ -111,9 +111,6 @@ public class CPPR2TLStore extends ResourceStore<CPPR2TL, CPPR2TLDbo>{
 			tmpOrderedCollection.get(i).setOrder(i+1);
 		}
 	}
-	
-	
-	
 
 	@Override
 	public CPPR2TL extract(CPPR2TLDbo dbo) {

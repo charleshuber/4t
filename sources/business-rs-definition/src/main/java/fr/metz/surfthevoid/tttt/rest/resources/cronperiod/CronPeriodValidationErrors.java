@@ -2,9 +2,8 @@ package fr.metz.surfthevoid.tttt.rest.resources.cronperiod;
 
 public enum CronPeriodValidationErrors {
 	
-	PERIOD_IS_INVALID("period.invalid", "The start time must be before the end time"),
-	START_TIME_IS_MANDATORY("period.startTime.cannot.be.empty", "The start time of the period cannot be empty"),
-	END_TIME_IS_MANDATORY("period.endTime.cannot.be.empty", "The end time of the period cannot be empty");
+	CRON_IS_INVALID("cron.invalid", "The cron expression is not valid"),
+	PERIOD_IS_INVALID("period.invalid", "The duration is not valid");
 	
 	CronPeriodValidationErrors(String code, String description){
 		this.code = code;

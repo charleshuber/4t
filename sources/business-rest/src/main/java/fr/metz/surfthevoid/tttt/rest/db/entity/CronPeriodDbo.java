@@ -38,27 +38,27 @@ public class CronPeriodDbo extends GenericDbo {
 	
 	// number of seconds for the period
 	@Column(name="SC_DUR", nullable=true)
-	private String scDur;
+	private Long scDur;
 	
 	// number of minutes for the period
 	@Column(name="MN_DUR", nullable=true)
-	private String mnDur;
+	private Long mnDur;
 	
 	// number of hours for the period
 	@Column(name="HR_DUR", nullable=true)
-	private String hrDur;
+	private Long hrDur;
 	
 	// number of days for the period
 	@Column(name="DY_DUR", nullable=true)
-	private String dyDur;
+	private Long dyDur;
 	
 	// number of months for the period
 	@Column(name="MT_DUR", nullable=true)
-	private String mtDur;
+	private Long mtDur;
 	
 	// number of years for the period
 	@Column(name="YR_DUR", nullable=true)
-	private String yrDur;
+	private Long yrDur;
 
 	public String getScExp() {
 		return scExp;
@@ -116,51 +116,51 @@ public class CronPeriodDbo extends GenericDbo {
 		this.yrExp = yrExp;
 	}
 
-	public String getScDur() {
+	public Long getScDur() {
 		return scDur;
 	}
 
-	public void setScDur(String scDur) {
+	public void setScDur(Long scDur) {
 		this.scDur = scDur;
 	}
 
-	public String getMnDur() {
+	public Long getMnDur() {
 		return mnDur;
 	}
 
-	public void setMnDur(String mnDur) {
+	public void setMnDur(Long mnDur) {
 		this.mnDur = mnDur;
 	}
 
-	public String getHrDur() {
+	public Long getHrDur() {
 		return hrDur;
 	}
 
-	public void setHrDur(String hrDur) {
+	public void setHrDur(Long hrDur) {
 		this.hrDur = hrDur;
 	}
 
-	public String getDyDur() {
+	public Long getDyDur() {
 		return dyDur;
 	}
 
-	public void setDyDur(String dyDur) {
+	public void setDyDur(Long dyDur) {
 		this.dyDur = dyDur;
 	}
 
-	public String getMtDur() {
+	public Long getMtDur() {
 		return mtDur;
 	}
 
-	public void setMtDur(String mtDur) {
+	public void setMtDur(Long mtDur) {
 		this.mtDur = mtDur;
 	}
 
-	public String getYrDur() {
+	public Long getYrDur() {
 		return yrDur;
 	}
 
-	public void setYrDur(String yrDur) {
+	public void setYrDur(Long yrDur) {
 		this.yrDur = yrDur;
 	}
 }

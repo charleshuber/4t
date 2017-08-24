@@ -2,13 +2,18 @@ package fr.metz.surfthevoid.tttt.rest.db.entity;
 
 import java.util.Set;
 
+import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
+import javax.persistence.Inheritance;
+import javax.persistence.InheritanceType;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
 @Entity
+@Inheritance(strategy=InheritanceType.JOINED)
+@DiscriminatorColumn(name="TYPE")
 @Table(name="TIMELINE")
 public class TimeLineDbo extends GenericDbo {
 	

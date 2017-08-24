@@ -22,7 +22,7 @@ public class CPPR2TLDbo extends GenericDbo {
 	
 	@ManyToOne
 	@JoinColumn(name="TL_ID" ,referencedColumnName="ID")
-	private TimeLineDbo timeline;
+	private TimelineDbo timeline;
 	
 	@Column(name="ORDER", nullable=false)
 	private Integer order;
@@ -43,11 +43,11 @@ public class CPPR2TLDbo extends GenericDbo {
 		this.cmpPeriod = cmpPeriod;
 	}
 
-	public TimeLineDbo getTimeline() {
+	public TimelineDbo getTimeline() {
 		return timeline;
 	}
 
-	public void setTimeline(TimeLineDbo timeline) {
+	public void setTimeline(TimelineDbo timeline) {
 		this.timeline = timeline;
 	}
 

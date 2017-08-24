@@ -5,10 +5,10 @@ import javax.inject.Named;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.CPPR2TLDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.CompiledPeriodDbo;
-import fr.metz.surfthevoid.tttt.rest.db.entity.TimeLineDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CPPR2TLDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CompiledPeriodDao;
-import fr.metz.surfthevoid.tttt.rest.db.repo.TimeLineDao;
+import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Errors;
@@ -24,7 +24,7 @@ public class CPPR2TLValidator extends Validator<CPPR2TL, CPPR2TLDbo>{
 	protected CompiledPeriodDao cpprDao;
 	
 	@Inject
-	protected TimeLineDao tlDao;
+	protected TimelineDao tlDao;
 	
 	@Override
 	public void validateInput(CPPR2TL input, Operation op, Errors errors) throws ValidationException {
@@ -47,7 +47,7 @@ public class CPPR2TLValidator extends Validator<CPPR2TL, CPPR2TLDbo>{
 		if(input.getTimelineId() == null){
 		 	errors.addFieldError(CPPR2TL.TL_ID_FIELD_NAME, CPPR2TLValidationErrors.TIMELINE_INVALID.getCode());
 		} else {
-			TimeLineDbo timeline = tlDao.read(input.getTimelineId());
+			TimelineDbo timeline = tlDao.read(input.getTimelineId());
 			if(timeline == null){
 				errors.addFieldError(CPPR2TL.TL_ID_FIELD_NAME, CPPR2TLValidationErrors.TIMELINE_INVALID.getCode());
 			} 

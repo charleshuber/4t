@@ -14,9 +14,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.CompiledPeriodDbo;
-import fr.metz.surfthevoid.tttt.rest.db.entity.TimeLineDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CompiledPeriodDao;
-import fr.metz.surfthevoid.tttt.rest.db.repo.TimeLineDao;
+import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
@@ -29,7 +29,7 @@ public class CompiledPeriodStore extends ResourceStore<CompiledPeriod, CompiledP
 	protected CompiledPeriodDao dao;
 	
 	@Inject
-	protected TimeLineDao tlDao;
+	protected TimelineDao tlDao;
 	
 	@Inject
 	protected CompiledPeriodValidator validator;
@@ -41,7 +41,7 @@ public class CompiledPeriodStore extends ResourceStore<CompiledPeriod, CompiledP
 	}
 	
 	public Set<CompiledPeriod> allOfTimeline(Long tlid) throws ValidationException {
-		TimeLineDbo dbTimeLine = tlDao.read(tlid);			
+		TimelineDbo dbTimeLine = tlDao.read(tlid);			
 		if(dbTimeLine != null){
 			if(CollectionUtils.isNotEmpty(dbTimeLine.getCompPeriods())){
 				return dbTimeLine.getCompPeriods().stream()

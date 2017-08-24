@@ -18,7 +18,7 @@ import fr.metz.surfthevoid.tttt.rest.db.entity.CPPR2TLDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.CompiledPeriodDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CPPR2TLDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CompiledPeriodDao;
-import fr.metz.surfthevoid.tttt.rest.db.repo.TimeLineDao;
+import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
@@ -34,7 +34,7 @@ public class CPPR2TLStore extends ResourceStore<CPPR2TL, CPPR2TLDbo>{
 	protected CompiledPeriodDao cpprDao;
 	
 	@Inject
-	protected TimeLineDao tlDao;
+	protected TimelineDao tlDao;
 	
 	@Inject
 	protected CPPR2TLValidator validator;

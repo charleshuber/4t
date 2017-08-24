@@ -9,7 +9,7 @@ import fr.metz.surfthevoid.tttt.rest.resources.ResourceBoundary;
 /**
  * Rest access point to manipulate compiled periods resources
  */
-@Named("cpprBoundary")
+@Named("crprBoundary")
 public class CronPeriodBoundary extends ResourceBoundary<CronPeriod> implements ICronPeriodBoundary{
 	
 	@Inject

@@ -13,9 +13,9 @@ import javax.inject.Named;
 import org.apache.commons.collections.CollectionUtils;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.PeriodDbo;
-import fr.metz.surfthevoid.tttt.rest.db.entity.TimeLineDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.PeriodDao;
-import fr.metz.surfthevoid.tttt.rest.db.repo.TimeLineDao;
+import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
@@ -27,7 +27,7 @@ public class PeriodStore extends ResourceStore<Period, PeriodDbo>{
 	protected PeriodDao dao;
 	
 	@Inject
-	protected TimeLineDao tlDao;
+	protected TimelineDao tlDao;
 	
 	@Inject
 	protected PeriodValidator validator;
@@ -39,7 +39,7 @@ public class PeriodStore extends ResourceStore<Period, PeriodDbo>{
 	}
 	
 	public Set<Period> allOfTimeline(Long tlid) throws ValidationException {
-		TimeLineDbo dbTimeLine = tlDao.read(tlid);			
+		TimelineDbo dbTimeLine = tlDao.read(tlid);			
 		if(dbTimeLine != null){
 			if(CollectionUtils.isNotEmpty(dbTimeLine.getCompPeriods())){
 				return dbTimeLine.getPeriods().stream()

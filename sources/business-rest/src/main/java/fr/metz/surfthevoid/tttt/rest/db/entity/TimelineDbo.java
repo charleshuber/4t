@@ -2,6 +2,7 @@ package fr.metz.surfthevoid.tttt.rest.db.entity;
 
 import java.util.Set;
 
+import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.Entity;
 import javax.persistence.Inheritance;
@@ -15,7 +16,10 @@ import javax.persistence.Table;
 @Inheritance(strategy=InheritanceType.JOINED)
 @DiscriminatorColumn(name="TYPE")
 @Table(name="TIMELINE")
-public class TimeLineDbo extends GenericDbo {
+public class TimelineDbo extends GenericDbo {
+	
+	@Column(name="NAME", unique=true, nullable=false)
+	private String name;
 	
 	@ManyToMany
 	@JoinTable(name="TL_2_PR", 
@@ -35,6 +39,14 @@ public class TimeLineDbo extends GenericDbo {
 		inverseJoinColumns = @JoinColumn(name="CPPR_ID", referencedColumnName="ID"))
 	//TODO Warn to cyclic dependencies
 	private Set<CompiledPeriodDbo> compPeriods;
+	
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
 
 	public Set<PeriodDbo> getPeriods() {
 		return periods;

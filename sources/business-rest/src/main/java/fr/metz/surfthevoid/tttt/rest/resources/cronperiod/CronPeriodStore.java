@@ -14,9 +14,9 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.CronPeriodDbo;
-import fr.metz.surfthevoid.tttt.rest.db.entity.TimeLineDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CronPeriodDao;
-import fr.metz.surfthevoid.tttt.rest.db.repo.TimeLineDao;
+import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
@@ -29,7 +29,7 @@ public class CronPeriodStore extends ResourceStore<CronPeriod, CronPeriodDbo>{
 	protected CronPeriodDao dao;
 	
 	@Inject
-	protected TimeLineDao tlDao;
+	protected TimelineDao tlDao;
 	
 	@Inject
 	protected CronPeriodValidator validator;
@@ -41,7 +41,7 @@ public class CronPeriodStore extends ResourceStore<CronPeriod, CronPeriodDbo>{
 	}
 	
 	public Set<CronPeriod> allOfTimeline(Long tlid) throws ValidationException {
-		TimeLineDbo dbTimeLine = tlDao.read(tlid);			
+		TimelineDbo dbTimeLine = tlDao.read(tlid);			
 		if(dbTimeLine != null){
 			if(CollectionUtils.isNotEmpty(dbTimeLine.getCompPeriods())){
 				return dbTimeLine.getCronPeriods().stream()

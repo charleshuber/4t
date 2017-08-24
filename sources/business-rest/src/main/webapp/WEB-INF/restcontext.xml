@@ -12,9 +12,11 @@
 		<jaxrs:serviceBeans>
 			<ref bean="userBoundary" />
 			<ref bean="groupBoundary" />
-			
 			<ref bean="cpprBoundary" />
 			<ref bean="cppr2tlBoundary" />
+			<ref bean="crprBoundary" />
+			<ref bean="periodBoundary" />
+			<ref bean="timelineBoundary" />
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />

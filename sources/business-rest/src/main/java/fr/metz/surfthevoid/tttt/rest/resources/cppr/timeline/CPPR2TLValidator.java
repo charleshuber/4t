@@ -1,7 +1,11 @@
 package fr.metz.surfthevoid.tttt.rest.resources.cppr.timeline;
 
+import java.util.Optional;
+
 import javax.inject.Inject;
 import javax.inject.Named;
+
+import org.apache.commons.collections.CollectionUtils;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.CPPR2TLDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.CompiledPeriodDbo;
@@ -30,6 +34,7 @@ public class CPPR2TLValidator extends Validator<CPPR2TL, CPPR2TLDbo>{
 	public void validateInput(CPPR2TL input, Operation op, Errors errors) throws ValidationException {
 		validateCPPR(input, op, errors);
 		validateTimeline(input, op, errors);
+		validateCyclicDependency(input, op, errors);
 	}
 
 	protected void validateCPPR(CPPR2TL input, Operation op, Errors errors) {	
@@ -54,6 +59,31 @@ public class CPPR2TLValidator extends Validator<CPPR2TL, CPPR2TLDbo>{
 		}
 	}
 
+	protected void validateCyclicDependency(CPPR2TL input, Operation op, Errors errors) {
+		CompiledPeriodDbo dbCPPR = cpprDao.read(input.getCompiledPeriodId());
+		TimelineDbo dbTimeline = tlDao.read(input.getTimelineId());
+		if(dbTimeline != null 
+				&& dbCPPR != null 
+				&& isTimelineContainingCPPR(dbTimeline, dbCPPR)) {
+			errors.addGlobalError(CPPR2TLValidationErrors.CYCLIC_DEPENDENCY.getCode());
+		}
+	}
+	
+	protected boolean isTimelineContainingCPPR(TimelineDbo dbTimeline, CompiledPeriodDbo dbCPPR) {
+		if(CollectionUtils.isEmpty(dbTimeline.getCompPeriods())){
+			return false;
+		}
+		Optional<CompiledPeriodDbo> optDirectLink = dbTimeline.getCompPeriods().stream()
+				.filter(link -> link == dbCPPR).findFirst();
+		
+		if(optDirectLink.isPresent()){
+			return true;
+		}
+		return dbTimeline.getCompPeriods().stream()
+				.filter(link -> isTimelineContainingCPPR(dbTimeline, link))
+				.findFirst().isPresent();
+	}
+	
 	@Override
 	protected CPPR2TLDao getDao() {
 		return dao;

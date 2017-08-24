@@ -14,9 +14,12 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.metz.surfthevoid.tttt.rest.db.entity.CompiledPeriodDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.CronPeriodDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.PeriodDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
-import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CompiledPeriodDao;
+import fr.metz.surfthevoid.tttt.rest.db.repo.CronPeriodDao;
+import fr.metz.surfthevoid.tttt.rest.db.repo.PeriodDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
@@ -31,9 +34,10 @@ public class TimelineStore extends ResourceStore<Timeline, TimelineDbo>{
 	protected TimelineDao dao;
 	@Inject
 	protected CompiledPeriodDao cpprDao;
-	
 	@Inject
-	protected TimelineDao tlDao;
+	protected CronPeriodDao crprDao;
+	@Inject
+	protected PeriodDao periodDao;
 	
 	@Inject
 	protected TimelineValidator validator;
@@ -45,32 +49,81 @@ public class TimelineStore extends ResourceStore<Timeline, TimelineDbo>{
 	}
 	
 	public Boolean addCPPR(Long timelineId, Long cpprId) throws ValidationException {
+		validator.validateCPPRAddition(timelineId, cpprId);
 		TimelineDbo dbTimeline = dao.read(timelineId);
 		CompiledPeriodDbo dbCPPR = cpprDao.read(cpprId);
-		
-		TODO ADD CYCLIC VALIDATION
-		
-		if(dbTimeline != null && dbCPPR != null){
-			if(CollectionUtils.isNotEmpty(dbTimeline.getCompPeriods()) 
-					&& dbTimeline.getCompPeriods().contains(dbCPPR)){
+		if(dbTimeline.getCompPeriods() == null){
+			dbTimeline.setCompPeriods(new HashSet<CompiledPeriodDbo>());
+		}
+		dbTimeline.getCompPeriods().add(dbCPPR);
+		return true;
+	}
+
+	public Boolean removeCPPR(Long timelineId, Long cpprId) throws ValidationException {
+		validator.validateCPPRDeletion(timelineId, cpprId);
+		TimelineDbo dbTimeline = dao.read(timelineId);
+		CompiledPeriodDbo dbCPPR = cpprDao.read(cpprId);
+		if(CollectionUtils.isNotEmpty(dbTimeline.getCompPeriods()) 
+				&& dbTimeline.getCompPeriods().contains(dbCPPR)){
+			dbTimeline.getCompPeriods().remove(dbCPPR);
+		}
+		return true;
+	}
+	
+	public Boolean addCRPR(Long timelineId, Long cpprId) throws ValidationException {
+		TimelineDbo dbTimeline = dao.read(timelineId);
+		CronPeriodDbo dbCRPR = crprDao.read(cpprId);
+		if(dbTimeline != null && dbCRPR != null){
+			if(CollectionUtils.isNotEmpty(dbTimeline.getCronPeriods()) 
+					&& dbTimeline.getCronPeriods().contains(dbCRPR)){
 				Errors errors = new Errors();
-				errors.addGlobalError("The compiled period with id " + cpprId + " is already a element of the timeline with id " + timelineId);
+				errors.addGlobalError("The cron period with id " + cpprId + " is already a element of the timeline with id " + timelineId);
 				throw new ValidationException(Type.CONFLICT, errors);
 			}
-			if(dbTimeline.getCompPeriods() == null) dbTimeline.setCompPeriods(new HashSet<CompiledPeriodDbo>());
-			dbTimeline.getCompPeriods().add(dbCPPR);
+			if(dbTimeline.getCronPeriods() == null) dbTimeline.setCronPeriods(new HashSet<CronPeriodDbo>());
+			dbTimeline.getCronPeriods().add(dbCRPR);
 			return true;
 		} 
 		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
 	
-	public Boolean removeCPPR(Long timelineId, Long cpprId) throws ValidationException {
+	public Boolean removeCRPR(Long timelineId, Long cpprId) throws ValidationException {
 		TimelineDbo dbTimeline = dao.read(timelineId);
-		CompiledPeriodDbo dbUser = cpprDao.read(cpprId);
-		if(dbTimeline != null && dbUser != null){
-			if(CollectionUtils.isNotEmpty(dbTimeline.getUsers()) 
-					&& dbTimeline.getUsers().contains(dbUser)){
-				dbTimeline.getUsers().remove(dbUser);
+		CronPeriodDbo dbCRPR = crprDao.read(cpprId);
+		if(dbTimeline != null && dbCRPR != null){
+			if(CollectionUtils.isNotEmpty(dbTimeline.getCronPeriods()) 
+					&& dbTimeline.getCronPeriods().contains(dbCRPR)){
+				dbTimeline.getCronPeriods().remove(dbCRPR);
+				return true;
+			}
+		} 
+		throw new ValidationException(Type.BAD_REQUEST, null);
+	}
+	
+	public Boolean addPeriod(Long timelineId, Long cpprId) throws ValidationException {
+		TimelineDbo dbTimeline = dao.read(timelineId);
+		PeriodDbo dbPeriod = periodDao.read(cpprId);
+		if(dbTimeline != null && dbPeriod != null){
+			if(CollectionUtils.isNotEmpty(dbTimeline.getPeriods()) 
+					&& dbTimeline.getPeriods().contains(dbPeriod)){
+				Errors errors = new Errors();
+				errors.addGlobalError("The period with id " + cpprId + " is already a element of the timeline with id " + timelineId);
+				throw new ValidationException(Type.CONFLICT, errors);
+			}
+			if(dbTimeline.getPeriods() == null) dbTimeline.setPeriods(new HashSet<PeriodDbo>());
+			dbTimeline.getPeriods().add(dbPeriod);
+			return true;
+		} 
+		throw new ValidationException(Type.BAD_REQUEST, null);
+	}
+	
+	public Boolean removePeriod(Long timelineId, Long cpprId) throws ValidationException {
+		TimelineDbo dbTimeline = dao.read(timelineId);
+		PeriodDbo dbPeriod = periodDao.read(cpprId);
+		if(dbTimeline != null && dbPeriod != null){
+			if(CollectionUtils.isNotEmpty(dbTimeline.getPeriods()) 
+					&& dbTimeline.getPeriods().contains(dbPeriod)){
+				dbTimeline.getPeriods().remove(dbPeriod);
 				return true;
 			}
 		} 

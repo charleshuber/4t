@@ -10,10 +10,10 @@ import javax.persistence.UniqueConstraint;
 @Entity
 @Table(
 	name="CPPR_2_TL",
-	uniqueConstraints={@UniqueConstraint(name="CPPR_2_TL_UK", columnNames={"CPPR_ID","TL_ID","ORDER"})})
+	uniqueConstraints={@UniqueConstraint(name="CPPR_2_TL_UK", columnNames={"CPPR_ID","TL_ID","POSITION"})})
 public class CPPR2TLDbo extends GenericDbo {
 	
-	@Column(name="NEG", unique=true, nullable=false)
+	@Column(name="NEG", nullable=false)
 	private boolean negative;
 	
 	@ManyToOne
@@ -24,7 +24,7 @@ public class CPPR2TLDbo extends GenericDbo {
 	@JoinColumn(name="TL_ID" ,referencedColumnName="ID")
 	private TimelineDbo timeline;
 	
-	@Column(name="ORDER", nullable=false)
+	@Column(name="POSITION", nullable=false)
 	private Integer order;
 
 	public boolean getNegative() {

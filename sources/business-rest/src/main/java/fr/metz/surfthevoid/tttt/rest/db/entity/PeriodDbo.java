@@ -1,6 +1,6 @@
 package fr.metz.surfthevoid.tttt.rest.db.entity;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -14,25 +14,25 @@ public class PeriodDbo extends GenericDbo {
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="START_TIME", nullable=false)
-	private LocalDateTime startTime;
+	private Date startTime;
 	
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name="END_TIME", nullable=false)
-	private LocalDateTime endTime;
+	private Date endTime;
 
-	public LocalDateTime getStartTime() {
+	public Date getStartTime() {
 		return startTime;
 	}
 
-	public void setStartTime(LocalDateTime startTime) {
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
 
-	public LocalDateTime getEndTime() {
+	public Date getEndTime() {
 		return endTime;
 	}
 
-	public void setEndTime(LocalDateTime endTime) {
+	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
 }

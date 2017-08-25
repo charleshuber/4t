@@ -37,7 +37,6 @@ public class TimelineDbo extends GenericDbo {
 	@JoinTable(name="TL_2_CPPR", 
 		joinColumns = @JoinColumn(name="TL_ID" ,referencedColumnName="ID"),
 		inverseJoinColumns = @JoinColumn(name="CPPR_ID", referencedColumnName="ID"))
-	//TODO Warn to cyclic dependencies
 	private Set<CompiledPeriodDbo> compPeriods;
 	
 	public String getName() {

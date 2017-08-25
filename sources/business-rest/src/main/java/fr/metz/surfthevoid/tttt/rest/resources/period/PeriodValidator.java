@@ -27,7 +27,7 @@ public class PeriodValidator extends Validator<Period, PeriodDbo>{
 		}
 		if(input.getStartTime() != null 
 				&& input.getEndTime() != null 
-				&& !input.getEndTime().isAfter(input.getStartTime())){
+				&& !input.getEndTime().after(input.getStartTime())){
 			errors.addGlobalError(PeriodValidationErrors.PERIOD_IS_INVALID.getCode());
 		}
 	}

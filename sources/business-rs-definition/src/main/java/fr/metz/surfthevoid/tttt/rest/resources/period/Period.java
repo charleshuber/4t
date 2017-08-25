@@ -1,6 +1,6 @@
 package fr.metz.surfthevoid.tttt.rest.resources.period;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 import fr.metz.surfthevoid.tttt.rest.resources.Resource;
 
@@ -9,19 +9,19 @@ public class Period extends Resource {
 	public static final String START_TIME_FIELD_NAME = "startTime";
 	public static final String END_TIME_FIELD_NAME = "endTime";
 	
-	private LocalDateTime startTime;
-	private LocalDateTime endTime;
+	private Date startTime;
+	private Date endTime;
 	
-	public LocalDateTime getStartTime() {
+	public Date getStartTime() {
 		return startTime;
 	}
-	public void setStartTime(LocalDateTime startTime) {
+	public void setStartTime(Date startTime) {
 		this.startTime = startTime;
 	}
-	public LocalDateTime getEndTime() {
+	public Date getEndTime() {
 		return endTime;
 	}
-	public void setEndTime(LocalDateTime endTime) {
+	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
 }

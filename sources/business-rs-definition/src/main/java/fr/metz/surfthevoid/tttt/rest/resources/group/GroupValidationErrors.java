@@ -3,7 +3,8 @@ package fr.metz.surfthevoid.tttt.rest.resources.group;
 public enum GroupValidationErrors {
 	
 	NAME_IS_MANDATORY("group.name.cannot.be.empty", "The name of the group cannot be empty"),
-	NAME_IS_ALREADY_USED("group.name.already.used", "This name is used by another group");
+	NAME_IS_ALREADY_USED("group.name.already.used", "This name is used by another group"),
+	CYCLIC_DEPENDENCY("group.cyclicdependency", "Group tree cannot content cyclic dependency");;
 	
 	GroupValidationErrors(String code, String description){
 		this.code = code;

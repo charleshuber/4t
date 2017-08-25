@@ -12,6 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 import fr.metz.surfthevoid.tttt.rest.db.entity.CPPR2TLDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.CompiledPeriodDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.CronPeriodDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.PeriodDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CompiledPeriodDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CronPeriodDao;
@@ -78,6 +79,10 @@ public class TimelineValidator extends Validator<Timeline, TimelineDbo>{
 		if(dbTimeline == null || dbCPPR == null){
 			throw new ValidationException(Type.BAD_REQUEST, null);
 		}
+		else if(CollectionUtils.isEmpty(dbTimeline.getCompPeriods()) 
+				&& !dbTimeline.getCompPeriods().contains(dbCPPR)){
+			throw new ValidationException(Type.NO_CONTENT, null);
+		}
 	}
 	
 	
@@ -99,6 +104,35 @@ public class TimelineValidator extends Validator<Timeline, TimelineDbo>{
 		CronPeriodDbo dbCRPR = crprDao.read(crprId);
 		if(dbTimeline == null || dbCRPR == null){
 			throw new ValidationException(Type.BAD_REQUEST, null);
+		}
+		else if(CollectionUtils.isEmpty(dbTimeline.getCronPeriods()) 
+				&& !dbTimeline.getCronPeriods().contains(dbCRPR)){
+			throw new ValidationException(Type.NO_CONTENT, null);
+		}	
+	}
+	
+	public void validatePeriodAddition(Long timelineId, Long periodId) throws ValidationException{
+		TimelineDbo dbTimeline = dao.read(timelineId);
+		PeriodDbo dbPeriod = periodDao.read(periodId);
+		if(dbTimeline == null || dbPeriod == null){
+			throw new ValidationException(Type.BAD_REQUEST, null);
+		} 
+		else if(CollectionUtils.isNotEmpty(dbTimeline.getPeriods()) 
+					&& dbTimeline.getPeriods().contains(dbPeriod)){
+			throw new ValidationException(Type.CONFLICT, null);
+			
+		}
+	}
+	
+	public void validatePeriodDeletion(Long timelineId, Long periodId) throws ValidationException{
+		TimelineDbo dbTimeline = dao.read(timelineId);
+		PeriodDbo dbPeriod = periodDao.read(periodId);
+		if(dbTimeline == null || dbPeriod == null){
+			throw new ValidationException(Type.BAD_REQUEST, null);
+		}
+		else if(CollectionUtils.isEmpty(dbTimeline.getPeriods()) 
+				&& !dbTimeline.getPeriods().contains(dbPeriod)){
+			throw new ValidationException(Type.NO_CONTENT, null);
 		}
 	}
 	

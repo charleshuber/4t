@@ -85,7 +85,6 @@ public class ValidationException extends Exception {
 		NO_CONTENT,
 		INVALID_INPUT,
 		INVALID_STATE,
-		INVALID_INPUT_DATA,
 		INVALID_RIGHT, 
 		CONFLICT
 	}

@@ -158,9 +158,8 @@ public abstract class ResourceBoundary<R extends Resource> implements IResourceB
 		ResponseBuilder rb = new ResponseBuilderImpl();
 		try {
 			// Execution du code relatif à l'opération passer en paramètre et définition du statut de la réponse
-			if(pingActionInterface.pingAction()){
-				rb.status(Status.OK);
-			}
+			pingActionInterface.pingAction();
+			rb.status(Status.OK);
 		} catch (ValidationException e) {
 			//gestion des erreurs de validation dans la construction de la réponse
 			handleValidationException(rb, e);
@@ -215,6 +214,6 @@ public abstract class ResourceBoundary<R extends Resource> implements IResourceB
 	
 	@FunctionalInterface
 	protected static interface PingActionInterface {
-		public Boolean pingAction() throws ValidationException;  
+		public void pingAction() throws ValidationException;  
 	}
 }

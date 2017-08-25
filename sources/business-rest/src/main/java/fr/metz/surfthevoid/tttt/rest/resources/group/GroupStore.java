@@ -20,7 +20,6 @@ import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
-import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Errors;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
 import fr.metz.surfthevoid.tttt.rest.resources.user.User;
 import fr.metz.surfthevoid.tttt.rest.resources.user.UserStore;
@@ -85,68 +84,33 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
 	
-	public Boolean addChild(Long groupId, Long childGroupId) throws ValidationException {
+	public void addChild(Long groupId, Long childGroupId) throws ValidationException {
+		validator.validateChildAddition(groupId, childGroupId);
 		GroupDbo dbGroup = dao.read(groupId);
 		GroupDbo dbChildGroup = dao.read(childGroupId);
-		if(dbGroup != null && dbChildGroup != null && !groupId.equals(childGroupId)){
-			if(dbGroup.hasChildGroup(childGroupId)){
-				Errors errors = new Errors();
-				errors.addGlobalError("The group with id " + childGroupId + " is already a child of the group with id " + groupId);
-				throw new ValidationException(Type.CONFLICT, errors);
-			}
-			if(dbChildGroup.hasChildGroup(groupId)){
-				Errors errors = new Errors();
-				errors.addGlobalError("Cyclic dependency: The group with id " + childGroupId + " is a parent of the group with id " + groupId);
-				throw new ValidationException(Type.CONFLICT, errors);
-			}
-			if(dbGroup.getChildren() == null) dbGroup.setChildren(new HashSet<GroupDbo>());
-			dbGroup.getChildren().add(dbChildGroup);
-			return true;
-		} 
-		throw new ValidationException(Type.BAD_REQUEST, null);
+		dbGroup.getChildren().add(dbChildGroup);
 	}
 	
-	public Boolean removeChild(Long groupId, Long childGroupId) throws ValidationException {
+	public void removeChild(Long groupId, Long childGroupId) throws ValidationException {
+		validator.validateChildDeletion(groupId, childGroupId);
 		GroupDbo dbGroup = dao.read(groupId);
 		GroupDbo dbChildGroup = dao.read(childGroupId);
-		if(dbGroup != null && dbChildGroup != null && !groupId.equals(childGroupId)){
-			if(CollectionUtils.isNotEmpty(dbGroup.getChildren()) 
-					&& dbGroup.getChildren().contains(dbChildGroup)){
-				dbGroup.getChildren().remove(dbChildGroup);
-				return true;
-			}
-		} 
-		throw new ValidationException(Type.BAD_REQUEST, null);
+		dbGroup.getChildren().remove(dbChildGroup);
 	}
 	
-	public Boolean addUser(Long groupId, Long userId) throws ValidationException {
+	public void addUser(Long groupId, Long userId) throws ValidationException {
+		validator.validateUserAddition(groupId, userId);
 		GroupDbo dbGroup = dao.read(groupId);
 		UserDbo dbUser = userDao.read(userId);
-		if(dbGroup != null && dbUser != null){
-			if(CollectionUtils.isNotEmpty(dbGroup.getUsers()) 
-					&& dbGroup.getUsers().contains(dbUser)){
-				Errors errors = new Errors();
-				errors.addGlobalError("The user with id " + userId + " is already a child of the group with id " + groupId);
-				throw new ValidationException(Type.CONFLICT, errors);
-			}
-			if(dbGroup.getUsers() == null) dbGroup.setUsers(new HashSet<UserDbo>());
-			dbGroup.getUsers().add(dbUser);
-			return true;
-		} 
-		throw new ValidationException(Type.BAD_REQUEST, null);
+		if(dbGroup.getUsers() == null) dbGroup.setUsers(new HashSet<UserDbo>());
+		dbGroup.getUsers().add(dbUser);
 	}
 	
-	public Boolean removeUser(Long groupId, Long userId) throws ValidationException {
+	public void removeUser(Long groupId, Long userId) throws ValidationException {
+		validator.validateUserDeletion(groupId, userId);
 		GroupDbo dbGroup = dao.read(groupId);
 		UserDbo dbUser = userDao.read(userId);
-		if(dbGroup != null && dbUser != null){
-			if(CollectionUtils.isNotEmpty(dbGroup.getUsers()) 
-					&& dbGroup.getUsers().contains(dbUser)){
-				dbGroup.getUsers().remove(dbUser);
-				return true;
-			}
-		} 
-		throw new ValidationException(Type.BAD_REQUEST, null);
+		dbGroup.getUsers().remove(dbUser);
 	}
 	
 	@Override

@@ -51,6 +51,16 @@ public class PeriodStore extends ResourceStore<Period, PeriodDbo>{
 		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
 	
+	public Set<Period> timelineCompilation(Long tlid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
+	public Set<Period> cpprCompilation(Long tlid) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 	@Override
 	protected PeriodDao getDao() {
 		return dao;
@@ -82,4 +92,5 @@ public class PeriodStore extends ResourceStore<Period, PeriodDbo>{
 	public Supplier<TreeSet<Period>> getOrderedById(){
 		return () -> new TreeSet<Period>(Comparator.comparing(Period::getId));
 	}
+
 }

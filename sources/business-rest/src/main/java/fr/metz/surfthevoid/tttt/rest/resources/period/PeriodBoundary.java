@@ -7,7 +7,7 @@ import javax.ws.rs.core.Response;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceBoundary;
 
 /**
- * Rest access point to manipulate compiled periods resources
+ * Rest access point to manipulate periods resources
  */
 @Named("periodBoundary")
 public class PeriodBoundary extends ResourceBoundary<Period> implements IPeriodBoundary{
@@ -31,5 +31,4 @@ public class PeriodBoundary extends ResourceBoundary<Period> implements IPeriodB
 		ReadSetInterface<Period> readSetAction = () -> periodStore.allOfTimeline(tlid);
 		return readSet(readSetAction);
 	}
-
 }

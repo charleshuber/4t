@@ -1,6 +1,7 @@
 package fr.metz.surfthevoid.tttt.rest.resources.cronperiod;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.Period;
 
 import org.apache.commons.lang3.StringUtils;
@@ -147,5 +148,18 @@ public class CronPeriod extends Resource {
 		if(months != null && months.longValue() > 0) result.plusMonths(months);
 		if(years != null && years.longValue() > 0) result.plusYears(years);
 		return result;
+	}
+	
+	public LocalDateTime addTo(LocalDateTime dateTime){
+		if(dateTime != null){
+			return dateTime
+					.plusYears(years)
+					.plusMonths(months)
+					.plusDays(days)
+					.plusHours(hours)
+					.plusMinutes(minutes)
+					.plusSeconds(seconds);
+		}
+		return null;
 	}
 }

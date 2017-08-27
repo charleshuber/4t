@@ -11,9 +11,9 @@ public class TimeInterval {
 	
 	public TimeInterval(){}
 	
-	public TimeInterval(LocalDateTime start, LocalDateTime end, ZoneOffset offset){
-		this.startTime = Date.from(start.toInstant(offset));
-		this.endTime = Date.from(end.toInstant(offset));
+	public TimeInterval(LocalDateTime start, LocalDateTime end){
+		this.startTime = Date.from(start.toInstant(ZoneOffset.UTC));
+		this.endTime = Date.from(end.toInstant(ZoneOffset.UTC));
 	}
 	
 	public TimeInterval(Date startTime, Date endTime){

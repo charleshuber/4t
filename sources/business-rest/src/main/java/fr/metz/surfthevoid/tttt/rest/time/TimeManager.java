@@ -36,7 +36,7 @@ public class TimeManager {
 	protected CronPeriodStore cronPeriodStore;
 	
 	public Set<TimeInterval> timelineCompilation(Long tlid, Date start, Date end) {
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 	
@@ -45,7 +45,7 @@ public class TimeManager {
 		return null;
 	}
 	
-	protected List<TimeInterval> getTimeIntervals(CronPeriod cronPeriod, LocalDateTime startPoint, LocalDateTime endPoint, ZoneOffset zos) throws ParseException{
+	protected List<TimeInterval> getTimeIntervals(CronPeriod cronPeriod, LocalDateTime startPoint, LocalDateTime endPoint) throws ParseException{
 		List<TimeInterval> results = new ArrayList<>();
 		
 		CronExpressionAnalyser analyser = new CronExpressionAnalyser(cronPeriod.toString());
@@ -55,7 +55,7 @@ public class TimeManager {
 			LocalDateTime previousEvent = optPreviousEvent.get();
 			LocalDateTime previousPeriodEnd = cronPeriod.addTo(previousEvent);
 			if(previousPeriodEnd != null && previousPeriodEnd.isAfter(startPoint)){
-				results.add(new TimeInterval(startPoint, previousPeriodEnd, zos));
+				results.add(new TimeInterval(startPoint, previousPeriodEnd));
 			}
 		}
 		
@@ -67,7 +67,7 @@ public class TimeManager {
 			if(nextPeriodEnd.isAfter(endPoint)){
 				nextPeriodEnd = endPoint;
 			} 
-			results.add(new TimeInterval(nextEvent, nextPeriodEnd, zos));
+			results.add(new TimeInterval(nextEvent, nextPeriodEnd));
 			optNextEvent = analyser.next(nextEvent);
 		}
 		

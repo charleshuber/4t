@@ -11,14 +11,21 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.collections.CollectionUtils;
+
+import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CompiledPeriodDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
+import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
+import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
 import fr.metz.surfthevoid.tttt.rest.resources.cronperiod.CronPeriod;
 import fr.metz.surfthevoid.tttt.rest.resources.cronperiod.CronPeriodStore;
+import fr.metz.surfthevoid.tttt.rest.resources.period.Period;
 import fr.metz.surfthevoid.tttt.rest.resources.time.TimeInterval;
 import fr.metz.surfthevoid.tttt.rest.time.cron.CronExpressionAnalyser;
 
@@ -35,14 +42,54 @@ public class TimeManager {
 	@Inject
 	protected CronPeriodStore cronPeriodStore;
 	
-	public Set<TimeInterval> timelineCompilation(Long tlid, Date start, Date end) {
-		
+	public Set<TimeInterval> cpprCompilation(Long cpprid, Date start, Date end) throws ValidationException {
+		return cpprCompilation(cpprid, 
+				LocalDateTime.ofInstant(start.toInstant(), ZoneOffset.UTC), 
+				LocalDateTime.ofInstant(end.toInstant(), ZoneOffset.UTC));
+	}
+	
+	public Set<TimeInterval> timelineCompilation(Long tlid, Date start, Date end) throws ValidationException {
+		return timelineCompilation(tlid, 
+				LocalDateTime.ofInstant(start.toInstant(), ZoneOffset.UTC), 
+				LocalDateTime.ofInstant(end.toInstant(), ZoneOffset.UTC));
+	}
+	
+	protected Set<TimeInterval> cpprCompilation(Long cpprid, LocalDateTime start, LocalDateTime end) throws ValidationException {
 		return null;
 	}
 	
-	public Set<TimeInterval> cpprCompilation(Long tlid, Date start, Date end) {
-		// TODO Auto-generated method stub
-		return null;
+	protected Set<TimeInterval> timelineCompilation(Long tlid, LocalDateTime start, LocalDateTime end) throws ValidationException {	
+		Set<TimeInterval> results = new TreeSet<>(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
+		TimelineDbo timeline = timelineDao.read(tlid);
+		if(timeline == null){
+			throw new ValidationException(Type.BAD_REQUEST, null);
+		}
+		
+		if(CollectionUtils.isNotEmpty(timeline.getPeriods())){
+			for(Period period)
+		}
+		
+		return results;
+	}
+	
+	protected TimeInterval toTimeInterval(Period period, LocalDateTime startPoint, LocalDateTime endPoint){
+		LocalDateTime startPeriodTime = LocalDateTime.ofInstant(period.getStartTime().toInstant(), ZoneOffset.UTC);
+		LocalDateTime endPeriodTime = LocalDateTime.ofInstant(period.getEndTime().toInstant(), ZoneOffset.UTC);
+		if(endPoint.isBefore(startPeriodTime) || endPeriodTime.isBefore(startPoint)){
+			return null;
+		}
+		
+		LocalDateTime startTime = startPeriodTime;
+		if(startTime.isBefore(startPoint)){
+			startTime = startPoint;
+		}
+		
+		LocalDateTime endTime = endPeriodTime;
+		if(endTime.isAfter(endPoint)){
+			endTime = endPoint;
+		}
+		
+		return new TimeInterval(startTime, endTime);
 	}
 	
 	protected List<TimeInterval> getTimeIntervals(CronPeriod cronPeriod, LocalDateTime startPoint, LocalDateTime endPoint) throws ParseException{

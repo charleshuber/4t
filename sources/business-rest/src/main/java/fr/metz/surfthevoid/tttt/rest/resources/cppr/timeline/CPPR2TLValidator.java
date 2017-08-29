@@ -69,19 +69,28 @@ public class CPPR2TLValidator extends Validator<CPPR2TL, CPPR2TLDbo>{
 		}
 	}
 	
-	protected boolean isTimelineContainingCPPR(TimelineDbo dbTimeline, CompiledPeriodDbo dbCPPR) {
+	public boolean isTimelineContainingCPPR(TimelineDbo dbTimeline, CompiledPeriodDbo dbCPPR) {
 		if(CollectionUtils.isEmpty(dbTimeline.getCompPeriods())){
 			return false;
 		}
 		Optional<CompiledPeriodDbo> optDirectLink = dbTimeline.getCompPeriods().stream()
-				.filter(link -> link == dbCPPR).findFirst();
+				.filter(cppr -> cppr == dbCPPR)
+				.findFirst();
 		
 		if(optDirectLink.isPresent()){
 			return true;
 		}
 		return dbTimeline.getCompPeriods().stream()
-				.filter(link -> isTimelineContainingCPPR(dbTimeline, link))
-				.findFirst().isPresent();
+				.filter(cppr -> {
+					if(CollectionUtils.isNotEmpty(cppr.getCp2tls())){
+						for(CPPR2TLDbo link : cppr.getCp2tls()){
+							if(isTimelineContainingCPPR(link.getTimeline(), dbCPPR)){
+								return true;
+							}
+						}
+					}
+				 return false;
+				}).findFirst().isPresent();
 	}
 	
 	@Override

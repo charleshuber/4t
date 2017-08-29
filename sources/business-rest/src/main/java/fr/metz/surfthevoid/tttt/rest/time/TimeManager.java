@@ -15,23 +15,36 @@ import java.util.TreeSet;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.transaction.Transactional;
+import javax.transaction.Transactional.TxType;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
+import fr.metz.surfthevoid.tttt.rest.db.entity.CPPR2TLDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.CompiledPeriodDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.CronPeriodDbo;
+import fr.metz.surfthevoid.tttt.rest.db.entity.PeriodDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.TimelineDbo;
 import fr.metz.surfthevoid.tttt.rest.db.repo.CompiledPeriodDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.TimelineDao;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
+import fr.metz.surfthevoid.tttt.rest.resources.cppr.timeline.CPPR2TLValidator;
 import fr.metz.surfthevoid.tttt.rest.resources.cronperiod.CronPeriod;
 import fr.metz.surfthevoid.tttt.rest.resources.cronperiod.CronPeriodStore;
 import fr.metz.surfthevoid.tttt.rest.resources.period.Period;
+import fr.metz.surfthevoid.tttt.rest.resources.period.PeriodStore;
 import fr.metz.surfthevoid.tttt.rest.resources.time.TimeInterval;
+import fr.metz.surfthevoid.tttt.rest.resources.timeline.TimelineValidator;
 import fr.metz.surfthevoid.tttt.rest.time.cron.CronExpressionAnalyser;
 
 @Named
+@Transactional(TxType.REQUIRED)
 public class TimeManager {
 	
+	protected Log log = LogFactory.getLog(getClass());
 	public DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
 	public ZoneOffset zoneOffset = ZoneOffset.UTC;
 	
@@ -40,38 +53,121 @@ public class TimeManager {
 	@Inject
 	protected CompiledPeriodDao cpprDao;
 	@Inject
+	protected PeriodStore periodStore;
+	@Inject
 	protected CronPeriodStore cronPeriodStore;
+	@Inject
+	protected TimelineValidator timelineValidator;
+	@Inject
+	protected CPPR2TLValidator cppr2TLValidator;
 	
 	public Set<TimeInterval> cpprCompilation(Long cpprid, Date start, Date end) throws ValidationException {
-		return cpprCompilation(cpprid, 
-				LocalDateTime.ofInstant(start.toInstant(), ZoneOffset.UTC), 
-				LocalDateTime.ofInstant(end.toInstant(), ZoneOffset.UTC));
+		try {
+			return cpprCompilation(cpprid, 
+					LocalDateTime.ofInstant(start.toInstant(), ZoneOffset.UTC), 
+					LocalDateTime.ofInstant(end.toInstant(), ZoneOffset.UTC));
+		} catch (ParseException e) {
+			log.error("A cron expression could not be parsed", e);
+			throw new ValidationException(Type.INTERNAL_ERROR, null);
+		}
 	}
 	
 	public Set<TimeInterval> timelineCompilation(Long tlid, Date start, Date end) throws ValidationException {
-		return timelineCompilation(tlid, 
-				LocalDateTime.ofInstant(start.toInstant(), ZoneOffset.UTC), 
-				LocalDateTime.ofInstant(end.toInstant(), ZoneOffset.UTC));
+		try {
+			return timelineCompilation(tlid, 
+					LocalDateTime.ofInstant(start.toInstant(), ZoneOffset.UTC), 
+					LocalDateTime.ofInstant(end.toInstant(), ZoneOffset.UTC));
+		} catch (ParseException e) {
+			log.error("A cron expression could not be parsed", e);
+			throw new ValidationException(Type.INTERNAL_ERROR, null);
+		}
 	}
 	
-	protected Set<TimeInterval> cpprCompilation(Long cpprid, LocalDateTime start, LocalDateTime end) throws ValidationException {
-		return null;
-	}
-	
-	protected Set<TimeInterval> timelineCompilation(Long tlid, LocalDateTime start, LocalDateTime end) throws ValidationException {	
+	protected Set<TimeInterval> cpprCompilation(Long cpprid, LocalDateTime start, LocalDateTime end) throws ValidationException, ParseException {
 		Set<TimeInterval> results = new TreeSet<>(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
+		List<TimeInterval> allIntervals = new ArrayList<>();
+		
+		CompiledPeriodDbo cppr = cpprDao.read(cpprid);
+		if(cppr == null){
+			throw new ValidationException(Type.BAD_REQUEST, null);
+		}
+		
+		validateNoCyclicDependency(cppr);
+		
+		if(CollectionUtils.isNotEmpty(cppr.getCp2tls())){
+			Set<CPPR2TLDbo> orderedLayers = new TreeSet<CPPR2TLDbo>(Comparator.comparing(CPPR2TLDbo::getOrder));
+			orderedLayers.addAll(cppr.getCp2tls());
+			for(CPPR2TLDbo cppr2TL : orderedLayers){
+				Set<TimeInterval> timelineIntervals = timelineCompilation(cppr2TL.getTimeline().getId(), start, end);
+				if(cppr2TL.getNegative()){
+					allIntervals = substractTimeIntervals(allIntervals, timelineIntervals);
+				} else {
+					allIntervals.addAll(timelineIntervals);
+				}
+			}
+		}
+		
+		results.addAll(optimizeIntervals(allIntervals));
+		return results;
+	}
+
+	protected Set<TimeInterval> timelineCompilation(Long tlid, LocalDateTime start, LocalDateTime end) throws ValidationException, ParseException {	
+		Set<TimeInterval> results = new TreeSet<>(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
+		List<TimeInterval> allIntervals = new ArrayList<>();
+		
 		TimelineDbo timeline = timelineDao.read(tlid);
 		if(timeline == null){
 			throw new ValidationException(Type.BAD_REQUEST, null);
 		}
+
+		validateNoCyclicDependency(timeline);
 		
 		if(CollectionUtils.isNotEmpty(timeline.getPeriods())){
-			for(Period period)
+			for(PeriodDbo period : timeline.getPeriods()){
+				allIntervals.add(toTimeInterval(periodStore.extract(period), start, end));
+			}
 		}
 		
+		if(CollectionUtils.isNotEmpty(timeline.getCronPeriods())){
+			for(CronPeriodDbo crpr : timeline.getCronPeriods()){
+				allIntervals.addAll(getTimeIntervals(cronPeriodStore.extract(crpr), start, end));
+			}
+		}
+		
+		if(CollectionUtils.isNotEmpty(timeline.getCompPeriods())){
+			for(CompiledPeriodDbo cppr : timeline.getCompPeriods()){
+				allIntervals.addAll(cpprCompilation(cppr.getId(), start, end));
+			}
+		}
+		
+		results.addAll(optimizeIntervals(allIntervals));
 		return results;
 	}
 	
+	protected void validateNoCyclicDependency(TimelineDbo timeline) throws ValidationException {
+		if(CollectionUtils.isNotEmpty(timeline.getCompPeriods())){
+			for(CompiledPeriodDbo period : timeline.getCompPeriods()){
+				if(timelineValidator.isCPPRContainingTimeline(period, timeline)){
+					log.error("Database data is invalid. "
+							+ "There is a cyclic dependency between timeline (" + timeline.getId() + ") and compiled period (" + period.getId() + ")");
+					throw new ValidationException(Type.INTERNAL_ERROR, null);
+				}
+			}
+		}
+	}
+	
+	protected void validateNoCyclicDependency(CompiledPeriodDbo cppr) throws ValidationException {
+		if(CollectionUtils.isNotEmpty(cppr.getCp2tls())){
+			for(CPPR2TLDbo period : cppr.getCp2tls()){
+				if(cppr2TLValidator.isTimelineContainingCPPR(period.getTimeline(), cppr)){
+					log.error("Database data is invalid. "
+							+ "There is a cyclic dependency between compiled period (" + cppr.getId() + ") and timeline (" + period.getId() + ")");
+					throw new ValidationException(Type.INTERNAL_ERROR, null);
+				}
+			}
+		}
+	}
+
 	protected TimeInterval toTimeInterval(Period period, LocalDateTime startPoint, LocalDateTime endPoint){
 		LocalDateTime startPeriodTime = LocalDateTime.ofInstant(period.getStartTime().toInstant(), ZoneOffset.UTC);
 		LocalDateTime endPeriodTime = LocalDateTime.ofInstant(period.getEndTime().toInstant(), ZoneOffset.UTC);
@@ -124,7 +220,7 @@ public class TimeManager {
 	protected List<TimeInterval> optimizeIntervals(List<TimeInterval> intervals){
 		LinkedList<TimeInterval> source = new LinkedList<TimeInterval>(intervals);
 		LinkedList<TimeInterval> dest = new LinkedList<TimeInterval>();
-		source.sort(Comparator.comparing(TimeInterval::getStartTime));
+		source.sort(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
 		
 		TimeInterval older = source.pollFirst();
 		dest.offer(older);
@@ -144,6 +240,17 @@ public class TimeManager {
 			}
 		}
 		return dest;
+	}
+	
+	private List<TimeInterval> substractTimeIntervals(List<TimeInterval> allIntervals,
+			Set<TimeInterval> timelineIntervals) {
+		List<TimeInterval> source = optimizeIntervals(allIntervals);
+		LinkedList<TimeInterval> dest = new LinkedList<TimeInterval>();
+		source.sort(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
+		
+		HARD STUFF HERE
+		
+		return null;
 	}
 	
 	/*

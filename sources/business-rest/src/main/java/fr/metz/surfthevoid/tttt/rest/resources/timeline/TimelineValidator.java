@@ -137,7 +137,7 @@ public class TimelineValidator extends Validator<Timeline, TimelineDbo>{
 	}
 	
 	
-	protected boolean isCPPRContainingTimeline(CompiledPeriodDbo dbCPPR, TimelineDbo dbTimeline) {
+	public boolean isCPPRContainingTimeline(CompiledPeriodDbo dbCPPR, TimelineDbo dbTimeline) {
 		if(CollectionUtils.isEmpty(dbCPPR.getCp2tls())){
 			return false;
 		}
@@ -149,8 +149,17 @@ public class TimelineValidator extends Validator<Timeline, TimelineDbo>{
 			return true;
 		}
 		return dbCPPR.getCp2tls().stream()
-				.filter(link -> isCPPRContainingTimeline(dbCPPR, link.getTimeline()))
-				.findFirst().isPresent();
+				.filter(link -> {
+					TimelineDbo innerDbTL = link.getTimeline();
+					if(CollectionUtils.isNotEmpty(innerDbTL.getCompPeriods())){
+						for(CompiledPeriodDbo innerDbCPPR : innerDbTL.getCompPeriods()){
+							if(isCPPRContainingTimeline(innerDbCPPR, dbTimeline)){
+								return true;
+							}
+						}
+					}
+					return false;
+				}).findFirst().isPresent();
 	}
 
 	@Override

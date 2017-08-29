@@ -86,6 +86,7 @@ public class ValidationException extends Exception {
 		INVALID_INPUT,
 		INVALID_STATE,
 		INVALID_RIGHT, 
-		CONFLICT
+		CONFLICT, 
+		INTERNAL_ERROR
 	}
 }

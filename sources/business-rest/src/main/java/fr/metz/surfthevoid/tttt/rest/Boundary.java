@@ -109,6 +109,8 @@ public abstract class Boundary {
 			rb.status(Status.NO_CONTENT);
 		} else if(e.getType() == Type.CONFLICT){
 			rb.status(Status.CONFLICT);
+		} else if(e.getType() == Type.INTERNAL_ERROR){
+			rb.status(Status.INTERNAL_SERVER_ERROR);
 		} else {
 			rb.status(Status.BAD_REQUEST);
 		}

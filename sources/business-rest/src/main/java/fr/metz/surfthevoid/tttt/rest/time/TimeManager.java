@@ -45,8 +45,9 @@ import fr.metz.surfthevoid.tttt.rest.time.cron.CronExpressionAnalyser;
 public class TimeManager {
 	
 	protected Log log = LogFactory.getLog(getClass());
-	public DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-	public ZoneOffset zoneOffset = ZoneOffset.UTC;
+	protected DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+	protected ZoneOffset zoneOffset = ZoneOffset.UTC;
+	protected Comparator<TimeInterval> tiComparator = Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime);
 	
 	@Inject
 	protected TimelineDao timelineDao;
@@ -84,7 +85,6 @@ public class TimeManager {
 	}
 	
 	protected Set<TimeInterval> cpprCompilation(Long cpprid, LocalDateTime start, LocalDateTime end) throws ValidationException, ParseException {
-		Set<TimeInterval> results = new TreeSet<>(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
 		List<TimeInterval> allIntervals = new ArrayList<>();
 		
 		CompiledPeriodDbo cppr = cpprDao.read(cpprid);
@@ -107,12 +107,10 @@ public class TimeManager {
 			}
 		}
 		
-		results.addAll(optimizeIntervals(allIntervals));
-		return results;
+		return optimizeIntervals(allIntervals);
 	}
 
 	protected Set<TimeInterval> timelineCompilation(Long tlid, LocalDateTime start, LocalDateTime end) throws ValidationException, ParseException {	
-		Set<TimeInterval> results = new TreeSet<>(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
 		List<TimeInterval> allIntervals = new ArrayList<>();
 		
 		TimelineDbo timeline = timelineDao.read(tlid);
@@ -140,8 +138,7 @@ public class TimeManager {
 			}
 		}
 		
-		results.addAll(optimizeIntervals(allIntervals));
-		return results;
+		return optimizeIntervals(allIntervals);
 	}
 	
 	protected void validateNoCyclicDependency(TimelineDbo timeline) throws ValidationException {
@@ -217,10 +214,10 @@ public class TimeManager {
 		return results;
 	}
 	
-	protected List<TimeInterval> optimizeIntervals(List<TimeInterval> intervals){
+	protected TreeSet<TimeInterval> optimizeIntervals(List<TimeInterval> intervals){
 		LinkedList<TimeInterval> source = new LinkedList<TimeInterval>(intervals);
 		LinkedList<TimeInterval> dest = new LinkedList<TimeInterval>();
-		source.sort(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
+		source.sort(tiComparator);
 		
 		TimeInterval older = source.pollFirst();
 		dest.offer(older);
@@ -239,18 +236,57 @@ public class TimeManager {
 				dest.offer(merged);
 			}
 		}
-		return dest;
+		TreeSet<TimeInterval> results = new TreeSet<>(tiComparator);
+		results.addAll(dest);
+		return results;
 	}
 	
-	private List<TimeInterval> substractTimeIntervals(List<TimeInterval> allIntervals,
-			Set<TimeInterval> timelineIntervals) {
-		List<TimeInterval> source = optimizeIntervals(allIntervals);
-		LinkedList<TimeInterval> dest = new LinkedList<TimeInterval>();
-		source.sort(Comparator.comparing(TimeInterval::getStartTime).thenComparing(TimeInterval::getEndTime));
+	protected Set<TimeInterval> substractTimeIntervals(List<TimeInterval> allIntervals,
+			Set<TimeInterval> intervalsToSubstract) {
+		TreeSet<TimeInterval> source = optimizeIntervals(allIntervals);
 		
-		HARD STUFF HERE
 		
-		return null;
+		for(TimeInterval subti :  intervalsToSubstract){
+			
+			TreeSet<TimeInterval> toDelete = new TreeSet<>(tiComparator);
+			TreeSet<TimeInterval> toAdd = new TreeSet<>(tiComparator);
+			
+			Date subtiStart = subti.getStartTime();
+			Date subtiEnd = subti.getEndTime();
+
+			for(TimeInterval ti : source){
+				Date tiStart = ti.getStartTime();
+				Date tiEnd = ti.getEndTime();
+				//ti is inside subti
+				if((tiStart.equals(subtiStart) || tiStart.after(subtiStart)) 
+						&& (tiEnd.equals(subtiEnd) || tiEnd.before(subtiEnd))){
+					toDelete.add(ti);
+				}
+				//substi is inside ti 
+				else if((subtiStart.equals(tiStart) || subtiStart.after(tiStart)) 
+						&& (subtiEnd.equals(tiEnd) || subtiEnd.before(tiEnd))){
+					toDelete.add(ti);
+					toAdd.add(new TimeInterval(tiStart, subtiStart));
+					toAdd.add(new TimeInterval(subtiEnd, tiEnd));
+				}
+				//substi start is inside ti
+				else if((subtiStart.equals(tiStart) || subtiStart.after(tiStart)) 
+							&& subtiStart.equals(tiEnd) || subtiStart.before(tiEnd)){
+						toDelete.add(ti);
+						toAdd.add(new TimeInterval(tiStart, subtiStart));
+				}
+				//substi end is inside ti
+				else if((subtiEnd.equals(tiStart) || subtiEnd.after(tiStart)) 
+							&& subtiEnd.equals(tiEnd) || subtiEnd.before(tiEnd)){
+						toDelete.add(ti);
+						toAdd.add(new TimeInterval(subtiStart, tiEnd));
+				}
+			}
+			
+			to continue
+		}
+		
+		return source;
 	}
 	
 	/*

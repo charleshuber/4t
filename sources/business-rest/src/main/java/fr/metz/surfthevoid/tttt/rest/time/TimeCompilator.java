@@ -42,7 +42,7 @@ import fr.metz.surfthevoid.tttt.rest.time.cron.CronExpressionAnalyser;
 
 @Named
 @Transactional(TxType.REQUIRED)
-public class TimeManager {
+public class TimeCompilator {
 	
 	protected Log log = LogFactory.getLog(getClass());
 	protected DateTimeFormatter df = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");

@@ -17,6 +17,7 @@
 			<ref bean="crprBoundary" />
 			<ref bean="periodBoundary" />
 			<ref bean="timelineBoundary" />
+			<ref bean="timeCompilatorBoundary"/>
 		</jaxrs:serviceBeans>
 		<jaxrs:providers>
 			<bean id="jacksonJsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />

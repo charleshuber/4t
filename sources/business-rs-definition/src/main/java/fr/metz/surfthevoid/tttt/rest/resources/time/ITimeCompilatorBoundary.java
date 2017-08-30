@@ -9,16 +9,16 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-@Path("/time")
-public interface ITimeBoundary {
+@Path("/timecompilation")
+public interface ITimeCompilatorBoundary {
 	
 	@GET
-	@Path("/timeline/{tlid}/compilation/{start}/{end}")
+	@Path("/timeline/{tlid}/{start}/{end}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response timelineCompilation(@PathParam("tlid") Long tlid, Date start, Date end);
 	
 	@GET
-	@Path("/compiledPeriod/{cpprid}/compilation/{start}/{end}")
+	@Path("/compiledPeriod/{cpprid}/{start}/{end}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response cpprCompilation(@PathParam("cpprid") Long cpprid, Date start, Date end);
 	

@@ -258,35 +258,47 @@ public class TimeManager {
 		TreeSet<TimeInterval> toDelete = new TreeSet<>(itvComparator);
 		TreeSet<TimeInterval> toAdd = new TreeSet<>(itvComparator);
 		
-		Date subtiStart = itvToSubstract.getStartTime();
-		Date subtiEnd = itvToSubstract.getEndTime();
+		Date subItvStart = itvToSubstract.getStartTime();
+		Date subItvEnd = itvToSubstract.getEndTime();
 
 		for(TimeInterval currentItv : optimizedIntervals){
 			Date currentItvStart = currentItv.getStartTime();
 			Date currentItvEnd = currentItv.getEndTime();
-			//ti is inside subti
-			if((currentItvStart.equals(subtiStart) || currentItvStart.after(subtiStart)) 
-					&& (currentItvEnd.equals(subtiEnd) || currentItvEnd.before(subtiEnd))){
+			//currentItv is inside itvToSubstract => - + + -
+			if((currentItvStart.equals(subItvStart) || currentItvStart.after(subItvStart)) 
+					&& (currentItvEnd.equals(subItvEnd) || currentItvEnd.before(subItvEnd))){
 				toDelete.add(currentItv);
 			}
-			//substi is inside ti 
-			else if((subtiStart.equals(currentItvStart) || subtiStart.after(currentItvStart)) 
-					&& (subtiEnd.equals(currentItvEnd) || subtiEnd.before(currentItvEnd))){
+			//itvToSubstract is inside currentItv  => + - - + 
+			else if((subItvStart.equals(currentItvStart) || subItvStart.after(currentItvStart)) 
+					&& (subItvEnd.equals(currentItvEnd) || subItvEnd.before(currentItvEnd))){
 				toDelete.add(currentItv);
-				toAdd.add(new TimeInterval(currentItvStart, subtiStart));
-				toAdd.add(new TimeInterval(subtiEnd, currentItvEnd));
+				Date exclusiveEndPoint = new Date(subItvStart.getTime() - 1);
+				if(currentItvStart.before(exclusiveEndPoint)){
+					toAdd.add(new TimeInterval(currentItvStart, exclusiveEndPoint));
+				}
+				Date exclusiveStartPoint = new Date(subItvEnd.getTime() + 1);
+				if(currentItvEnd.after(exclusiveStartPoint)){
+					toAdd.add(new TimeInterval(exclusiveStartPoint, currentItvEnd));
+				}
 			}
-			//substi start is inside ti
-			else if((subtiStart.equals(currentItvStart) || subtiStart.after(currentItvStart)) 
-						&& subtiStart.equals(currentItvEnd) || subtiStart.before(currentItvEnd)){
-					toDelete.add(currentItv);
-					toAdd.add(new TimeInterval(currentItvStart, subtiStart));
+			//itvToSubstract start is inside currentItv  => + - + - 
+			else if((subItvStart.equals(currentItvStart) || subItvStart.after(currentItvStart)) 
+						&& subItvStart.equals(currentItvEnd) || subItvStart.before(currentItvEnd)){
+				toDelete.add(currentItv);
+				Date exclusiveEndPoint = new Date(subItvStart.getTime() - 1);
+				if(currentItvStart.before(exclusiveEndPoint)){
+					toAdd.add(new TimeInterval(currentItvStart, exclusiveEndPoint));
+				}
 			}
-			//substi end is inside ti
-			else if((subtiEnd.equals(currentItvStart) || subtiEnd.after(currentItvStart)) 
-						&& subtiEnd.equals(currentItvEnd) || subtiEnd.before(currentItvEnd)){
-					toDelete.add(currentItv);
-					toAdd.add(new TimeInterval(subtiStart, currentItvEnd));
+			//itvToSubstract end is inside currentItv  => - + - +
+			else if((subItvEnd.equals(currentItvStart) || subItvEnd.after(currentItvStart)) 
+						&& subItvEnd.equals(currentItvEnd) || subItvEnd.before(currentItvEnd)){
+				toDelete.add(currentItv);
+				Date exclusiveStartPoint = new Date(subItvEnd.getTime() + 1);
+				if(currentItvEnd.after(exclusiveStartPoint)){
+					toAdd.add(new TimeInterval(exclusiveStartPoint, currentItvEnd));
+				}
 			}
 		}
 		optimizedIntervals.removeAll(toDelete);

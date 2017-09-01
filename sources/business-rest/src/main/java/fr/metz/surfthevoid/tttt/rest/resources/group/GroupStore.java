@@ -21,21 +21,14 @@ import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
-import fr.metz.surfthevoid.tttt.rest.resources.user.User;
-import fr.metz.surfthevoid.tttt.rest.resources.user.UserStore;
 
 @Named
 public class GroupStore extends ResourceStore<Group, GroupDbo>{
 	
 	@Inject
 	protected GroupDao dao;
-	
 	@Inject
 	protected UserDao userDao;
-	
-	@Inject
-	protected UserStore userStore;
-	
 	@Inject
 	protected GroupValidator validator;
 	
@@ -43,6 +36,19 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 		return dao.readAll().stream()
 				.map(dbo -> extract(dbo))
 				.collect(Collectors.toCollection(getOrderedByName()));
+	}
+	
+	public Set<Group> readAllOfUser(Long userId) throws ValidationException {
+		UserDbo dbUser =  userDao.read(userId);
+		if(dbUser != null){
+			if(CollectionUtils.isNotEmpty(dbUser.getGroups())){
+				return dbUser.getGroups().stream()
+				.map(dbGroup -> extract(dbGroup))
+				.collect(Collectors.toCollection(getOrderedByName()));
+			}
+			return new HashSet<Group>();
+		} 
+		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
 	
 	public Set<Group> children(Long id) throws ValidationException {
@@ -67,19 +73,6 @@ public class GroupStore extends ResourceStore<Group, GroupDbo>{
 				.collect(Collectors.toCollection(getOrderedByName()));
 			}
 			return new HashSet<Group>();
-		} 
-		throw new ValidationException(Type.BAD_REQUEST, null);
-	}
-	
-	public Set<User> users(Long id) throws ValidationException {
-		GroupDbo dbGroup = dao.read(id);			
-		if(dbGroup != null){
-			if(CollectionUtils.isNotEmpty(dbGroup.getUsers())){
-				return dbGroup.getUsers().stream()
-				.map(dbUser -> userStore.extract(dbUser))
-				.collect(Collectors.toCollection(userStore.getOrderedById()));
-			}
-			return new HashSet<User>();
 		} 
 		throw new ValidationException(Type.BAD_REQUEST, null);
 	}

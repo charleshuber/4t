@@ -15,13 +15,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.security.authentication.encoding.Md5PasswordEncoder;
 import org.springframework.security.authentication.encoding.MessageDigestPasswordEncoder;
 
+import fr.metz.surfthevoid.tttt.rest.db.entity.GroupDbo;
 import fr.metz.surfthevoid.tttt.rest.db.entity.UserDbo;
+import fr.metz.surfthevoid.tttt.rest.db.repo.GroupDao;
 import fr.metz.surfthevoid.tttt.rest.db.repo.UserDao;
 import fr.metz.surfthevoid.tttt.rest.resources.Operation;
 import fr.metz.surfthevoid.tttt.rest.resources.ResourceStore;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException;
 import fr.metz.surfthevoid.tttt.rest.resources.ValidationException.Type;
-import fr.metz.surfthevoid.tttt.rest.resources.group.Group;
 import fr.metz.surfthevoid.tttt.rest.resources.group.GroupStore;
 
 @Named
@@ -31,23 +32,13 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 	protected UserDao dao;
 	
 	@Inject
+	protected GroupDao groupDao;
+	
+	@Inject
 	protected GroupStore groupStore;
 	
 	@Inject
 	protected UserValidator validator;
-	
-	public Set<Group> getGroups(Long id) throws ValidationException {
-		UserDbo dbUser =  dao.read(id);
-		if(dbUser != null){
-			if(CollectionUtils.isNotEmpty(dbUser.getGroups())){
-				return dbUser.getGroups().stream()
-				.map(dbGroup -> groupStore.extract(dbGroup))
-				.collect(Collectors.toCollection(groupStore.getOrderedByName()));
-			}
-			return new HashSet<Group>();
-		} 
-		throw new ValidationException(Type.BAD_REQUEST, null);
-	}
 	
 	@Override
 	protected UserDao getDao() {
@@ -63,6 +54,19 @@ public class UserStore extends ResourceStore<User, UserDbo>{
 		return dao.readAll().stream()
 				.map(dbo -> extract(dbo))
 				.collect(Collectors.toCollection(getOrderedById()));
+	}
+	
+	public Set<User> readAllOfGroup(Long groupId) throws ValidationException {
+		GroupDbo dbGroup = groupDao.read(groupId);			
+		if(dbGroup != null){
+			if(CollectionUtils.isNotEmpty(dbGroup.getUsers())){
+				return dbGroup.getUsers().stream()
+				.map(dbUser -> extract(dbUser))
+				.collect(Collectors.toCollection(getOrderedById()));
+			}
+			return new HashSet<User>();
+		} 
+		throw new ValidationException(Type.BAD_REQUEST, null);
 	}
 
 	@Override

@@ -21,12 +21,12 @@ public class UserBoundary extends ResourceBoundary<User> implements IUserBoundar
 	}
 
 	@Override
-	public Response groups(Long id) {
-		return readSet(() -> userStore.getGroups(id));
+	public Response all() {
+		return readSet(() -> userStore.readAll());
 	}
 
 	@Override
-	public Response all() {
-		return readSet(() -> userStore.readAll());
+	public Response allOfGroup(Long groupId) {
+		return readSet(() -> userStore.readAllOfGroup(groupId));
 	}
 }

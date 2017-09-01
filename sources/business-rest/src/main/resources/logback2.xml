@@ -15,6 +15,7 @@
 	<root level="DEBUG">
 		<appender-ref ref="CONSOLE" />
 	</root>
+	<logger name="*" level="TRACE" />
 	<logger name="org.apache.cxf" level="INFO" />
 	<logger name="org.springframework" level="DEBUG" />
 </configuration>

@@ -18,6 +18,11 @@ public interface IGroupBoundary extends IResourceBoundary<Group>{
 	public Response all();
 	
 	@GET
+	@Path("/allOfUser/{userId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response allOfUser(@PathParam("userId") Long userId);
+	
+	@GET
 	@Path("/{groupId}/children")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response children(@PathParam("groupId") Long groupId);
@@ -26,11 +31,6 @@ public interface IGroupBoundary extends IResourceBoundary<Group>{
 	@Path("/{groupId}/parents")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response parents(@PathParam("groupId") Long groupId);
-	
-	@GET
-	@Path("/{groupId}/users")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response users(@PathParam("groupId") Long groupId);
 	
 	@GET
 	@Path("/{groupId}/addChild/{childId}")

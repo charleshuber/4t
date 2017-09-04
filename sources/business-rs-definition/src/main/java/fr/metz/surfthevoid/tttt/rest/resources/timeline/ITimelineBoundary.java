@@ -23,12 +23,12 @@ public interface ITimelineBoundary extends IResourceBoundary<Timeline>{
 	public Response removeCPPR(@PathParam("tlId") Long timelineId, @PathParam("cpprId") Long cpprId);
 	
 	@GET
-	@Path("/{tlId}/add/cronPeriod/{cpprId}")
+	@Path("/{tlId}/add/cronPeriod/{crprId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response addCRPR(@PathParam("tlId") Long timelineId, @PathParam("crprId") Long crprId);
 	
 	@GET
-	@Path("/{tlId}/remove/cronPeriod/{cpprId}")
+	@Path("/{tlId}/remove/cronPeriod/{crprId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response removeCRPR(@PathParam("tlId") Long timelineId, @PathParam("crprId") Long crprId);
 	

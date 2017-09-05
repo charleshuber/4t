@@ -9,7 +9,7 @@ import javax.ws.rs.core.Response;
 
 import fr.metz.surfthevoid.tttt.rest.resources.IResourceBoundary;
 
-@Path("/cronperiods")
+@Path("/cronperiod")
 public interface ICronPeriodBoundary extends IResourceBoundary<CronPeriod>{
 	
 	@GET

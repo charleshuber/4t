@@ -13,11 +13,6 @@ import fr.metz.surfthevoid.tttt.rest.resources.IResourceBoundary;
 public interface IGroupBoundary extends IResourceBoundary<Group>{
 	
 	@GET
-	@Path("/all")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response all();
-	
-	@GET
 	@Path("/allOfUser/{userId}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response allOfUser(@PathParam("userId") Long userId);

@@ -13,11 +13,6 @@ import fr.metz.surfthevoid.tttt.rest.resources.IResourceBoundary;
 public interface ICompiledPeriodBoundary extends IResourceBoundary<CompiledPeriod>{
 	
 	@GET
-	@Path("/all")
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response all();
-	
-	@GET
 	@Path("/timeline/{tlid}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response allOfTimeline(@PathParam("tlid") Long tlid);
